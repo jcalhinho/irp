@@ -31,3 +31,6 @@
 1. **Gratuit** : extension « Mode lecture adapté » (local, sans compte).
 2. **Éditeurs** : kit « vue agent » (`/llms.txt`, `.md`, `/.well-known/irp.json`, IRP-Doc) pour un site existant + tableau de bord de conformité (`must_show`, axe).
 3. **Collectivités** : script d'intégration du mode lecture + rapport de benchmark sur leurs pages.
+
+## Axe fort : « les modèles locaux feront le front »
+Message : le front-end de présentation (mise en forme, reformulation, adaptation) sera bientôt fait par des petits modèles locaux (Gemini Nano dans Chrome, LFM2.5 / LFM3 de Liquid AI via WebGPU). Il manque un contrat de confiance : IRP = le serveur publie du sens, le modèle local adapte, le code vérifie et rend. Preuve visible : le badge « modèle utilisé · local · sortie vérifiée ». À ne pas affirmer : que LFM3 tourne déjà dans le navigateur (non vérifié ; LFM2.5 oui, via ONNX/transformers.js).

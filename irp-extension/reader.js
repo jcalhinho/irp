@@ -44,13 +44,13 @@
     .status{position:absolute;left:-9999px}
   `;
 
+  // IA locale : Gemini Nano (Chrome) s'il est là ; le modèle utilisé est toujours affiché. Sortie vérifiée par IRP.
+  let aiModel = null;
   async function aiAdapter() {
-    const LM = (typeof self !== 'undefined' && (self.LanguageModel || (self.ai && self.ai.languageModel))) || null;
-    if (!LM || typeof LM.create !== 'function') return null;
-    try {
-      const session = await LM.create({ initialPrompts: [{ role: 'system', content: "Tu réécris des textes en français très simple (FALC) : phrases courtes, mots courants, une idée par phrase. Tu conserves EXACTEMENT tous les nombres, dates, montants, noms et adresses. Tu réponds uniquement par le texte réécrit, sans balises." }] });
-      return (t) => session.prompt(t);
-    } catch { return null; }
+    const c = await loadCore();
+    const r = await c.createLocalAdapter('chrome-builtin');
+    aiModel = r ? r.model : null;
+    return r ? r.adapter : null;
   }
 
   async function build() {
@@ -78,7 +78,8 @@
     const v = c.verifyPreserved(doc, r.text);
     const badge = root.querySelector('.badge');
     badge.className = 'badge' + (v.ok ? '' : ' warn');
-    badge.textContent = v.ok ? '✔ Nombres, dates et noms conservés' : '⚠ Éléments manquants : ' + v.missing.slice(0, 3).join(', ');
+    badge.textContent = (v.ok ? '✔ Nombres, dates et noms conservés' : '⚠ Éléments manquants : ' + v.missing.slice(0, 3).join(', '))
+      + (state.simplify ? ' · ' + c.modelBadge(state.ai ? aiModel : null) : '');
     status.textContent = v.ok ? 'Mode lecture affiché. Aucun nombre ni date perdu.' : 'Attention : certains éléments sont manquants.';
     if (!v.ok && state.simplify) {
       // garde-fou : la version simplifiée perdrait une information → on affiche l'original, et on le dit

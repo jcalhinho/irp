@@ -5,3 +5,4 @@ export * from './extract.js';
 export * from './verify.js';
 export * from './agent.js';
 export * from './audit.js';
+export * from './localmodel.js';

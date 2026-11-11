@@ -12,6 +12,20 @@
 - 🔒 Un modèle qui génère du HTML est une surface d'attaque et un risque de dérive. IRP n'en génère jamais : **aucun HTML ne vient d'un modèle**.
 - 🧠 Chacun lit à sa façon (dyslexie, faible vision, langue seconde, fatigue) : mêmes faits, présentation adaptée, **sans rien perdre** (contrat `must_show` vérifié).
 
+## 🧠 La thèse : les modèles locaux vont faire le travail du front
+
+Les petits modèles tournent déjà dans le navigateur ou sur l'appareil : Gemini Nano est intégré à Chrome, et les modèles ouverts de Liquid AI (LFM2.5 aujourd'hui, famille LFM3 annoncée le 27 octobre 2026) tiennent en quelques centaines de Mo à ~1 Go en 4 bits et s'exécutent via WebGPU. Ils sont assez bons pour **reformuler, résumer, réorganiser** — c'est-à-dire pour le travail de présentation que l'on codait à la main côté front.
+
+Ce qui manque, c'est un contrat pour les laisser faire sans risque. IRP est ce contrat :
+- le serveur publie du **sens** (composants JSON, `must_show`), pas du HTML ;
+- un modèle **local, interchangeable** adapte le texte à la personne ;
+- le code **vérifie** (nombres, dates, montants, noms conservés) et **rend** de façon déterministe ;
+- l'interface **dit toujours quel modèle a travaillé** (ex. « LFM2.5-1.2B · local, sur cet appareil · sortie vérifiée »).
+
+Le contrat ne dépend pas du modèle : un modèle plus gros, plus petit ou plus mauvais ne peut pas faire perdre un montant. Quand les modèles s'améliorent, IRP en profite sans rien changer ; quand ils se trompent, rien ne passe. Voir `irp-core/localmodel.js`.
+
+> État actuel : Gemini Nano est branché dans le lecteur. Le chemin LFM (WebGPU / transformers.js) est implémenté et testé avec un modèle simulé ; il reste à le valider sur une vraie machine avec le vrai modèle.
+
 ## 🚀 Installer sur un site : une ligne
 
 ```html
