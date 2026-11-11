@@ -201,6 +201,11 @@ _TOOL_CSP = ("default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-in
              "img-src 'self' data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'")
 _STATIC = {"/tool": ("irp-site/tool.html", "text/html; charset=utf-8"), "/tool.js": ("irp-site/tool.js", "text/javascript; charset=utf-8"),
            "/privacy": ("irp-site/privacy.html", "text/html; charset=utf-8")}
+# Démo modèles locaux : CSP dédiée (bibliothèque d'inférence + poids depuis des hôtes nommés, jamais d'inline script).
+_LOCAL_CSP = ("default-src 'none'; script-src 'self' 'wasm-unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; "
+              "connect-src 'self' https://huggingface.co https://*.huggingface.co https://*.hf.co https://cdn.jsdelivr.net; "
+              "worker-src 'self' blob:; img-src 'self' data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'")
+_LOCAL_PAGES = {"/local": ("irp-site/local.html", "text/html; charset=utf-8"), "/local.js": ("irp-site/local.js", "text/javascript; charset=utf-8")}
 # Scripts publics du widget (lecture seule, sans secret) : intégrables depuis n'importe quel site → CORS ouvert.
 _WIDGET = {"/widget.js": "irp-site/widget.js", "/reader.js": "irp-extension/reader.js"}
 _CORS_OPEN = {"Access-Control-Allow-Origin": "*", "Cross-Origin-Resource-Policy": "cross-origin"}
@@ -465,6 +470,16 @@ class IRPHandler(BaseHTTPRequestHandler):
             except OSError:
                 return False
             self._send_bytes(200, body, "text/javascript; charset=utf-8", {**_CORS_OPEN, "Cache-Control": "public, max-age=300"})
+            return True
+        if path in _LOCAL_PAGES:
+            rel, ctype = _LOCAL_PAGES[path]
+            try:
+                with open(os.path.join(_REPO_DIR, rel), "rb") as f:
+                    body = f.read()
+            except OSError:
+                return False
+            self._send_bytes(200, body, ctype, {"Content-Security-Policy": _LOCAL_CSP, "Referrer-Policy": "no-referrer",
+                                                "X-Frame-Options": "DENY", "Cache-Control": "no-cache"})
             return True
         if path in _STATIC:
             rel, ctype = _STATIC[path]

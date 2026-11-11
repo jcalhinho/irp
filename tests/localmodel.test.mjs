@@ -36,8 +36,11 @@ test('sans loader ou sans WebGPU : null (jamais d’exception)', async () => {
 
 test('un petit modèle qui perd un montant est rejeté : le contrat ne dépend pas du modèle', async () => {
   const res = await adaptText('Le montant est de 1 200 € avant le 31 octobre 2027.', { adapter: async () => 'Le montant est élevé, payez bientôt.' });
-  assert.notEqual(res.source, 'model');
+  assert.equal(res.source, 'rules');
+  assert.match(res.reason, /^ia-perte/);
   assert.match(res.text, /1 200 €/);
+  const ok = await adaptText('Le montant est de 1 200 € avant le 31 octobre 2027.', { adapter: async (t) => t });
+  assert.equal(ok.source, 'ai');
 });
 
 test('badge sans modèle = règles déterministes', () => assert.match(modelBadge(null), /Règles déterministes/));

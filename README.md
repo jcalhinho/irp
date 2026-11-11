@@ -22,7 +22,7 @@ Ce qui manque, c'est un contrat pour les laisser faire sans risque. IRP est ce c
 - le code **vérifie** (nombres, dates, montants, noms conservés) et **rend** de façon déterministe ;
 - l'interface **dit toujours quel modèle a travaillé** (ex. « LFM2.5-1.2B · local, sur cet appareil · sortie vérifiée »).
 
-Le contrat ne dépend pas du modèle : un modèle plus gros, plus petit ou plus mauvais ne peut pas faire perdre un montant. Quand les modèles s'améliorent, IRP en profite sans rien changer ; quand ils se trompent, rien ne passe. Voir `irp-core/localmodel.js`.
+Le contrat ne dépend pas du modèle : un modèle plus gros, plus petit ou plus mauvais ne peut pas faire perdre un montant. Quand les modèles s'améliorent, IRP en profite sans rien changer ; quand ils se trompent, rien ne passe. Voir `irp-core/localmodel.js`. Démo : `/local` (le modèle tourne sur votre appareil ; sa sortie est acceptée ou rejetée devant vous).
 
 > État actuel : Gemini Nano est branché dans le lecteur. Le chemin LFM (WebGPU / transformers.js) est implémenté et testé avec un modèle simulé ; il reste à le valider sur une vraie machine avec le vrai modèle.
 
