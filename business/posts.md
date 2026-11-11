@@ -1,6 +1,6 @@
 # Posts prêts à publier — IRP
 
-Adresse : https://irp-lecture.netlify.app · démo : /local · outil : /tool · dépôt : <à renseigner : URL GitHub>
+Adresse : https://irp-lecture.netlify.app · démo : /local · outil : /tool · dépôt : https://github.com/jcalhinho/irp
 Image à joindre : capture de /local où le garde-fou rejette la sortie d'un vrai modèle (store/screenshots/ ou nouvelle capture).
 Moment conseillé : mardi à jeudi, 14 h – 16 h (heure de Paris) = matin côte est des États-Unis. Répondre à tous les commentaires pendant 48 h.
 
@@ -24,7 +24,7 @@ The demo page downloads LFM2.5-1.2B (~1 GB, cached) and runs it on your GPU. On 
 
 Same document also gets served as compact Markdown for agents (HTML→Markdown: 7941 → 2851 tokens on my test set), and there's a one-line embeddable widget and a Chrome extension (reader mode with dyslexia / plain-language / low-vision profiles).
 
-Honest limits: the benchmark corpus is 20 synthetic French pages, not the real web; the plain-language ("FALC") mode is an automatic reading aid, not certified; the additions check is a heuristic and will miss subtle inventions; the hosted site is static, so the paste box works but URL fetching needs the Python server in the repo. Feedback on the guard (what it misses) is what I'm after.
+Honest limits: the benchmark corpus is 20 synthetic French pages, not the real web; the plain-language ("FALC") mode is an automatic reading aid, not certified; the additions check is a heuristic and will miss subtle inventions; the hosted site is static, so the paste box works, but URL fetching needs the Python server from the repo (https://github.com/jcalhinho/irp, MIT), which I haven't hosted. Feedback on the guard (what it misses) is what I'm after.
 
 ---
 
@@ -39,7 +39,8 @@ Il manque un contrat pour les laisser faire sans risque. J'en ai fait un : IRP. 
 3/ Démo : un vrai LFM2.5 tourne dans votre navigateur, et vous voyez IRP accepter ou rejeter sa sortie en direct. Sur mon exemple, le modèle a oublié « Caisse des Écoles » : rejeté, version sûre affichée.
 https://irp-lecture.netlify.app/local
 
-4/ Une ligne pour l'installer sur un site : un bouton « Lecture adaptée » (dyslexie, langage simplifié, basse vision). Rien n'est chargé avant le clic, rien n'est envoyé.
+4/ Code ouvert (MIT) : https://github.com/jcalhinho/irp
+Une ligne pour l'installer sur un site : un bouton « Lecture adaptée » (dyslexie, langage simplifié, basse vision). Rien n'est chargé avant le clic, rien n'est envoyé.
 Limites : FALC = aide automatique non certifiée ; banc d'essai sur corpus synthétique. Critiques bienvenues.
 
 ---
@@ -55,6 +56,7 @@ Le vrai problème : comment les laisser faire sans qu'ils perdent un montant ou 
 J'ai construit IRP, un contrat de confiance : le serveur publie du sens, un modèle local adapte le texte, et du code vérifie que rien n'est perdu (ni inventé) avant d'afficher. L'interface dit toujours quel modèle a travaillé.
 
 → Démo (le modèle tourne chez vous) : https://irp-lecture.netlify.app/local
+→ Code (MIT) : https://github.com/jcalhinho/irp
 → Installation sur un site : une ligne de code.
 
 Limites assumées : le FALC est une aide automatique non certifiée, mes mesures portent sur un corpus synthétique. Je cherche surtout vos critiques sur le garde-fou.
