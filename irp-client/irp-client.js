@@ -4,13 +4,15 @@
 
 import { ContextSensor } from './context-sensor.js';
 import { DomBuilder } from './dom-builder.js';
-import { initRouter, renderIRP, getAvailableRenderers, getSGPKey } from './model-router.js';
+import { initRouter, renderIRP, getAvailableRenderers } from './model-router.js';
 import { irpCache } from './cache.js';
 
 // ─── Configuration ──────────────────────────────────────────────────────────
 
 const IRP_SERVER = window.IRP_CONFIG?.server || 'http://localhost:8001';
-const SGP_API_KEY = window.IRP_CONFIG?.apiKey || new URLSearchParams(window.location.search).get('key') || '';
+// Jeton optionnel du proxy (déploiement hors localhost). Jamais de clé API côté navigateur :
+// la clé SGP reste sur le serveur, le navigateur ne parle qu'au proxy.
+const PROXY_TOKEN = window.IRP_CONFIG?.proxyToken || '';
 
 // ─── État global ────────────────────────────────────────────────────────────
 
@@ -32,14 +34,14 @@ async function main() {
   // 2. Initialiser le model router (détecte les renderers disponibles)
   builder.showLoading('Détection des modèles IA disponibles…');
   const proxyUrl = `${IRP_SERVER}/__proxy/sgp`;
-  await initRouter({ apiKey: SGP_API_KEY, proxyUrl });
+  await initRouter({ proxyUrl, proxyToken: PROXY_TOKEN });
 
   const renderers = getAvailableRenderers();
   if (renderers.length === 0) {
     builder.showError(
       'Aucun modèle IA disponible',
-      'Le client IRP n\'a trouvé aucun moteur de rendu. Configurez une clé API SGP ou utilisez Chrome avec Prompt API activé.',
-      `URL param: ?key=sk-...\nServeur IRP: ${IRP_SERVER}\nRenderers testés: Chrome Prompt API, WebLLM, LFM3, SGP API`,
+      'Le client IRP n\'a trouvé aucun moteur de rendu. Démarrez le serveur IRP avec SGP_API_KEY (proxy SGP) ou utilisez Chrome avec Prompt API activé.',
+      `Proxy SGP: ${proxyUrl}\nServeur IRP: ${IRP_SERVER}\nRenderers testés: Chrome Prompt API, WebLLM, LFM3, SGP API`,
       () => main()
     );
     return;
@@ -105,9 +107,8 @@ async function navigateTo(path, pushState = true) {
       streamBuffer = full;
       // Injecter le HTML partiel pour affichage progressif
       // (sans transitions pour éviter les clignotements pendant le stream)
-      const sanitized = builder._sanitize ? builder._sanitize(full) : full;
       builder.root.style.opacity = '1';
-      builder.root.innerHTML = sanitized;
+      builder.setHTML(full); // assaini, aucun script exécuté
     };
 
     const result = await renderIRP(irp, _context, (status) => {

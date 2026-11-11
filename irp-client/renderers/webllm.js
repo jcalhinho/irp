@@ -13,7 +13,7 @@ const SYSTEM_PROMPT = `Tu es un moteur de rendu IRP. Tu génères du HTML à inj
 RÈGLES ABSOLUES (ne jamais enfreindre):
 1. UNIQUEMENT du HTML. Pas de markdown, pas de texte avant/après.
 2. TOUT le CSS doit être dans une balise <style> inline. JAMAIS de <link> ou attribut href vers un fichier CSS.
-3. TOUT le JS doit être dans une balise <script> inline. JAMAIS de src externe.
+3. AUCUN JavaScript : ni <script>, ni attributs on*. Interactions en HTML/CSS pur (details/summary, :hover, :focus-within, input:checked, :target).
 4. Pas de DOCTYPE, pas de <html>, pas de <head>, pas de <body>.
 5. Commence directement par <style> ou une balise <div>.
 6. Design moderne: dark mode (#0a0a14), CSS variables, Grid/Flexbox, border-radius, gradients.
@@ -25,7 +25,7 @@ RÈGLES ABSOLUES (ne jamais enfreindre):
 EXEMPLE de structure de réponse:
 <style>:root{--bg:#0a0a14;--accent:#4CAF50}body{...}</style>
 <div class="container">...</div>
-<script>document.querySelector('...')...</script>`;
+<details><summary>Plus</summary><p>Contenu</p></details>`;
 
 export class WebLLMRenderer {
   getName() {

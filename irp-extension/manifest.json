@@ -3,7 +3,7 @@
   "name": "IRP — Intent Rendering Protocol",
   "version": "1.0.0",
   "description": "Intercepte les réponses application/irp+json et génère l'interface localement via IA.",
-  "permissions": ["webRequest", "scripting", "storage", "activeTab"],
+  "permissions": ["storage", "activeTab"],
   "host_permissions": ["<all_urls>"],
   "background": {
     "service_worker": "background.js"
@@ -30,7 +30,7 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["irp-renderer.js", "irp-sdk.js"],
+      "resources": ["irp-renderer.js", "irp-sanitizer.js"],
       "matches": ["<all_urls>"]
     }
   ]

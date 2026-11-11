@@ -15,7 +15,7 @@
 
   const SYSTEM_PROMPT = `Tu es un moteur de rendu IRP (Intent Rendering Protocol).
 Tu reçois un intent, des données, et le contexte utilisateur.
-Tu DOIS générer UNIQUEMENT du HTML5 valide avec CSS inline (<style>) et JS inline (<script>).
+Tu DOIS générer UNIQUEMENT du HTML5 valide avec CSS inline (<style>), SANS JavaScript (ni <script> ni attributs on*).
 Pas de markdown, pas d'explication, pas de ressources externes.
 Le HTML sera injecté dans un div#irp-root.
 Design moderne, responsive, accessible.
@@ -176,7 +176,8 @@ Adapte le design au contexte (dark/light, mobile/desktop, reduced motion, etc.).
       document.body.innerHTML = '';
       document.body.appendChild(mount);
     }
-    mount.innerHTML = html;
+    if (!window.IRPSanitizer) throw new Error('IRPSanitizer introuvable : rendu refusé (échec sécurisé)');
+    window.IRPSanitizer.mount(mount, html); // assaini, aucun script exécuté
   }
 
   function showLoading(message) {
@@ -187,7 +188,14 @@ Adapte le design au contexte (dark/light, mobile/desktop, reduced motion, etc.).
       loader.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#1a1a2e;color:#e0e0e0;padding:2rem 3rem;border-radius:12px;font-family:system-ui;z-index:999999;box-shadow:0 8px 32px rgba(0,0,0,0.3);';
       document.body.appendChild(loader);
     }
-    loader.innerHTML = `<div style="display:flex;align-items:center;gap:12px;"><div style="width:20px;height:20px;border:2px solid #4CAF50;border-top-color:transparent;border-radius:50%;animation:irp-spin 0.8s linear infinite;"></div>${message}</div>`;
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;gap:12px;';
+    const spin = document.createElement('div');
+    spin.style.cssText = 'width:20px;height:20px;border:2px solid #4CAF50;border-top-color:transparent;border-radius:50%;animation:irp-spin 0.8s linear infinite;';
+    const label = document.createElement('span');
+    label.textContent = String(message); // texte, jamais du HTML
+    row.append(spin, label);
+    loader.replaceChildren(row);
     if (!document.getElementById('irp-spin-style')) {
       const style = document.createElement('style');
       style.id = 'irp-spin-style';

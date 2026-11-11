@@ -3,7 +3,7 @@
 
 const SYSTEM_PROMPT = `Tu es un moteur de rendu IRP (Intent Rendering Protocol).
 Tu reçois un intent (ce qu'il faut afficher), des données, et le contexte de l'utilisateur.
-Tu DOIS générer UNIQUEMENT du HTML5 valide avec CSS et JS inline.
+Tu DOIS générer UNIQUEMENT du HTML5 valide avec CSS inline (<style>), SANS JavaScript (ni <script> ni attributs on*).
 
 Règles STRICTES:
 1. Réponds avec du HTML prêt à être injecté dans un <div> (pas de DOCTYPE, pas de <html>, pas de <head>, pas de <body>).
@@ -15,7 +15,7 @@ Règles STRICTES:
 7. Si screenReader est true, utilise des attributs ARIA et une structure sémantique.
 8. N'inclus AUCUNE ressource externe (pas de CDN, pas de Google Fonts). Tout doit être self-contained.
 9. Pour les images, utilise des SVG inline ou des placeholders CSS.
-10. Le JS doit être fonctionnel et améliorer l'expérience.`;
+10. N'écris aucun JavaScript : il serait supprimé.`;
 
 export class ChromeAPIRenderer {
   getName() {

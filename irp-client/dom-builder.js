@@ -1,5 +1,7 @@
 // dom-builder.js — Construit et injecte le DOM généré par l'IA
-// Version 2: sanitization renforcée, transitions fluides, exécution scripts robuste
+// Version 3: HTML assaini par liste blanche (sanitizer.js), AUCUN script exécuté
+
+import './sanitizer.js'; // définit globalThis.IRPSanitizer
 
 export class DomBuilder {
   constructor(rootId = 'irp-root') {
@@ -14,19 +16,27 @@ export class DomBuilder {
   }
 
   /**
-   * Injecte du HTML dans la racine avec transition.
-   * @param {string} html — Le HTML généré par l'IA
+   * Remplace immédiatement le contenu de la racine (sans transition).
+   * Le HTML est assaini par liste blanche : aucun script n'est exécuté.
+   * @param {string} html — Le HTML généré par l'IA (non fiable)
+   */
+  setHTML(html) {
+    globalThis.IRPSanitizer.mount(this.root, html);
+  }
+
+  /**
+   * Injecte du HTML dans la racine avec transition (fade out → remplace → fade in).
+   * @param {string} html — Le HTML généré par l'IA (non fiable)
    */
   inject(html) {
-    const sanitized = this._sanitize(html);
+    // On assainit AVANT la transition : le fragment est prêt, seul le remplacement est différé
+    const fragment = globalThis.IRPSanitizer.sanitizeToFragment(html, document);
 
-    // Transition simple : fade out → inject → fade in
     this.root.style.transition = `opacity ${this._transitionDuration / 2}ms ease`;
     this.root.style.opacity = '0';
 
     setTimeout(() => {
-      this.root.innerHTML = sanitized;
-      this._executeScripts(sanitized);
+      this.root.replaceChildren(fragment);
 
       // Forcer le reflow puis remettre l'opacité
       void this.root.offsetHeight;
@@ -98,50 +108,6 @@ export class DomBuilder {
   }
 
   // ─── Privé ──────────────────────────────────────────────
-
-  /**
-   * Sanitise le HTML : enlève les éléments dangereux et externes.
-   */
-  _sanitize(html) {
-    // Enlève les iframes (sécurité)
-    html = html.replace(/<iframe[^>]*>.*?<\/iframe>/gis, '');
-    // Enlève les scripts avec src externe
-    html = html.replace(/<script[^>]*\ssrc=["'][^"']*["'][^>]*><\/script>/gis, '');
-    // Enlève les <link> externes (CSS doit être inline)
-    html = html.replace(/<link[^>]*rel=["']?stylesheet["']?[^>]*>/gi, '');
-    html = html.replace(/<link[^>]*href=["']?[^"']*\.css["']?[^>]*>/gi, '');
-    // Enlève les objets/embed
-    html = html.replace(/<(object|embed)[^>]*>.*?<\/(object|embed)>/gis, '');
-    // Enlève les event handlers inline (onclick, onload, etc.)
-    html = html.replace(/\son\w+\s*=\s*["'][^"']*["']/gi, '');
-    // Enlève javascript: URLs
-    html = html.replace(/href=["']javascript:[^"']*["']/gi, 'href="#"');
-    // Remplace les <img src="http..."> par des placeholders
-    html = html.replace(/<img([^>]*)src=["']https?:\/\/[^"']*["']([^>]*)>/gi,
-      '<div$1style="min-height:120px;background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#555;"$2>🖼️</div>');
-    return html;
-  }
-
-  /**
-   * Exécute les scripts inline trouvés dans le HTML injecté.
-   * innerHTML n'exécute pas les <script>, il faut le faire manuellement.
-   */
-  _executeScripts(html) {
-    const scriptRegex = /<script[^>]*>([\s\S]*?)<\/script>/gi;
-    let match;
-    while ((match = scriptRegex.exec(html)) !== null) {
-      const code = match[1].trim();
-      if (code) {
-        try {
-          // Exécute dans un scope isolé pour éviter les collisions
-          const fn = new Function(code);
-          fn.call(this.root);
-        } catch (e) {
-          console.warn('[IRP] Erreur script inline:', e.message);
-        }
-      }
-    }
-  }
 
   _escape(text) {
     const div = document.createElement('div');

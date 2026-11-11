@@ -259,12 +259,17 @@ def test_seo_product():
 
 
 def test_intents_list():
-    """Test de la route /__intents."""
+    """Test de la route /__intents : tous les intents implémentés sont listés."""
     section("Debug: /__intents")
+    expected = {"show_landing", "show_product", "read_article", "show_dashboard", "show_catalog",
+                "fill_form", "browse_list", "show_pricing", "show_chat"}
     status, data = fetch_json("/__intents")
     if status == 200 and data and "intents" in data:
-        count = len(data["intents"])
-        ok(f"/__intents → {count} intents listés")
+        names = {i["name"] for i in data["intents"]}
+        if names == expected:
+            ok(f"/__intents → {len(names)} intents listés")
+        else:
+            fail("/__intents → liste incomplète", f"manque {sorted(expected - names)}, en trop {sorted(names - expected)}")
     else:
         fail(f"/__intents → status={status}")
 
@@ -280,16 +285,54 @@ def test_data_endpoints():
             fail(f"{path} → status={status}")
 
 
+def _post_raw(path, body=b"", headers=None):
+    """POST brut (urllib) : retourne (status, headers, body) sans lever sur 4xx/5xx."""
+    req = urllib.request.Request(f"{BASE_URL}{path}", data=body, headers=headers or {}, method="POST")
+    try:
+        with urllib.request.urlopen(req, timeout=10) as r:
+            return r.status, r.headers, r.read()
+    except urllib.error.HTTPError as e:
+        return e.code, e.headers, e.read()
+
+
 def test_proxy_sgp():
-    """Test que le proxy SGP répond (même sans clé, doit retourner une réponse)."""
-    section("Proxy SGP")
-    # Test sans body — doit retourner une erreur 500 (pas de clé) ou 200
-    status, hdrs, body = fetch("/__proxy/sgp", method="POST")
-    # On accepte 400 (body invalide), 500 (pas de clé) ou 200 (si clé configurée)
-    if status in (200, 400, 500):
-        ok(f"/__proxy/sgp → status={status} (proxy actif)")
+    """Le proxy SGP est durci : jamais de 200 pour une origine hostile ou un Content-Type non JSON.
+
+    Selon la configuration du serveur testé (clé SGP présente ou non), le proxy est actif ou
+    désactivé (503). Dans les deux cas, ces requêtes hostiles doivent être refusées.
+    """
+    section("Proxy SGP (durci)")
+    valid = b'{"messages":[{"role":"user","content":"ping"}]}'
+    json_ct = {"Content-Type": "application/json"}
+
+    status, hdrs, _ = _post_raw("/__proxy/sgp", valid, {**json_ct, "Origin": "https://evil.example"})
+    if status in (403, 503) and hdrs.get("Access-Control-Allow-Origin") is None:
+        ok(f"origine hostile → {status}, aucun en-tête CORS")
     else:
-        fail(f"/__proxy/sgp → status={status}", "expected 200, 400 or 500")
+        fail(f"origine hostile → status={status}", "attendu 403 (ou 503 si proxy désactivé), sans Access-Control-Allow-Origin")
+
+    status, _, _ = _post_raw("/__proxy/sgp", valid, {"Content-Type": "text/plain"})
+    if status in (415, 403, 503):
+        ok(f"Content-Type text/plain → {status}")
+    else:
+        fail(f"Content-Type text/plain → status={status}", "attendu 415/403/503")
+
+    status, _, _ = _post_raw("/__proxy/sgp", b"", {})
+    if status in (415, 400, 503):
+        ok(f"POST sans corps → {status}")
+    else:
+        fail(f"POST sans corps → status={status}", "attendu 415/400/503")
+
+    req = urllib.request.Request(f"{BASE_URL}/__proxy/sgp", headers={"Origin": "https://evil.example"}, method="OPTIONS")
+    try:
+        with urllib.request.urlopen(req, timeout=10) as r:
+            status, acao = r.status, r.headers.get("Access-Control-Allow-Origin")
+    except urllib.error.HTTPError as e:
+        status, acao = e.code, e.headers.get("Access-Control-Allow-Origin")
+    if status == 403 and acao is None:
+        ok("preflight d'une origine hostile → 403")
+    else:
+        fail(f"preflight d'une origine hostile → status={status}, ACAO={acao}", "attendu 403 sans CORS")
 
 
 # ─── Main ────────────────────────────────────────────────────────────────────

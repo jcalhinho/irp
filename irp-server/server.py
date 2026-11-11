@@ -24,11 +24,14 @@ import argparse
 import json
 import os
 import sys
-from http.server import HTTPServer, BaseHTTPRequestHandler
+from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse, unquote
 
 # SEO: prerender HTML pour les bots
 from seo import is_bot, prerender
+
+# Proxy LLM durci (auth, CORS en liste blanche, limites) — voir proxy.py
+import proxy as _proxy
 
 # ─── Chargement des données ──────────────────────────────────────────────────
 
@@ -147,6 +150,40 @@ def _build_error(status: str, message: str, path: str) -> dict:
     }
 
 
+# ─── Catalogue d'intents (utilisé par /__health et /__intents) ───────────────
+
+def _intent_catalog() -> list[dict]:
+    """Liste de tous les intents servis, avec leurs routes."""
+    return [
+        {"name": "show_landing", "description": "Page d'accueil marketing", "routes": ["GET /"]},
+        {"name": "show_product", "description": "Fiche produit e-commerce", "routes": ["GET /product/<id>"],
+         "available_ids": list(_PRODUCTS_BY_ID.keys())},
+        {"name": "read_article", "description": "Article de blog/presse", "routes": ["GET /article/<id>"],
+         "available_ids": list(_ARTICLES_BY_ID.keys())},
+        {"name": "show_dashboard", "description": "Tableau de bord avec widgets", "routes": ["GET /dashboard"]},
+        {"name": "show_catalog", "description": "Catalogue produits avec filtres", "routes": ["GET /catalog"]},
+        {"name": "fill_form", "description": "Formulaire (contact, inscription)",
+         "routes": ["GET /contact", "GET /signup", "GET /form/<id>"]},
+        {"name": "browse_list", "description": "Liste générique (tâches, favoris)",
+         "routes": ["GET /tasks", "GET /favorites"]},
+        {"name": "show_pricing", "description": "Tableau de tarifs", "routes": ["GET /pricing"]},
+        {"name": "show_chat", "description": "Interface de conversation", "routes": ["GET /chat"]},
+    ]
+
+
+# ─── Proxy LLM (configuré au démarrage par main(), ou par les tests) ─────────
+
+_PROXY_CFG = None  # proxy.ProxyConfig
+_RATE = None       # proxy.RateLimiter
+
+
+def configure_proxy(cfg) -> None:
+    """Installe la configuration du proxy (et son limiteur de débit)."""
+    global _PROXY_CFG, _RATE
+    _PROXY_CFG = cfg
+    _RATE = _proxy.RateLimiter(cfg.rate_per_min)
+
+
 # ─── Serveur HTTP ────────────────────────────────────────────────────────────
 
 class IRPHandler(BaseHTTPRequestHandler):
@@ -166,6 +203,7 @@ class IRPHandler(BaseHTTPRequestHandler):
                 self.send_header("Content-Type", "text/html; charset=utf-8")
                 self.send_header("Content-Length", str(len(body)))
                 self.send_header("X-IRP-Prerendered", "true")
+                self.send_header("X-Content-Type-Options", "nosniff")
                 self.end_headers()
                 self.wfile.write(body)
                 return
@@ -175,37 +213,12 @@ class IRPHandler(BaseHTTPRequestHandler):
             self._serve_irp({
                 "status": "ok",
                 "version": "1.0",
-                "intents": ["show_landing", "show_product", "read_article", "show_dashboard"],
+                "intents": [i["name"] for i in _intent_catalog()],
             })
             return
 
         if path == "/__intents":
-            self._serve_irp({
-                "intents": [
-                    {
-                        "name": "show_landing",
-                        "description": "Page d'accueil marketing",
-                        "route": "GET /",
-                    },
-                    {
-                        "name": "show_product",
-                        "description": "Fiche produit e-commerce",
-                        "route": "GET /product/<id>",
-                        "available_ids": list(_PRODUCTS_BY_ID.keys()),
-                    },
-                    {
-                        "name": "read_article",
-                        "description": "Article de blog/presse",
-                        "route": "GET /article/<id>",
-                        "available_ids": list(_ARTICLES_BY_ID.keys()),
-                    },
-                    {
-                        "name": "show_dashboard",
-                        "description": "Tableau de bord avec widgets",
-                        "route": "GET /dashboard",
-                    },
-                ],
-            })
+            self._serve_irp({"intents": _intent_catalog()})
             return
 
         if path == "/__data/products":
@@ -290,11 +303,53 @@ class IRPHandler(BaseHTTPRequestHandler):
         # ── 404 ──
         self._serve_irp(_build_error("404", f"Route '{path}' introuvable", path), status=404)
 
+    # ── Réponses ──
+
+    def _send_bytes(self, status: int, body: bytes, content_type: str, extra: dict | None = None):
+        self.send_response(status)
+        self.send_header("Content-Type", content_type)
+        self.send_header("Content-Length", str(len(body)))
+        self.send_header("X-Content-Type-Options", "nosniff")
+        for k, v in (extra or {}).items():
+            self.send_header(k, v)
+        self.end_headers()
+        self.wfile.write(body)
+
+    def _proxy_cors_headers(self) -> dict:
+        """CORS du proxy : jamais '*' — on ne renvoie que l'origine si elle est autorisée."""
+        origin = self.headers.get("Origin")
+        if _PROXY_CFG and origin and _proxy.origin_allowed(origin, _PROXY_CFG):
+            return {"Access-Control-Allow-Origin": origin, "Vary": "Origin"}
+        return {"Vary": "Origin"}
+
+    def _proxy_error(self, status: int, code: str, extra: dict | None = None):
+        headers = self._proxy_cors_headers()
+        headers.update(extra or {})
+        self._send_bytes(status, json.dumps({"error": code}).encode(), "application/json; charset=utf-8", headers)
+
+    # ── CORS preflight ──
+
     def do_OPTIONS(self):
-        """Gère les requêtes preflight CORS (OPTIONS)."""
+        """Preflight CORS. Proxy : origines autorisées seulement ; routes IRP publiques : ouvert (lecture seule)."""
+        path = urlparse(self.path).path
+        if path == "/__proxy/sgp":
+            origin = self.headers.get("Origin")
+            if not (_PROXY_CFG and _PROXY_CFG.enabled and origin and _proxy.origin_allowed(origin, _PROXY_CFG)):
+                self._proxy_error(403, "origin_not_allowed")
+                return
+            self.send_response(204)
+            for k, v in self._proxy_cors_headers().items():
+                self.send_header(k, v)
+            self.send_header("Access-Control-Allow-Methods", "POST, OPTIONS")
+            self.send_header("Access-Control-Allow-Headers", "Content-Type, X-IRP-Token, Authorization")
+            self.send_header("Access-Control-Max-Age", "600")
+            self.send_header("Content-Length", "0")
+            self.end_headers()
+            return
+
         self.send_response(204)
         self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Methods", "GET, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type, X-IRP-Context")
         self.send_header("Access-Control-Max-Age", "86400")
         self.end_headers()
@@ -302,8 +357,7 @@ class IRPHandler(BaseHTTPRequestHandler):
     def do_POST(self):
         path = urlparse(self.path).path
 
-        # ── Proxy SGP : relaye les appels LLM vers SGP LLMaaS ──
-        # Nécessaire car l'API SGP ne supporte pas CORS depuis le navigateur
+        # ── Proxy SGP : relaye les appels LLM (l'API SGP n'autorise pas CORS depuis un navigateur) ──
         if path == "/__proxy/sgp":
             self._proxy_sgp()
             return
@@ -311,59 +365,47 @@ class IRPHandler(BaseHTTPRequestHandler):
         self._serve_irp(_build_error("405", "Méthode POST non supportée", path), status=405)
 
     def _proxy_sgp(self):
-        """Proxy vers SGP LLMaaS pour éviter les problèmes CORS côté navigateur."""
-        import urllib.request
-
-        # Clé SGP : depuis l'env ou depuis la config OpenCode
-        sgp_key = os.environ.get("SGP_API_KEY", "")
-        if not sgp_key:
-            try:
-                auth_path = os.path.expanduser("~/.local/share/opencode/auth.json")
-                with open(auth_path) as f:
-                    auth = json.load(f)
-                    sgp_key = auth.get("sgp", {}).get("key", "")
-            except Exception:
-                pass
-
-        if not sgp_key:
-            self._serve_irp({"error": "Aucune clé SGP configurée"}, status=500)
+        """Proxy durci vers SGP LLMaaS : auth → débit → Content-Type → taille → validation → relais."""
+        cfg = _PROXY_CFG
+        if cfg is None or not cfg.enabled:
+            self._proxy_error(503, "proxy_disabled")
             return
 
-        # Lire le body de la requête
-        content_length = int(self.headers.get("Content-Length", 0))
-        body = self.rfile.read(content_length)
+        ok, status, code = _proxy.authorize(self.headers, cfg)
+        if not ok:
+            self._proxy_error(status, code)
+            return
 
-        # Forward vers SGP
-        sgp_url = "https://llmasservice.sgp.fr/v1/chat/completions"
-        req = urllib.request.Request(
-            sgp_url,
-            data=body,
-            headers={
-                "Content-Type": "application/json",
-                "Authorization": f"Bearer {sgp_key}",
-            },
-            method="POST",
-        )
+        if not _RATE.allow(self.client_address[0]):
+            self._proxy_error(429, "rate_limited", {"Retry-After": "60"})
+            return
+
+        # Content-Type JSON exigé : bloque les "simple requests" cross-site (text/plain, formulaires)
+        ctype = (self.headers.get("Content-Type") or "").split(";")[0].strip().lower()
+        if ctype != "application/json":
+            self._proxy_error(415, "content_type_must_be_json")
+            return
 
         try:
-            with urllib.request.urlopen(req, timeout=120) as resp:
-                resp_body = resp.read()
-                # Retourne la réponse SGP au client avec CORS
-                self.send_response(200)
-                self.send_header("Content-Type", "application/json; charset=utf-8")
-                self.send_header("Content-Length", str(len(resp_body)))
-                self.send_header("Access-Control-Allow-Origin", "*")
-                self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-                self.send_header("Access-Control-Allow-Headers", "Content-Type, X-IRP-Context")
-                self.end_headers()
-                self.wfile.write(resp_body)
-        except urllib.error.HTTPError as e:
-            err_body = e.read().decode("utf-8", errors="replace")
-            print(f"[PROXY SGP] HTTP {e.code}: {err_body[:200]}", file=sys.stderr)
-            self._serve_irp({"error": f"SGP API Error {e.code}", "detail": err_body[:500]}, status=e.code)
-        except Exception as e:
-            print(f"[PROXY SGP] Erreur: {e}", file=sys.stderr)
-            self._serve_irp({"error": str(e)}, status=500)
+            length = int(self.headers.get("Content-Length", ""))
+        except ValueError:
+            self._proxy_error(411, "length_required")
+            return
+        if length <= 0:
+            self._proxy_error(400, "empty_body")
+            return
+        if length > _proxy.MAX_BODY:
+            self._proxy_error(413, "body_too_large")
+            return
+
+        payload, err = _proxy.validate_payload(self.rfile.read(length))
+        if payload is None:
+            self._proxy_error(400, err)
+            return
+
+        status, headers, body = _proxy.forward(cfg, payload)
+        extra = dict(self._proxy_cors_headers())
+        self._send_bytes(status, body, headers.get("Content-Type", "application/json; charset=utf-8"), extra)
 
     def _resolve_irp(self, path: str) -> dict | None:
         """Résout une route vers un objet IRP (pour le prerender SEO)."""
@@ -408,8 +450,9 @@ class IRPHandler(BaseHTTPRequestHandler):
         self.send_response(status)
         self.send_header("Content-Type", "application/irp+json; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
-        self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("X-Content-Type-Options", "nosniff")
+        self.send_header("Access-Control-Allow-Origin", "*")  # intents publics, lecture seule
+        self.send_header("Access-Control-Allow-Methods", "GET, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type, X-IRP-Context")
         self.end_headers()
         self.wfile.write(body)
@@ -429,9 +472,16 @@ def main():
     parser = argparse.ArgumentParser(description="IRP Server — Intent Rendering Protocol")
     parser.add_argument("--host", default="localhost", help="Host (default: localhost)")
     parser.add_argument("--port", type=int, default=8000, help="Port (default: 8000)")
+    parser.add_argument("--allow-origin", action="append", default=[], metavar="ORIGIN",
+                        help="Origine navigateur autorisée pour le proxy SGP (répétable). "
+                             "Défaut : http://localhost:3000 et http://127.0.0.1:3000")
+    parser.add_argument("--no-proxy", action="store_true", help="Désactive le proxy SGP")
     args = parser.parse_args()
 
-    server = HTTPServer((args.host, args.port), IRPHandler)
+    cfg = _proxy.build_config(args.host, args.allow_origin, enabled_flag=not args.no_proxy)
+    configure_proxy(cfg)
+
+    server = ThreadingHTTPServer((args.host, args.port), IRPHandler)
     print(f"🚀 IRP Server — http://{args.host}:{args.port}")
     print(f"   Content-Type: application/irp+json")
     print(f"   Données: {len(_PRODUCTS)} produits, {len(_ARTICLES)} articles, 1 dashboard")
@@ -442,6 +492,13 @@ def main():
     print(f"     /dashboard               → show_dashboard")
     print(f"     /__intents               → liste des intents (debug)")
     print(f"     /__health                → healthcheck")
+    if cfg.enabled:
+        print(f"   Proxy SGP : actif (clé : {cfg.key_source}, jeton : {'oui' if cfg.token else 'non'}, "
+              f"origines : {', '.join(cfg.origins)})")
+    else:
+        print(f"   Proxy SGP : DÉSACTIVÉ — {cfg.reason}")
+    if not cfg.loopback:
+        print(f"   ⚠️  Écoute sur {args.host} (non-loopback) : le proxy exige IRP_PROXY_TOKEN")
     print()
 
     try:

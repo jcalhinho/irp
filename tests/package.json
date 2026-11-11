@@ -1,0 +1,8 @@
+{
+  "name": "irp-tests",
+  "private": true,
+  "type": "module",
+  "description": "Tests de l assainisseur IRP (dev uniquement, le projet lui-même reste sans dépendance)",
+  "scripts": { "test": "node --test" },
+  "devDependencies": { "jsdom": "^31.0.0" }
+}

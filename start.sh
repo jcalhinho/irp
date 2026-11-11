@@ -60,6 +60,8 @@ kill_port $PORT_CLIENT
 
 echo -e "${GREEN}▶${NC} Démarrage du serveur IRP sur le port $PORT_SERVER..."
 cd "$SCRIPT_DIR/irp-server"
+# Le proxy SGP n'accepte que les origines du client lancé ci-dessous
+export IRP_ALLOWED_ORIGINS="http://localhost:$PORT_CLIENT,http://127.0.0.1:$PORT_CLIENT"
 nohup python3 server.py --port $PORT_SERVER > /tmp/irp-server.log 2>&1 &
 SERVER_PID=$!
 echo -e "  PID: $SERVER_PID"

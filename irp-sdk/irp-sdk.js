@@ -13,10 +13,12 @@
  *   await client.init();        // détecte les renderers disponibles
  *   await client.navigate('/'); // fetch IRP + rendu
  *
- * Ou sans module:
- *   <script src="irp-sdk.js"></script>
- *   <script>IRP.create({ server: '...' }).navigate('/');</script>
+ * Sécurité : le HTML généré par l'IA est NON FIABLE ; il est assaini par liste blanche
+ * (irp-sanitizer.js, importé ci-dessous) avant injection. Aucun script n'est exécuté.
+ * Aucune clé API côté navigateur : le proxy serveur la détient (jeton optionnel : proxyToken).
  */
+
+import './irp-sanitizer.js'; // définit globalThis.IRPSanitizer
 
 // ─── IRPResponse ─────────────────────────────────────────────────────────────
 
@@ -149,7 +151,7 @@ class IRPCache {
 
 const SYSTEM_PROMPT = `Tu es un moteur de rendu IRP (Intent Rendering Protocol).
 Tu reçois un intent, des données, et le contexte utilisateur.
-Tu DOIS générer UNIQUEMENT du HTML5 valide avec CSS inline (<style>) et JS inline (<script>).
+Tu DOIS générer UNIQUEMENT du HTML5 valide avec CSS inline (<style>), SANS JavaScript (ni <script> ni attributs on*).
 Pas de markdown, pas d'explication, pas de ressources externes.
 Le HTML sera injecté dans un div#irp-root.
 Design moderne, responsive, accessible.
@@ -237,7 +239,9 @@ class SGPAPIRenderer {
   get name() { return 'SGP API (claude-qwen)'; }
   _proxyUrl = null;
 
-  constructor(proxyUrl) { this._proxyUrl = proxyUrl; }
+  _token = '';
+
+  constructor(proxyUrl, token = '') { this._proxyUrl = proxyUrl; this._token = token || ''; }
 
   async isAvailable() { return !!this._proxyUrl; }
 
@@ -253,7 +257,7 @@ class SGPAPIRenderer {
     });
     const resp = await fetch(this._proxyUrl, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...(this._token ? { 'X-IRP-Token': this._token } : {}) },
       body,
     });
     if (!resp.ok) throw new Error(`SGP API Error ${resp.status}`);
@@ -281,7 +285,7 @@ class IRPClient {
     this.server = options.server || 'http://localhost:8001';
     this.proxyUrl = options.proxyUrl || `${this.server}/__proxy/sgp`;
     this.mount = options.mount || '#irp-root';
-    this.apiKey = options.apiKey || null;
+    this.proxyToken = options.proxyToken || null; // jeton du proxy (optionnel) — jamais de clé API ici
     this.onLoading = options.onLoading || ((msg) => console.log('[IRP]', msg));
     this.onError = options.onError || ((err) => console.error('[IRP]', err));
     this.onRender = options.onRender || (() => {});
@@ -299,7 +303,7 @@ class IRPClient {
     const candidates = [
       new ChromeAPIRenderer(),
       new WebLLMRenderer(),
-      new SGPAPIRenderer(this.proxyUrl),
+      new SGPAPIRenderer(this.proxyUrl, this.proxyToken),
     ];
 
     for (const r of candidates) {
@@ -396,7 +400,8 @@ class IRPClient {
   _inject(html) {
     const mount = document.querySelector(this.mount);
     if (!mount) throw new Error(`Mount point "${this.mount}" introuvable`);
-    mount.innerHTML = html;
+    if (!globalThis.IRPSanitizer) throw new Error('IRPSanitizer introuvable : rendu refusé (échec sécurisé)');
+    globalThis.IRPSanitizer.mount(mount, html); // assaini, aucun script exécuté
   }
 
   async clearCache() {

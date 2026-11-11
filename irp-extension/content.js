@@ -9,10 +9,14 @@
   // On doit injecter dans le contexte de la page (pas le content script)
   // pour pouvoir patcher fetch() et XMLHttpRequest.
 
-  const hookScript = document.createElement('script');
-  hookScript.src = chrome.runtime.getURL('irp-renderer.js');
-  hookScript.onload = () => hookScript.remove();
-  (document.head || document.documentElement).appendChild(hookScript);
+  // L'assainisseur doit être chargé AVANT le renderer (le rendu est refusé sans lui).
+  function injectScript(file, next) {
+    const s = document.createElement('script');
+    s.src = chrome.runtime.getURL(file);
+    s.onload = () => { s.remove(); if (next) next(); };
+    (document.head || document.documentElement).appendChild(s);
+  }
+  injectScript('irp-sanitizer.js', () => injectScript('irp-renderer.js'));
 
   // ─── Communication page ↔ content script ↔ background ──────────────────────
 

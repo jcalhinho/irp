@@ -1,6 +1,6 @@
 // model-router.js — Sélectionne le meilleur renderer selon le contexte
 
-import { SGPRenderer, setApiKey, getApiKey, setProxyUrl } from './renderers/sgp-api.js';
+import { SGPRenderer, setProxyUrl, setProxyToken } from './renderers/sgp-api.js';
 import { irpCache } from './cache.js';
 
 // Renderers disponibles (chargés dynamiquement)
@@ -9,7 +9,7 @@ let _initialized = false;
 
 /**
  * Initialise le model router avec les renderers disponibles.
- * @param {Object} config — { apiKey: string }
+ * @param {Object} config — { proxyUrl: string, proxyToken?: string }
  */
 export async function initRouter(config = {}) {
   if (_initialized) return;
@@ -54,16 +54,16 @@ export async function initRouter(config = {}) {
   }
 
   // 4. Renderer SGP API (priorité 4 — fallback distant, toujours disponible)
-  if (config.proxyUrl || config.apiKey) {
-    if (config.apiKey) setApiKey(config.apiKey);
-    if (config.proxyUrl) setProxyUrl(config.proxyUrl);
+  if (config.proxyUrl) {
+    setProxyUrl(config.proxyUrl);
+    if (config.proxyToken) setProxyToken(config.proxyToken);
     const sgp = new SGPRenderer();
     if (await sgp.isAvailable()) {
       _renderers.push(sgp);
       console.log('[IRP Router] ✅ SGP API (claude-qwen) disponible');
     }
   } else {
-    console.log('[IRP Router] ⬚ SGP API: pas de clé API');
+    console.log('[IRP Router] ⬚ SGP API: pas de proxy configuré');
   }
 
   if (_renderers.length === 0) {
@@ -174,7 +174,3 @@ export function getAvailableRenderers() {
   return _renderers.map(r => r.getName());
 }
 
-/** Retourne la clé API SGP (pour debug) */
-export function getSGPKey() {
-  return getApiKey();
-}

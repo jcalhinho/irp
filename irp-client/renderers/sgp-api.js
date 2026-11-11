@@ -4,14 +4,11 @@
 const SGP_MODEL = 'claude-qwen';
 
 let _proxyUrl = null;
-let _apiKey = null;
+let _proxyToken = '';
 
-export function setApiKey(key) {
-  _apiKey = key;
-}
-
-export function getApiKey() {
-  return _apiKey;
+// Jeton du proxy (optionnel). La clé API SGP n'existe QUE côté serveur.
+export function setProxyToken(token) {
+  _proxyToken = token || '';
 }
 
 export function setProxyUrl(url) {
@@ -29,7 +26,7 @@ const INTENT_PROMPTS = {
 
   show_dashboard: `Génère un tableau de bord analytique. Structure: sidebar navigation, header avec titre + filtres, 4 KPI cards (valeur + variation + sparkline SVG), 2 graphiques (bar/line en SVG), table de données récente. Design: grille propre, couleurs sémantiques (vert=up, rouge=down), hover states. Le but est la clarté des données.`,
 
-  show_catalog: `Génère un catalogue produits avec filtres. Structure: sidebar filtres (catégorie, prix, tri), grille de produits (3-4 colonnes), chaque carte = image SVG + nom + prix + bouton. Design: cartes uniformes, hover effect, filtres interactifs en JS. Le but est la navigation efficace.`,
+  show_catalog: `Génère un catalogue produits avec filtres. Structure: sidebar filtres (catégorie, prix, tri), grille de produits (3-4 colonnes), chaque carte = image SVG + nom + prix + bouton. Design: cartes uniformes, hover effect, filtres en HTML/CSS (formulaire GET). Le but est la navigation efficace.`,
 
   fill_form: `Génère un formulaire moderne. Structure: titre, champs avec labels flottants, validation visuelle (bordures vertes/rouges), champs requis marqués, bouton submit (primary), lien secondaire. Design: un champ par ligne, largeur max 480px, focus states, messages d'aide. Le but est la complétion sans friction.`,
 
@@ -52,7 +49,7 @@ const INTENT_PROMPTS = {
   show_docs: `Génère une documentation technique. Structure: sidebar sommaire, contenu avec H2/H3/code blocks, recherche, navigation prev/next. Design: typo monospace pour code, coloration syntaxique simulée, largeur de lecture. Le but est la référence rapide.`,
 };
 
-const DEFAULT_PROMPT = `Génère une interface web moderne et fonctionnelle adaptée à l'intent fourni. Structure sémantique HTML5, design soigné, interactivité JS pertinente.`;
+const DEFAULT_PROMPT = `Génère une interface web moderne et fonctionnelle adaptée à l'intent fourni. Structure sémantique HTML5, design soigné, interactions en CSS pur (details/summary, :hover).`;
 
 // ─── Prompt système commun ──────────────────────────────────────────────────
 
@@ -63,7 +60,7 @@ RÈGLES ABSOLUES:
 1. Réponds avec du HTML5 uniquement. PAS de markdown, PAS d'explication, PAS de texte avant/après.
 2. Le HTML sera injecté dans un <div>. Ne mets PAS de <!DOCTYPE>, <html>, <head> ou <body>.
 3. Tout le CSS doit être dans une balise <style> inline. JAMAIS de <link rel="stylesheet">.
-4. Tout le JS doit être dans une balise <script> inline. JAMAIS de <script src="...">.
+4. AUCUN JavaScript : ni <script>, ni attributs on*. Interactions en HTML/CSS pur (details/summary, :hover, :focus-within, input:checked, :target).
 5. AUCUNE ressource externe: pas de CDN, pas de Google Fonts, pas d'images distantes.
 6. Pour les images, utilise des SVG inline ou des dégradés CSS.
 7. Design: dark mode avec fond #0a0a14, surfaces #12122a, accent #00E676, texte #f0f0f5.
@@ -71,13 +68,13 @@ RÈGLES ABSOLUES:
 9. Responsive: utilise clamp() pour les tailles fluides, media queries si nécessaire.
 10. Accessibilité: structure sémantique (section, article, nav, button), ARIA si besoin.
 11. Si reducedMotion: pas d'animations. Si contrast "high": contrastes élevés.
-12. Le JS doit être fonctionnel: ajoute des event listeners, interactions réelles.
+12. Tout script serait supprimé : n'en écris pas.
 13. Sois créatif mais professionnel. Le design doit être bluffant.
 
 EXEMPLE de structure attendue:
 <style>:root{--bg:#0a0a14;--accent:#00E676;...}.card{background:var(--bg);...}</style>
 <section class="hero"><h1>Titre</h1><p>Description</p><button>CTA</button></section>
-<script>document.querySelector('button').addEventListener('click',()=>{...})</script>`;
+<details><summary>Plus</summary><p>Contenu</p></details>`;
 
 // ─── Renderer ───────────────────────────────────────────────────────────────
 
@@ -117,7 +114,10 @@ export class SGPRenderer {
 
     const response = await fetch(_proxyUrl, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        ...(_proxyToken ? { 'X-IRP-Token': _proxyToken } : {}),
+      },
       body,
     });
 
@@ -160,7 +160,7 @@ export class SGPRenderer {
       for (const line of lines) {
         if (line.startsWith('data: ')) {
           const data = line.slice(6).trim();
-          if (data ===') continue;
+          if (data === '[DONE]') continue;
           try {
             const parsed = JSON.parse(data);
             const delta = parsed.choices?.[0]?.delta?.content;
@@ -252,6 +252,6 @@ CONTEXTE UTILISATEUR:
 - Réseau: ${context.network?.type || 'wifi'}
 - GPU: ${context.device?.gpu ? 'oui' : 'non'}, Cores: ${context.device?.cores || 8}, RAM: ${context.device?.ram || 8}GB
 
-Génère le HTML optimal maintenant. RÈGLES ABSOLUES: CSS inline dans <style>, JS inline dans <script>, SVG inline pour images, AUCUNE ressource externe.`;
+Génère le HTML optimal maintenant. RÈGLES ABSOLUES: CSS inline dans <style>, AUCUN JavaScript (ni <script> ni on*), SVG inline pour images, AUCUNE ressource externe.`;
   }
 }
