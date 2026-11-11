@@ -1,0 +1,37 @@
+{
+  "title": "Tableau de bord — IRP Analytics",
+  "user": { "name": "AJC", "role": "Admin" },
+  "last_updated": "2026-11-10T22:30:00Z",
+  "kpi_cards": [
+    { "label": "Pages rendues", "value": "12 847", "change": "+12.3%", "trend": "up" },
+    { "label": "Temps moyen", "value": "1.2s", "change": "-0.3s", "trend": "down" },
+    { "label": "Cache hit rate", "value": "87%", "change": "+5%", "trend": "up" },
+    { "label": "Bande passante", "value": "2.1 GB", "change": "-68%", "trend": "down" }
+  ],
+  "chart": {
+    "type": "line",
+    "title": "Rendus par jour (7 derniers jours)",
+    "data": [
+      { "day": "Lun", "value": 1820 },
+      { "day": "Mar", "value": 2104 },
+      { "day": "Mer", "value": 1950 },
+      { "day": "Jeu", "value": 2380 },
+      { "day": "Ven", "value": 2750 },
+      { "day": "Sam", "value": 1240 },
+      { "day": "Dim", "value": 603 }
+    ]
+  },
+  "recent_activity": [
+    { "time": "22:28", "action": "Page rendue", "detail": "/product/macbook-pro-16", "model": "chrome-api", "latency": "180ms" },
+    { "time": "22:25", "action": "Page rendue", "detail": "/article/irp-intro", "model": "webllm", "latency": "2.1s" },
+    { "time": "22:20", "action": "Cache hit", "detail": "/product/iphone-16-pro", "model": "cache", "latency": "2ms" },
+    { "time": "22:15", "action": "Page rendue", "detail": "/dashboard", "model": "sgp-api", "latency": "8.3s" },
+    { "time": "22:10", "action": "Modèle chargé", "detail": "Qwen2.5-0.5B (WebLLM)", "model": "system", "latency": "—" }
+  ],
+  "model_usage": [
+    { "model": "Chrome Prompt API", "count": 5234, "percentage": 41 },
+    { "model": "WebLLM (Qwen 0.5B)", "count": 3892, "percentage": 30 },
+    { "model": "SGP API (claude-qwen)", "count": 2103, "percentage": 16 },
+    { "model": "Cache", "count": 1618, "percentage": 13 }
+  ]
+}

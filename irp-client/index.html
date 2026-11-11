@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IRP Client — Intent Rendering Protocol</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Racine où le DOM généré par l'IA est injecté -->
+    <div id="irp-root">
+        <div class="irp-loading">
+            <div class="irp-spinner"></div>
+            <p id="irp-status">Initialisation du client IRP…</p>
+        </div>
+    </div>
+
+    <!-- Barre de debug (peut être cachée) -->
+    <div id="irp-debug" class="irp-debug irp-debug--hidden">
+        <div class="irp-debug__header">
+            <span>IRP Debug</span>
+            <button id="irp-debug-close">×</button>
+        </div>
+        <div id="irp-debug-content"></div>
+    </div>
+
+    <!-- Scripts (ES modules, pas de build) -->
+    <script type="module" src="irp-client.js"></script>
+</body>
+</html>

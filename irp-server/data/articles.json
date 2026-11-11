@@ -1,0 +1,52 @@
+[
+  {
+    "id": "irp-intro",
+    "title": "IRP : La fin du frontend tel qu'on le connaît",
+    "author": "AJC",
+    "date": "2026-11-10",
+    "reading_time": "8 min",
+    "tags": ["IRP", "Web", "IA", "Architecture"],
+    "excerpt": "Le protocole IRP inverse le modèle web : le serveur envoie des intentions, le navigateur génère l'interface. Fini le HTML, le CSS, le build.",
+    "sections": [
+      {
+        "heading": "Le problème",
+        "content": "Depuis 30 ans, le modèle web est statique : serveur → HTML/CSS/JS → navigateur passif. Le navigateur ne pense pas, il exécute. Conséquence : 500KB par page, accessibilité après coup, frontend de plus en plus complexe."
+      },
+      {
+        "heading": "La solution : IRP",
+        "content": "IRP (Intent Rendering Protocol) inverse le modèle. Le serveur envoie un intent (JSON 2-10KB) décrivant ce qu'il faut afficher. Le navigateur, via un agent IA local, génère l'interface optimale pour l'utilisateur, l'appareil et le contexte."
+      },
+      {
+        "heading": "Comment ça marche",
+        "content": "Le serveur envoie : { intent: 'show_product', data: {...}, constraints: {...} }. Le navigateur reçoit, détecte le contexte (écran, a11y, prefs), et l'IA génère le DOM. Chrome Prompt API (Gemini Nano) le fait en ~200ms. WebLLM en ~2-5s. Fallback API distante si besoin."
+      },
+      {
+        "heading": "Pourquoi c'est révolutionnaire",
+        "content": "50x moins de bande passante. Accessibilité native. Personnalisation totale. Fin du build, des frameworks, du CSS. Le serveur ne fait plus de présentation — seulement des données et des intentions."
+      }
+    ]
+  },
+  {
+    "id": "lfm3-browser",
+    "title": "LFM3 de Liquid AI : un modèle tri-hybride dans le navigateur",
+    "author": "AJC",
+    "date": "2026-11-10",
+    "reading_time": "5 min",
+    "tags": ["LFM3", "Liquid AI", "WebGPU", "WASM"],
+    "excerpt": "LFM3-1.7B utilise une architecture tri-hybride plus efficace qu'un transformer. ~1GB en 4-bit, tool calling natif, checkpoints ONNX. Un candidat sérieux pour le rendu IRP local.",
+    "sections": [
+      {
+        "heading": "Architecture tri-hybride",
+        "content": "LFM3 n'est pas un transformer classique. Il combine trois mécanismes : attention, convolution et SSM (State Space Model). Résultat : plus efficace que un transformer de même taille, surtout pour les longs contextes (256K tokens)."
+      },
+      {
+        "heading": "Dans le navigateur",
+        "content": "LFM3-1.7B en 4-bit prend ~1GB de RAM. Les checkpoints ONNX sont disponibles sur HuggingFace. Un Space (fusorlabs/liquidai-lmf3-wasm) le fait déjà tourner en WASM. C'est viable pour générer du DOM structuré en temps réel."
+      },
+      {
+        "heading": "Pour IRP",
+        "content": "LFM3 supporte nativement le tool calling et les outputs structurés. C'est exactement ce qu'il faut pour IRP : recevoir un intent + data, générer du HTML structuré. À tester comme alternative à Qwen2.5-0.5B dans le model router."
+      }
+    ]
+  }
+]

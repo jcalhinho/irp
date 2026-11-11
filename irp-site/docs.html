@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IRP.dev — Intent Rendering Protocol — Documentation</title>
+<meta name="description" content="Documentation officielle d'IRP: le protocole qui remplace le HTML par des intentions. Le navigateur génère l'interface via IA locale.">
+<style>
+  :root {
+    --bg: #060611;
+    --surface: #0d0d1f;
+    --surface2: #14142b;
+    --accent: #00E676;
+    --accent2: #00B0FF;
+    --accent3: #D500F9;
+    --text: #f0f0f5;
+    --muted: #7a7a9a;
+    --border: #1e1e3a;
+    --code-bg: #0a0a14;
+    --radius: 12px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+  }
+  a { color: var(--accent2); text-decoration: none; }
+  a:hover { color: var(--accent); }
+
+  /* Layout */
+  .layout { display: flex; min-height: 100vh; }
+  .sidebar {
+    width: 280px; flex-shrink: 0;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 24px 16px;
+    position: sticky; top: 0; height: 100vh; overflow-y: auto;
+  }
+  .sidebar .logo { font-size: 20px; font-weight: 800; margin-bottom: 24px; padding: 0 8px; }
+  .sidebar .logo span { background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .sidebar nav { display: flex; flex-direction: column; gap: 2px; }
+  .sidebar nav a {
+    padding: 8px 12px; border-radius: 8px; font-size: 14px; color: var(--muted);
+    transition: 0.15s;
+  }
+  .sidebar nav a:hover, .sidebar nav a.active {
+    background: var(--surface2); color: var(--text);
+  }
+  .sidebar nav a.active { border-left: 3px solid var(--accent); }
+  .sidebar .section-label {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 1px;
+    color: var(--muted); padding: 16px 12px 8px; font-weight: 700;
+  }
+
+  .content { flex: 1; padding: 48px 64px; max-width: 900px; }
+  .content section { margin-bottom: 64px; scroll-margin-top: 24px; }
+  .content h1 { font-size: 2rem; font-weight: 800; margin-bottom: 16px; letter-spacing: -0.5px; }
+  .content h2 { font-size: 1.4rem; font-weight: 700; margin: 32px 0 12px; }
+  .content h3 { font-size: 1.1rem; font-weight: 600; margin: 24px 0 8px; color: var(--accent); }
+  .content p { margin-bottom: 12px; color: var(--text); }
+  .content ul, .content ol { margin: 12px 0 12px 24px; }
+  .content li { margin-bottom: 6px; }
+  .content code {
+    background: var(--surface2); padding: 2px 8px; border-radius: 4px;
+    font-family: 'SF Mono', Monaco, monospace; font-size: 0.9em; color: var(--accent);
+  }
+  .content table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+  .content th, .content td {
+    border: 1px solid var(--border); padding: 8px 12px; text-align: left; font-size: 14px;
+  }
+  .content th { background: var(--surface2); font-weight: 600; }
+
+  /* Code blocks */
+  .code-block {
+    background: var(--code-bg); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px; overflow-x: auto;
+    font-family: 'SF Mono', Monaco, monospace; font-size: 13px; line-height: 1.7;
+    margin: 16px 0; position: relative;
+  }
+  .code-block .lang {
+    position: absolute; top: 8px; right: 12px;
+    font-size: 11px; color: var(--muted); text-transform: uppercase;
+  }
+  .code-block .c { color: #4a4a6a; }
+  .code-block .k { color: #79c0ff; }
+  .code-block .s { color: #a5d6ff; }
+  .code-block .n { color: #79c0ff; }
+  .code-block .l { color: #7ee787; }
+
+  /* Callout */
+  .callout {
+    background: var(--surface); border: 1px solid var(--border);
+    border-left: 4px solid var(--accent2);
+    border-radius: 8px; padding: 16px 20px; margin: 16px 0;
+  }
+  .callout.warning { border-left-color: #FFA726; }
+  .callout .title { font-weight: 700; margin-bottom: 4px; }
+
+  /* Badge */
+  .badge {
+    display: inline-block; padding: 2px 10px; border-radius: 100px;
+    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .badge.new { background: rgba(0,230,118,0.15); color: var(--accent); }
+  .badge.v1 { background: rgba(0,176,255,0.15); color: var(--accent2); }
+
+  /* Hero */
+  .hero {
+    background: radial-gradient(ellipse at top, rgba(0,230,118,0.08), transparent 60%);
+    padding: 48px 0 32px; margin-bottom: 32px;
+  }
+  .hero h1 { font-size: 2.5rem; }
+  .hero .tagline { font-size: 1.2rem; color: var(--muted); margin-bottom: 16px; }
+  .hero .badges { display: flex; gap: 8px; }
+
+  /* Interactive demo */
+  .demo-box {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px; margin: 16px 0;
+  }
+  .demo-box .tabs { display: flex; gap: 4px; margin-bottom: 16px; border-bottom: 1px solid var(--border); }
+  .demo-box .tab {
+    padding: 8px 16px; font-size: 13px; color: var(--muted); cursor: pointer;
+    border-bottom: 2px solid transparent; transition: 0.15s;
+  }
+  .demo-box .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .demo-box .tab-content { display: none; }
+  .demo-box .tab-content.active { display: block; }
+
+  @media (max-width: 900px) {
+    .sidebar { display: none; }
+    .content { padding: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="logo">⚡ <span>IRP</span>.dev</div>
+  <nav>
+    <div class="section-label">Introduction</div>
+    <a href="#intro" class="active">Qu'est-ce qu'IRP ?</a>
+    <a href="#why">Pourquoi IRP ?</a>
+    <a href="#how">Comment ça marche</a>
+
+    <div class="section-label">Spécification</div>
+    <a href="#format">Format IRP</a>
+    <a href="#fields">Champs</a>
+    <a href="#intents">Catalogue d'intents</a>
+    <a href="#streaming">Streaming</a>
+    <a href="#seo">SEO & SSR</a>
+    <a href="#caching">Cache</a>
+
+    <div class="section-label">Guide</div>
+    <a href="#quickstart">Démarrage rapide</a>
+    <a href="#sdk-python">SDK Python</a>
+    <a href="#sdk-js">SDK JavaScript</a>
+    <a href="#extension">Extension navigateur</a>
+    <a href="#router">Model Router</a>
+
+    <div class="section-label">Référence</div>
+    <a href="#security">Sécurité</a>
+    <a href="#versioning">Versioning</a>
+    <a href="#roadmap">Roadmap</a>
+  </nav>
+</aside>
+
+<!-- Content -->
+<main class="content">
+
+<!-- Hero -->
+<div class="hero">
+  <h1>IRP — Intent Rendering Protocol</h1>
+  <p class="tagline">Le protocole qui remplace le HTML par des intentions. Le navigateur génère l'interface via IA locale.</p>
+  <div class="badges">
+    <span class="badge v1">v1.1</span>
+    <span class="badge new">Streaming</span>
+    <span class="badge new">SEO Prerender</span>
+  </div>
+</div>
+
+<!-- Intro -->
+<section id="intro">
+  <h2>Qu'est-ce qu'IRP ?</h2>
+  <p>
+    <strong>IRP (Intent Rendering Protocol)</strong> est un protocole web qui inverse le modèle client-serveur.
+    Au lieu d'envoyer du HTML/CSS/JS, le serveur envoie une <strong>intention</strong> (JSON ~2KB).
+    Le navigateur, via un agent IA embarqué, génère l'interface optimale pour cet utilisateur, cette machine, ce contexte.
+  </p>
+
+  <div class="code-block">
+<span class="c">// Le serveur envoie ceci (2KB) :</span>
+{
+  <span class="k">"irp"</span>: {
+    <span class="k">"version"</span>: <span class="s">"1.1"</span>,
+    <span class="k">"intent"</span>: <span class="s">"show_product"</span>,
+    <span class="k">"data"</span>: { <span class="k">"name"</span>: <span class="s">"MacBook Pro 16"</span>, <span class="k">"price"</span>: { <span class="k">"amount"</span>: <span class="n">2799</span>, <span class="k">"currency"</span>: <span class="s">"EUR"</span> } },
+    <span class="k">"actions"</span>: [{ <span class="k">"id"</span>: <span class="s">"add_to_cart"</span>, <span class="k">"label"</span>: <span class="s">"Ajouter au panier"</span>, <span class="k">"type"</span>: <span class="s">"primary"</span> }]
+  }
+}
+
+<span class="c">// Le navigateur génère ceci (13KB) :</span>
+<span class="c">// → HTML5 + CSS inline + JS inline + SVG inline</span>
+<span class="c">// → Adapté à l'écran, au thème, à l'accessibilité de l'utilisateur</span>
+  </div>
+</section>
+
+<!-- Why -->
+<section id="why">
+  <h2>Pourquoi IRP ?</h2>
+  <table>
+    <tr><th>Métrique</th><th>Web classique</th><th>IRP</th></tr>
+    <tr><td>Bande passante</td><td>100-500KB</td><td><strong>2KB</strong> (50x moins)</td></tr>
+    <tr><td>Build step</td><td>Requis (Webpack, Vite)</td><td><strong>Aucun</strong></td></tr>
+    <tr><td>Framework</td><td>React/Vue/Svelte</td><td><strong>Aucun</strong></td></tr>
+    <tr><td>Accessibilité</td><td>Post-traitement ARIA</td><td><strong>Native</strong></td></tr>
+    <tr><td>Personnalisation</td><td>Générique</td><td><strong>Unique par utilisateur</strong></td></tr>
+    <tr><td>Privacy</td><td>Données au serveur</td><td><strong>Locale</strong> (WebGPU)</td></tr>
+  </table>
+</section>
+
+<!-- How -->
+<section id="how">
+  <h2>Comment ça marche</h2>
+  <ol>
+    <li>Le client demande une page (<code>GET /product/123</code>)</li>
+    <li>Le serveur répond avec un IRP JSON (<code>Content-Type: application/irp+json</code>)</li>
+    <li>Le client détecte le contexte (écran, thème, a11y, réseau, batterie)</li>
+    <li>Le Model Router choisit le meilleur renderer IA disponible</li>
+    <li>L'IA génère le HTML/CSS/JS adapté au contexte</li>
+    <li>Le DomBuilder sanitize et injecte le résultat</li>
+    <li>Le rendu est caché dans IndexedDB pour les visites suivantes</li>
+  </ol>
+
+  <div class="callout">
+    <div class="title">💡 Bot detection</div>
+    Les bots (Googlebot, Bingbot) reçoivent du HTML statique prerenderisé côté serveur. Le SEO est préservé.
+  </div>
+</section>
+
+<!-- Format -->
+<section id="format">
+  <h2>Format IRP</h2>
+  <h3>Content-Type</h3>
+  <div class="code-block">
+Content-Type: application/irp+json; charset=utf-8
+  </div>
+
+  <h3>Structure complète (v1.1)</h3>
+  <div class="code-block">
+<span class="lang">json</span>
+{
+  <span class="k">"irp"</span>: {
+    <span class="k">"version"</span>: <span class="s">"1.1"</span>,
+    <span class="k">"intent"</span>: <span class="s">"show_product"</span>,
+    <span class="k">"data"</span>: { ... },
+    <span class="k">"constraints"</span>: {
+      <span class="k">"must_show"</span>: [<span class="s">"name"</span>, <span class="s">"price"</span>],
+      <span class="k">"priority"</span>: <span class="s">"conversion"</span>,
+      <span class="k">"content_type"</span>: <span class="s">"commercial"</span>
+    },
+    <span class="k">"context_hints"</span>: {
+      <span class="k">"cacheable"</span>: <span class="l">true</span>,
+      <span class="k">"ttl"</span>: <span class="n">3600</span>,
+      <span class="k">"streamable"</span>: <span class="l">true</span>
+    },
+    <span class="k">"actions"</span>: [
+      { <span class="k">"id"</span>: <span class="s">"add_to_cart"</span>, <span class="k">"label"</span>: <span class="s">"Ajouter au panier"</span>, <span class="k">"type"</span>: <span class="s">"primary"</span>, <span class="k">"href"</span>: <span class="s">"/cart/add/123"</span>, <span class="k">"method"</span>: <span class="s">"POST"</span> }
+    ],
+    <span class="k">"metadata"</span>: {
+      <span class="k">"title"</span>: <span class="s">"MacBook Pro 16 — 2799€"</span>,
+      <span class="k">"description"</span>: <span class="s">"Le MacBook Pro 16 pouces..."</span>,
+      <span class="k">"lang"</span>: <span class="s">"fr"</span>,
+      <span class="k">"og_type"</span>: <span class="s">"product"</span>
+    },
+    <span class="k">"seo"</span>: {
+      <span class="k">"prerender"</span>: <span class="l">true</span>,
+      <span class="k">"json_ld"</span>: { <span class="k">"@type"</span>: <span class="s">"Product"</span>, ... }
+    }
+  }
+}
+  </div>
+</section>
+
+<!-- Fields -->
+<section id="fields">
+  <h2>Champs</h2>
+  <table>
+    <tr><th>Champ</th><th>Type</th><th>Requis</th><th>Version</th><th>Description</th></tr>
+    <tr><td><code>version</code></td><td>string</td><td>✅</td><td>v1.0</td><td>Version du protocole</td></tr>
+    <tr><td><code>intent</code></td><td>string</td><td>✅</td><td>v1.0</td><td>L'intent de rendu</td></tr>
+    <tr><td><code>data</code></td><td>object</td><td>✅</td><td>v1.0</td><td>Les données à afficher</td></tr>
+    <tr><td><code>constraints</code></td><td>object</td><td>❌</td><td>v1.0</td><td>Contraintes de rendu</td></tr>
+    <tr><td><code>context_hints</code></td><td>object</td><td>❌</td><td>v1.0</td><td>Cache et streaming</td></tr>
+    <tr><td><code>actions</code></td><td>array</td><td>❌</td><td><span class="badge new">v1.1</span></td><td>Éléments interactifs déclaratifs</td></tr>
+    <tr><td><code>metadata</code></td><td>object</td><td>❌</td><td><span class="badge new">v1.1</span></td><td>SEO et réseaux sociaux</td></tr>
+    <tr><td><code>seo</code></td><td>object</td><td>❌</td><td><span class="badge new">v1.1</span></td><td>Prerender et structured data</td></tr>
+  </table>
+</section>
+
+<!-- Intents -->
+<section id="intents">
+  <h2>Catalogue d'intents</h2>
+  <h3>Core intents (v1.0)</h3>
+  <table>
+    <tr><th>Intent</th><th>Description</th></tr>
+    <tr><td><code>show_landing</code></td><td>Page d'accueil marketing</td></tr>
+    <tr><td><code>show_product</code></td><td>Fiche produit e-commerce</td></tr>
+    <tr><td><code>show_catalog</code></td><td>Catalogue avec filtres</td></tr>
+    <tr><td><code>read_article</code></td><td>Article de blog</td></tr>
+    <tr><td><code>fill_form</code></td><td>Formulaire (contact, signup)</td></tr>
+    <tr><td><code>show_dashboard</code></td><td>Tableau de bord analytique</td></tr>
+    <tr><td><code>browse_list</code></td><td>Liste de tâches/items</td></tr>
+    <tr><td><code>show_pricing</code></td><td>Tableau de tarifs</td></tr>
+    <tr><td><code>show_chat</code></td><td>Interface de chat</td></tr>
+    <tr><td><code>show_error</code></td><td>Page d'erreur (404, 500)</td></tr>
+  </table>
+  <h3>Extended intents (v1.1)</h3>
+  <table>
+    <tr><th>Intent</th><th>Description</th></tr>
+    <tr><td><code>show_profile</code></td><td>Profil utilisateur</td></tr>
+    <tr><td><code>show_search</code></td><td>Résultats de recherche</td></tr>
+    <tr><td><code>play_media</code></td><td>Lecteur vidéo/audio</td></tr>
+    <tr><td><code>show_map</code></td><td>Interface cartographique</td></tr>
+    <tr><td><code>show_docs</code></td><td>Documentation technique</td></tr>
+  </table>
+</section>
+
+<!-- Streaming -->
+<section id="streaming">
+  <h2>Streaming <span class="badge new">v1.1</span></h2>
+  <p>Le client peut demander un rendu en streaming via SSE (Server-Sent Events).</p>
+
+  <h3>Requête</h3>
+  <div class="code-block">
+Accept: text/event-stream
+X-IRP-Context: {"device":"desktop","theme":"dark","lang":"fr"}
+  </div>
+
+  <h3>Réponse</h3>
+  <div class="code-block">
+<span class="lang">sse</span>
+event: irp
+data: {"irp":{"version":"1.1","intent":"show_product","data":{...}}}
+
+event: chunk
+data: {"delta":"<style>.card{background:#0a0a14;...</style>"}
+
+event: chunk
+data: {"delta":"<section><h1>MacBook Pro 16</h1>"}
+
+event: done
+data: {"renderer":"SGP API","bytes":4523}
+  </div>
+
+  <div class="callout warning">
+    <div class="title">⚠️ Support</div>
+    Le streaming n'est supporté que par le renderer SGP API. Les renderers locaux (Chrome API, WebLLM, LFM3) génèrent atomiquement.
+  </div>
+</section>
+
+<!-- SEO -->
+<section id="seo">
+  <h2>SEO & SSR <span class="badge new">v1.1</span></h2>
+  <p>IRP résout le problème SEO en détectant les bots via User-Agent et en servant du HTML statique prerenderisé.</p>
+
+  <h3>Bot detection</h3>
+  <div class="code-block">
+<span class="lang">http</span>
+<span class="c"># Bot</span>
+User-Agent: Googlebot/2.1
+→ Content-Type: text/html
+→ X-IRP-Prerendered: true
+
+<span class="c"># Client normal</span>
+User-Agent: Mozilla/5.0 ...
+→ Content-Type: application/irp+json
+  </div>
+
+  <p>Le HTML prerenderisé inclut :</p>
+  <ul>
+    <li><code>&lt;title&gt;</code> et <code>&lt;meta name="description"&gt;</code></li>
+    <li>Open Graph tags (<code>og:title</code>, <code>og:description</code>, <code>og:type</code>)</li>
+    <li>Twitter Card tags</li>
+    <li>JSON-LD structured data (<code>schema.org</code>)</li>
+    <li>Contenu sémantique HTML5 (h1, h2, p, ul, table)</li>
+  </ul>
+</section>
+
+<!-- Caching -->
+<section id="caching">
+  <h2>Cache</h2>
+  <h3>Client (IndexedDB)</h3>
+  <p>Le client cache le HTML rendu dans IndexedDB. La clé inclut : path + intent + data_id + contexte (theme, lang, device, viewport, a11y).</p>
+  <h3>TTL</h3>
+  <p>Configurable via <code>context_hints.ttl</code> (défaut: 3600s). <code>context_hints.cacheable: false</code> désactive le cache.</p>
+</section>
+
+<!-- Quickstart -->
+<section id="quickstart">
+  <h2>Démarrage rapide</h2>
+  <div class="code-block">
+<span class="lang">bash</span>
+<span class="c"># 1. Cloner</span>
+git clone https://github.com/user/irp.git
+cd irp
+
+<span class="c"># 2. Lancer</span>
+./start.sh
+
+<span class="c"># Ça démarre :</span>
+<span class="c"># - Serveur IRP sur http://localhost:8001</span>
+<span class="c"># - Client IRP sur http://localhost:3000</span>
+<span class="c"># - Ouvre le navigateur</span>
+  </div>
+</section>
+
+<!-- SDK Python -->
+<section id="sdk-python">
+  <h2>SDK Python</h2>
+  <div class="code-block">
+<span class="lang">python</span>
+<span class="k">from</span> irp_sdk <span class="k">import</span> show_product, show_landing, <span class="l">@intent</span>, IRPResponse
+
+<span class="c"># Factory helpers</span>
+response = show_product(
+    product_id=<span class="s">"widget-42"</span>,
+    name=<span class="s">"Super Widget"</span>,
+    price={<span class="s">"amount"</span>: <span class="n">29.99</span>, <span class="s">"currency"</span>: <span class="s">"EUR"</span>},
+)
+<span class="k">print</span>(response.to_json())    <span class="c"># → JSON string</span>
+<span class="k">print</span>(response.headers())    <span class="c"># → {"Content-Type": "application/irp+json"}</span>
+
+<span class="c"># Décorateur personnalisé</span>
+<span class="l">@intent</span>(<span class="s">"show_custom"</span>)
+<span class="k">def</span> my_handler(user_id):
+    <span class="k">return</span> IRPResponse(
+        intent=<span class="s">"show_custom"</span>,
+        data={<span class="s">"user_id"</span>: user_id},
+    )
+  </div>
+</section>
+
+<!-- SDK JS -->
+<section id="sdk-js">
+  <h2>SDK JavaScript</h2>
+  <div class="code-block">
+<span class="lang">javascript</span>
+<span class="k">import</span> { IRPClient } <span class="k">from</span> <span class="s">'./irp-sdk/irp-sdk.js'</span>;
+
+<span class="k">const</span> client = <span class="k">new</span> IRPClient({
+  server: <span class="s">'http://localhost:8001'</span>,
+  mount: <span class="s">'#app'</span>,
+});
+
+<span class="k">await</span> client.init();         <span class="c">// détecte les renderers IA</span>
+<span class="k">await</span> client.navigate(<span class="s">'/'</span>);  <span class="c">// fetch IRP + rendu local</span>
+  </div>
+</section>
+
+<!-- Extension -->
+<section id="extension">
+  <h2>Extension navigateur</h2>
+  <p>L'extension Chrome/Firefox intercepte les réponses <code>application/irp+json</code> sur n'importe quel site.</p>
+  <ol>
+    <li>Ouvrir <code>chrome://extensions</code></li>
+    <li>Activer "Developer mode"</li>
+    <li>"Load unpacked" → <code>irp-extension/</code></li>
+  </ol>
+  <p>L'extension patche <code>fetch()</code> et <code>XMLHttpRequest</code> automatiquement.</p>
+</section>
+
+<!-- Router -->
+<section id="router">
+  <h2>Model Router</h2>
+  <p>Le client détecte automatiquement le meilleur modèle IA disponible :</p>
+  <table>
+    <tr><th>#</th><th>Renderer</th><th>Latence</th><th>Type</th><th>Streaming</th></tr>
+    <tr><td>1</td><td>Chrome Prompt API</td><td>~200ms</td><td>Native</td><td>❌</td></tr>
+    <tr><td>2</td><td>WebLLM (Qwen2.5-0.5B)</td><td>~2-5s</td><td>Local (WebGPU)</td><td>❌</td></tr>
+    <tr><td>3</td><td>LFM3-1.7B</td><td>~3-8s</td><td>Local (ONNX)</td><td>❌</td></tr>
+    <tr><td>4</td><td>SGP API (claude-qwen)</td><td>~5-30s</td><td>Remote</td><td>✅</td></tr>
+  </table>
+</section>
+
+<!-- Security -->
+<section id="security">
+  <h2>Sécurité</h2>
+  <h3>Sanitization</h3>
+  <p>Le client sanitize tout le HTML généré avant injection :</p>
+  <ul>
+    <li>Supprime <code>&lt;iframe&gt;</code>, <code>&lt;object&gt;</code>, <code>&lt;embed&gt;</code></li>
+    <li>Supprime <code>&lt;script src="..."&gt;</code> (scripts externes)</li>
+    <li>Supprime <code>&lt;link rel="stylesheet"&gt;</code> (CSS externe)</li>
+    <li>Supprime les event handlers inline (<code>onclick</code>, <code>onload</code>)</li>
+    <li>Supprime les <code>javascript:</code> URLs</li>
+    <li>Remplace les <code>&lt;img src="http..."&gt;</code> par des placeholders</li>
+  </ul>
+  <h3>Proxy</h3>
+  <p>Le proxy SGP ne expose jamais la clé API au client. Rate-limiting recommandé (10 req/min/IP).</p>
+</section>
+
+<!-- Versioning -->
+<section id="versioning">
+  <h2>Versioning</h2>
+  <table>
+    <tr><th>Version</th><th>Statut</th><th>Ajouts</th></tr>
+    <tr><td>v1.0</td><td>✅ Stable</td><td>intent, data, constraints, context_hints</td></tr>
+    <tr><td>v1.1</td><td>✅ Stable</td><td>actions, metadata, seo, streaming, context negotiation</td></tr>
+    <tr><td>v1.2</td><td>🔄 Planifié</td><td>Partial intents, SSR hydration</td></tr>
+  </table>
+</section>
+
+<!-- Roadmap -->
+<section id="roadmap">
+  <h2>Roadmap</h2>
+  <ol>
+    <li>✅ <strong>Phase 1</strong> — POC (serveur + client + 4 renderers)</li>
+    <li>✅ <strong>Phase 2</strong> — Spec + SDK (Python + JS)</li>
+    <li>✅ <strong>Phase 3</strong> — Extension navigateur</li>
+    <li>✅ <strong>Phase 4</strong> — SEO prerender + streaming + tests E2E</li>
+    <li>🔄 <strong>Phase 5</strong> — Modèles plus performants (Gemma-2B, Phi-3-mini)</li>
+    <li>🔄 <strong>Phase 6</strong> — Spec v1.2 (partial intents, hydration)</li>
+    <li>📋 <strong>Phase 7</strong> — Standard W3C/WHATWG</li>
+    <li>📋 <strong>Phase 8</strong> — Marketplace d'intents</li>
+  </ol>
+</section>
+
+</main>
+</div>
+
+<script>
+// Active nav highlighting
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.sidebar nav a');
+
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 100) current = s.id;
+  });
+  navLinks.forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+});
+
+// Smooth scroll
+navLinks.forEach(a => {
+  a.addEventListener('click', (e) => {
+    e.preventDefault();
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth' });
+  });
+});
+</script>
+
+</body>
+</html>

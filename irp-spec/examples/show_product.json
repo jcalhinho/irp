@@ -1,0 +1,41 @@
+{
+  "irp": {
+    "version": "1.0",
+    "intent": "show_product",
+    "data": {
+      "id": "macbook-pro-16",
+      "name": "MacBook Pro 16\"",
+      "price": { "amount": 2799, "currency": "EUR" },
+      "category": "Laptop",
+      "specs": [
+        { "label": "CPU", "value": "Apple M3 Max" },
+        { "label": "RAM", "value": "36 GB" },
+        { "label": "Storage", "value": "1 TB SSD" },
+        { "label": "Display", "value": "16.2\" Liquid Retina XDR" },
+        { "label": "Battery", "value": "22 hours" }
+      ],
+      "description": "Le MacBook Pro 16\" avec M3 Max offre des performances de pointe pour les professionnels créatifs.",
+      "availability": "in_stock",
+      "rating": { "score": 4.8, "count": 1247 }
+    },
+    "constraints": {
+      "must_show": ["name", "price"],
+      "priority": "conversion",
+      "content_type": "commercial"
+    },
+    "actions": [
+      { "id": "add_to_cart", "label": "Ajouter au panier", "type": "primary", "href": "/cart/add/macbook-pro-16", "method": "POST", "irp": true },
+      { "id": "wishlist", "label": "Sauvegarder", "type": "secondary", "href": "/wishlist/add/macbook-pro-16", "method": "POST", "irp": true }
+    ],
+    "context_hints": {
+      "cacheable": true,
+      "ttl": 3600,
+      "etag": "mbp16-v2"
+    },
+    "metadata": {
+      "title": "MacBook Pro 16\" — À partir de 2799€",
+      "description": "MacBook Pro 16\" avec puce M3 Max, 36GB RAM, 1TB SSD.",
+      "lang": "fr"
+    }
+  }
+}

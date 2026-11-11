@@ -1,0 +1,165 @@
+/* IRP Client — styles minimaux (le reste est généré par l'IA) */
+
+:root {
+    --irp-bg: #0f0f1a;
+    --irp-fg: #e0e0e8;
+    --irp-accent: #7c3aed;
+    --irp-accent-light: #a78bfa;
+    --irp-card: #1a1a2e;
+    --irp-error: #ef4444;
+    --irp-success: #22c55e;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    background: var(--irp-bg);
+    color: var(--irp-fg);
+    min-height: 100vh;
+}
+
+#irp-root {
+    min-height: 100vh;
+}
+
+/* Loading state */
+.irp-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    gap: 1rem;
+}
+
+.irp-spinner {
+    width: 48px;
+    height: 48px;
+    border: 3px solid var(--irp-card);
+    border-top-color: var(--irp-accent);
+    border-radius: 50%;
+    animation: irp-spin 0.8s linear infinite;
+}
+
+@keyframes irp-spin {
+    to { transform: rotate(360deg); }
+}
+
+.irp-loading p {
+    color: var(--irp-accent-light);
+    font-size: 0.95rem;
+}
+
+/* Error state */
+.irp-error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    gap: 1rem;
+    padding: 2rem;
+    text-align: center;
+}
+
+.irp-error h2 {
+    color: var(--irp-error);
+    font-size: 1.5rem;
+}
+
+.irp-error p {
+    color: #a0a0b0;
+    max-width: 500px;
+    line-height: 1.6;
+}
+
+.irp-error__details {
+    background: var(--irp-card);
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 3px solid var(--irp-error);
+    font-family: monospace;
+    font-size: 0.85rem;
+    color: #a0a0b0;
+    max-width: 600px;
+    text-align: left;
+    word-break: break-word;
+}
+
+/* Debug panel */
+.irp-debug {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 400px;
+    max-height: 50vh;
+    background: var(--irp-card);
+    border: 1px solid var(--irp-accent);
+    border-radius: 8px 0 0 0;
+    overflow-y: auto;
+    z-index: 9999;
+    font-size: 0.8rem;
+}
+
+.irp-debug--hidden {
+    display: none;
+}
+
+.irp-debug__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    background: var(--irp-accent);
+    color: white;
+    font-weight: 600;
+}
+
+.irp-debug__header button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+.irp-debug__content {
+    padding: 0.75rem;
+}
+
+.irp-debug__row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.25rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.irp-debug__row span:first-child {
+    color: var(--irp-accent-light);
+}
+
+.irp-debug__row span:last-child {
+    color: var(--irp-fg);
+    text-align: right;
+    word-break: break-all;
+}
+
+/* Progress bar pour le téléchargement de modèles */
+.irp-progress {
+    width: 300px;
+    height: 6px;
+    background: var(--irp-card);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.irp-progress__bar {
+    height: 100%;
+    background: var(--irp-accent);
+    transition: width 0.3s ease;
+}

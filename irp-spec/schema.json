@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://irp.dev/schema/irp-v1.json",
+  "title": "IRP — Intent Rendering Protocol v1.0",
+  "description": "Protocole d'échange entre un serveur (qui fournit des intentions) et un client/navigateur (qui génère l'interface via IA).",
+  "type": "object",
+  "required": ["irp"],
+  "properties": {
+    "irp": {
+      "type": "object",
+      "required": ["version", "intent", "data"],
+      "properties": {
+        "version": {
+          "type": "string",
+          "const": "1.0",
+          "description": "Version du protocole IRP"
+        },
+        "intent": {
+          "type": "string",
+          "description": "L'intention de rendu — ce que l'utilisateur veut faire",
+          "examples": ["show_product", "read_article", "show_dashboard", "fill_form", "show_landing"]
+        },
+        "data": {
+          "type": "object",
+          "description": "Les données brutes à afficher, sans aucune présentation",
+          "additionalProperties": true
+        },
+        "constraints": {
+          "type": "object",
+          "description": "Les règles métier — ce qui DOIT être affiché et comment",
+          "properties": {
+            "must_show": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Liste des champs de data qui doivent obligatoirement être affichés"
+            },
+            "must_not_show": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Champs qui ne doivent pas être affichés par défaut"
+            },
+            "priority": {
+              "type": "string",
+              "enum": ["conversion", "readability", "data_density", "engagement", "clarity", "normal"],
+              "description": "La priorité de rendu influence le design généré par l'IA"
+            },
+            "content_type": {
+              "type": "string",
+              "enum": ["commercial", "editorial", "analytical", "marketing", "error", "informational", "interactive"],
+              "description": "Le type de contenu influence le style et la structure"
+            },
+            "max_interactions": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Nombre maximum d'éléments interactifs (boutons, liens) à afficher"
+            },
+            "legal": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Mentions légales obligatoires (RGPD, CGV, etc.)"
+            }
+          },
+          "additionalProperties": true
+        },
+        "context_hints": {
+          "type": "object",
+          "description": "Indications sur la mise en cache et l'authentification",
+          "properties": {
+            "requires_auth": {
+              "type": "boolean",
+              "default": false,
+              "description": "Si true, le contenu nécessite une authentification"
+            },
+            "cacheable": {
+              "type": "boolean",
+              "default": true,
+              "description": "Si true, le client peut cacher le rendu généré"
+            },
+            "ttl": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 3600,
+              "description": "Durée de vie du cache en secondes (0 = pas de cache)"
+            },
+            "etag": {
+              "type": "string",
+              "description": "Identifiant de version pour invalidation de cache"
+            }
+          },
+          "additionalProperties": true
+        },
+        "actions": {
+          "type": "array",
+          "description": "Actions disponibles sur cette page (navigation, API calls)",
+          "items": {
+            "type": "object",
+            "required": ["id", "label", "href"],
+            "properties": {
+              "id": { "type": "string" },
+              "label": { "type": "string" },
+              "type": {
+                "type": "string",
+                "enum": ["primary", "secondary", "tertiary", "danger", "navigation"],
+                "default": "secondary"
+              },
+              "href": { "type": "string" },
+              "method": {
+                "type": "string",
+                "enum": ["GET", "POST", "PUT", "DELETE"],
+                "default": "GET"
+              },
+              "irp": {
+                "type": "boolean",
+                "default": true,
+                "description": "Si true, l'action renvoie un IRP (navigation côté client). Si false, action HTTP classique."
+              }
+            }
+          }
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Métadonnées optionnelles (SEO, analytics, etc.)",
+          "properties": {
+            "title": { "type": "string", "description": "Titre de la page pour le SEO" },
+            "description": { "type": "string", "description": "Description pour le SEO" },
+            "og_image": { "type": "string", "description": "URL de l'image OpenGraph" },
+            "canonical": { "type": "string", "description": "URL canonique" },
+            "lang": { "type": "string", "description": "Langue du contenu (BCP 47)" }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

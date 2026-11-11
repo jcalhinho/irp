@@ -1,0 +1,27 @@
+{
+  "irp": {
+    "version": "1.0",
+    "intent": "fill_form",
+    "data": {
+      "id": "contact-form",
+      "title": "Contactez-nous",
+      "description": "Envoyez-nous un message, nous répondons sous 24h.",
+      "fields": [
+        { "id": "name", "label": "Nom complet", "type": "text", "required": true, "placeholder": "Jean Dupont" },
+        { "id": "email", "label": "Email", "type": "email", "required": true, "placeholder": "jean@example.com", "validation": "email" },
+        { "id": "subject", "label": "Sujet", "type": "select", "required": true, "options": ["Question produit", "Support technique", "Partenariat", "Autre"] },
+        { "id": "message", "label": "Message", "type": "textarea", "required": true, "placeholder": "Votre message...", "validation": "min_length:10" },
+        { "id": "newsletter", "label": "Recevoir la newsletter", "type": "checkbox", "required": false }
+      ],
+      "submit": { "label": "Envoyer le message", "href": "/api/contact", "method": "POST" },
+      "cancel": { "label": "Annuler", "href": "/" }
+    },
+    "constraints": {
+      "must_show": ["title", "fields", "submit"],
+      "priority": "clarity",
+      "content_type": "interactive"
+    },
+    "context_hints": { "cacheable": false, "ttl": 0 },
+    "metadata": { "title": "Contact — IRP Demo", "lang": "fr" }
+  }
+}

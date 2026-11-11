@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IRP — Le web qui se code lui-même</title>
+<meta name="description" content="IRP (Intent Rendering Protocol) : le serveur envoie des intentions, le navigateur génère l'interface via IA. 50x moins de bande passante, zéro build, accessibilité native.">
+<meta property="og:title" content="IRP — Le web qui se code lui-même">
+<meta property="og:description" content="Le navigateur devient un agent IA actif. Fini le frontend tel qu'on le connaît.">
+<meta property="og:type" content="website">
+<style>
+  :root {
+    --bg: #060611;
+    --surface: #0d0d1f;
+    --surface2: #14142b;
+    --accent: #00E676;
+    --accent2: #00B0FF;
+    --accent3: #D500F9;
+    --text: #f0f0f5;
+    --muted: #7a7a9a;
+    --border: #1e1e3a;
+    --radius: 16px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+  a { color: var(--accent2); text-decoration: none; transition: 0.2s; }
+  a:hover { color: var(--accent); }
+
+  /* ─── Nav ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 32px;
+    background: rgba(6,6,17,0.8);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  nav .logo { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
+  nav .logo span { background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  nav .links { display: flex; gap: 28px; align-items: center; }
+  nav .links a { color: var(--muted); font-size: 14px; font-weight: 500; }
+  nav .links a:hover { color: var(--text); }
+  nav .cta { background: var(--accent); color: #000; padding: 8px 20px; border-radius: 8px; font-weight: 600; font-size: 14px; }
+  nav .cta:hover { background: #00C853; color: #000; }
+
+  /* ─── Hero ─── */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 120px 24px 80px;
+    position: relative;
+  }
+  .hero::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% 0%, rgba(0,230,118,0.12), transparent),
+      radial-gradient(ellipse 60% 40% at 80% 50%, rgba(0,176,255,0.08), transparent),
+      radial-gradient(ellipse 60% 40% at 20% 50%, rgba(213,0,249,0.06), transparent);
+    pointer-events: none;
+  }
+  .hero .badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--surface2); border: 1px solid var(--border);
+    padding: 6px 16px; border-radius: 100px; font-size: 13px; color: var(--muted);
+    margin-bottom: 32px; position: relative;
+  }
+  .hero .badge .dot { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+  .hero h1 {
+    font-size: clamp(2.5rem, 7vw, 5rem);
+    font-weight: 900; letter-spacing: -2px; line-height: 1.05;
+    max-width: 900px; margin-bottom: 24px; position: relative;
+  }
+  .hero h1 .gradient {
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 50%, var(--accent3) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero .tagline {
+    font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+    color: var(--muted); max-width: 640px; margin-bottom: 40px; position: relative;
+  }
+  .hero .cta-group { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; position: relative; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 14px 32px; border-radius: 12px; font-weight: 700; font-size: 15px;
+    transition: all 0.2s; cursor: pointer; border: none; text-decoration: none;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #000;
+    box-shadow: 0 4px 24px rgba(0,230,118,0.3);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,230,118,0.4); color: #000; }
+  .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+  .btn-secondary:hover { border-color: var(--accent2); background: var(--surface); color: var(--text); }
+
+  /* ─── Stats bar ─── */
+  .stats-bar {
+    display: flex; justify-content: center; gap: 64px; flex-wrap: wrap;
+    padding: 48px 24px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .stat { text-align: center; }
+  .stat .num {
+    font-size: clamp(2rem, 4vw, 3rem); font-weight: 900; letter-spacing: -1px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .stat .label { font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+
+  /* ─── Sections ─── */
+  .section { max-width: 1000px; margin: 0 auto; padding: 100px 24px; }
+  .section-label {
+    display: inline-block; font-size: 13px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 2px; color: var(--accent); margin-bottom: 12px;
+  }
+  .section h2 { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800; letter-spacing: -1px; margin-bottom: 16px; }
+  .section .subtitle { font-size: 1.1rem; color: var(--muted); max-width: 600px; margin-bottom: 48px; }
+
+  /* ─── Comparison ─── */
+  .comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .compare-col {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 32px; position: relative; overflow: hidden;
+  }
+  .compare-col.old { opacity: 0.6; }
+  .compare-col.new { border-color: var(--accent); box-shadow: 0 0 40px rgba(0,230,118,0.08); }
+  .compare-col .tag {
+    position: absolute; top: 16px; right: 16px;
+    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+    padding: 4px 10px; border-radius: 100px;
+  }
+  .compare-col.old .tag { background: rgba(244,67,54,0.15); color: #f44336; }
+  .compare-col.new .tag { background: rgba(0,230,118,0.15); color: var(--accent); }
+  .compare-col h3 { font-size: 18px; font-weight: 700; margin-bottom: 20px; }
+  .compare-col ul { list-style: none; }
+  .compare-col li { padding: 8px 0; font-size: 14px; color: var(--muted); display: flex; align-items: start; gap: 8px; }
+  .compare-col.old li::before { content: "✗"; color: #f44336; font-weight: 700; flex-shrink: 0; }
+  .compare-col.new li::before { content: "✓"; color: var(--accent); font-weight: 700; flex-shrink: 0; }
+
+  /* ─── Architecture flow ─── */
+  .arch {
+    display: flex; align-items: stretch; justify-content: center; gap: 0;
+    margin: 48px 0; flex-wrap: wrap;
+  }
+  .arch-node {
+    flex: 1; min-width: 180px; max-width: 260px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 28px 20px; text-align: center;
+    position: relative; transition: 0.3s;
+  }
+  .arch-node:hover { transform: translateY(-4px); border-color: var(--accent2); }
+  .arch-node.server { border-color: var(--accent2); }
+  .arch-node.browser { border-color: var(--accent); }
+  .arch-node .icon { font-size: 36px; margin-bottom: 12px; }
+  .arch-node h4 { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+  .arch-node p { font-size: 12px; color: var(--muted); }
+  .arch-node .size { font-size: 11px; color: var(--accent); margin-top: 8px; font-weight: 600; }
+  .arch-arrow { display: flex; align-items: center; padding: 0 8px; font-size: 28px; color: var(--muted); }
+
+  /* ─── Code block ─── */
+  .code-block {
+    background: #0a0a14; border: 1px solid var(--border);
+    border-radius: 12px; padding: 24px; overflow-x: auto;
+    font-family: 'SF Mono', 'Fira Code', Monaco, monospace;
+    font-size: 13px; line-height: 1.7; margin: 24px 0;
+  }
+  .code-block .comment { color: #4a4a6a; }
+  .code-block .key { color: #79c0ff; }
+  .code-block .str { color: #a5d6ff; }
+  .code-block .num { color: #79c0ff; }
+  .code-block .label { color: #7ee787; }
+
+  /* ─── Features grid ─── */
+  .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+  .feature {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 28px; transition: 0.3s;
+  }
+  .feature:hover { border-color: var(--accent); transform: translateY(-4px); box-shadow: 0 8px 32px rgba(0,230,118,0.06); }
+  .feature .icon { font-size: 32px; margin-bottom: 16px; }
+  .feature h4 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+  .feature p { font-size: 14px; color: var(--muted); }
+
+  /* ─── Renderer chain ─── */
+  .chain { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; margin: 40px 0; }
+  .chain-node {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 20px 24px; text-align: center; min-width: 160px;
+    transition: 0.3s;
+  }
+  .chain-node:hover { border-color: var(--accent); }
+  .chain-node .num { font-size: 24px; font-weight: 800; color: var(--accent); }
+  .chain-node h5 { font-size: 14px; font-weight: 600; margin: 4px 0; }
+  .chain-node p { font-size: 11px; color: var(--muted); }
+  .chain-arrow { font-size: 24px; color: var(--muted); }
+
+  /* ─── Demo grid ─── */
+  .demo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; }
+  .demo-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 24px 16px; text-align: center;
+    transition: 0.3s; text-decoration: none; color: var(--text);
+  }
+  .demo-card:hover { border-color: var(--accent); transform: translateY(-4px); color: var(--text); }
+  .demo-card .icon { font-size: 28px; margin-bottom: 8px; }
+  .demo-card h5 { font-size: 14px; font-weight: 600; }
+  .demo-card p { font-size: 11px; color: var(--muted); margin-top: 4px; font-family: monospace; }
+
+  /* ─── Quick start ─── */
+  .steps { counter-reset: step; margin: 32px 0; }
+  .step {
+    position: relative; padding: 20px 20px 20px 64px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; margin-bottom: 12px;
+  }
+  .step::before {
+    counter-increment: step; content: counter(step);
+    position: absolute; left: 20px; top: 50%; transform: translateY(-50%);
+    width: 32px; height: 32px; background: var(--accent); color: #000;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 14px;
+  }
+  .step h4 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+  .step p { font-size: 13px; color: var(--muted); }
+  .step code { background: var(--surface2); padding: 2px 8px; border-radius: 4px; font-size: 12px; color: var(--accent); }
+
+  /* ─── CTA section ─── */
+  .cta-section {
+    text-align: center; padding: 100px 24px;
+    background: radial-gradient(ellipse at center, rgba(0,230,118,0.06), transparent 70%);
+  }
+  .cta-section h2 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; margin-bottom: 16px; }
+  .cta-section p { font-size: 1.1rem; color: var(--muted); max-width: 500px; margin: 0 auto 32px; }
+
+  /* ─── Footer ─── */
+  footer { text-align: center; padding: 48px 24px; border-top: 1px solid var(--border); color: var(--muted); font-size: 13px; }
+  footer a { color: var(--muted); }
+  footer a:hover { color: var(--accent); }
+
+  @media (max-width: 768px) {
+    nav { padding: 12px 16px; }
+    nav .links { display: none; }
+    .comparison { grid-template-columns: 1fr; }
+    .arch { flex-direction: column; }
+    .arch-arrow { transform: rotate(90deg); padding: 8px 0; }
+    .stats-bar { gap: 32px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+  <div class="logo">⚡ <span>IRP</span></div>
+  <div class="links">
+    <a href="#how">Comment ça marche</a>
+    <a href="#compare">Avant / Après</a>
+    <a href="#features">Fonctionnalités</a>
+    <a href="#demo">Démo</a>
+    <a href="#start">Démarrer</a>
+    <a class="cta" href="#start">Commencer</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="badge"><span class="dot"></span> Protocol v1.0 — POC fonctionnel</div>
+  <h1>Le web qui se<br><span class="gradient">code lui-même</span></h1>
+  <p class="tagline">
+    Le serveur envoie une <strong>intention</strong>, pas du HTML.
+    Le navigateur génère l'interface via <strong>IA locale</strong>.
+    50x moins de bande passante. Zéro build. Accessibilité native.
+  </p>
+  <div class="cta-group">
+    <a class="btn btn-primary" href="#demo">→ Voir la démo live</a>
+    <a class="btn btn-secondary" href="#how">Comment ça marche ?</a>
+  </div>
+</div>
+
+<!-- Stats -->
+<div class="stats-bar">
+  <div class="stat"><div class="num">50×</div><div class="label">Moins de bande passante</div></div>
+  <div class="stat"><div class="num">0</div><div class="label">Build step</div></div>
+  <div class="stat"><div class="num">4</div><div class="label">Modèles IA</div></div>
+  <div class="stat"><div class="num">15</div><div class="label">Intents</div></div>
+  <div class="stat"><div class="num">2KB</div><div class="label">Par page</div></div>
+</div>
+
+<!-- How it works -->
+<div class="section" id="how">
+  <div class="section-label">Architecture</div>
+  <h2>Le navigateur devient un agent IA actif</h2>
+  <p class="subtitle">Depuis 30 ans, le navigateur est passif : il affiche ce que le serveur lui envoie. IRP inverse ce modèle.</p>
+
+  <div class="arch">
+    <div class="arch-node server">
+      <div class="icon">🖥️</div>
+      <h4>Serveur</h4>
+      <p>Envoie intent + data</p>
+      <div class="size">≈ 2KB JSON</div>
+    </div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-node">
+      <div class="icon">📡</div>
+      <h4>Réseau</h4>
+      <p>application/irp+json</p>
+      <div class="size">Pas de HTML</div>
+    </div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-node browser">
+      <div class="icon">🧠</div>
+      <h4>Navigateur</h4>
+      <p>Agent IA génère le DOM</p>
+      <div class="size">Local, WebGPU</div>
+    </div>
+  </div>
+
+  <h3 style="font-size:1.2rem; margin: 32px 0 16px; color: var(--accent);">Le serveur envoie une intention</h3>
+  <div class="code-block">
+<span class="comment">// Content-Type: application/irp+json — 2KB sur le réseau</span>
+{
+  <span class="key">"irp"</span>: {
+    <span class="key">"version"</span>: <span class="str">"1.0"</span>,
+    <span class="key">"intent"</span>: <span class="str">"show_product"</span>,
+    <span class="key">"data"</span>: {
+      <span class="key">"name"</span>: <span class="str">"MacBook Pro 16"</span>,
+      <span class="key">"price"</span>: { <span class="key">"amount"</span>: <span class="num">2799</span>, <span class="key">"currency"</span>: <span class="str">"EUR"</span> },
+      <span class="key">"specs"</span>: [
+        { <span class="key">"label"</span>: <span class="str">"CPU"</span>, <span class="key">"value"</span>: <span class="str">"Apple M3 Max"</span> },
+        { <span class="key">"label"</span>: <span class="str">"RAM"</span>, <span class="key">"value"</span>: <span class="str">"36 GB"</span> }
+      ]
+    },
+    <span class="key">"constraints"</span>: {
+      <span class="key">"priority"</span>: <span class="str">"conversion"</span>,
+      <span class="key">"must_show"</span>: [<span class="str">"name"</span>, <span class="str">"price"</span>]
+    }
+  }
+}
+  </div>
+
+  <h3 style="font-size:1.2rem; margin: 32px 0 16px; color: var(--accent);">Le navigateur génère l'interface optimale</h3>
+  <p style="color: var(--muted); font-size: 15px;">
+    L'agent IA local prend l'intent, détecte le contexte (écran, accessibilité, préférences, réseau, batterie),
+    et génère le DOM parfait pour <strong style="color:var(--text)">cet utilisateur</strong> sur
+    <strong style="color:var(--text)">cette machine</strong>. Pas de React, pas de Tailwind, pas de build —
+    l'IA fait tout.
+  </p>
+</div>
+
+<!-- Comparison -->
+<div class="section" id="compare">
+  <div class="section-label">Avant / Après</div>
+  <h2>La fin du frontend tel qu'on le connaît</h2>
+  <p class="subtitle">Tout ce que vous n'aurez plus à faire.</p>
+
+  <div class="comparison">
+    <div class="compare-col old">
+      <span class="tag">Aujourd'hui</span>
+      <h3>❌ Web classique</h3>
+      <ul>
+        <li>Serveur génère du HTML statique pour tous</li>
+        <li>Build step obligatoire (Webpack, Vite, Next.js)</li>
+        <li>Framework frontend (React, Vue, Svelte)</li>
+        <li>CSS framework (Tailwind, Bootstrap)</li>
+        <li>100-500KB transférés par page</li>
+        <li>Responsive design générique (media queries)</li>
+        <li>Accessibilité en post-traitement (ARIA)</li>
+        <li>Un codebase pour tous les utilisateurs</li>
+        <li>Bundle size obsession, tree-shaking, code splitting</li>
+        <li>SSR vs CSR vs SSG — le débat sans fin</li>
+      </ul>
+    </div>
+    <div class="compare-col new">
+      <span class="tag">IRP</span>
+      <h3>✅ Avec IRP</h3>
+      <ul>
+        <li>Serveur envoie des intentions (JSON 2KB)</li>
+        <li>Zéro build step</li>
+        <li>Zéro framework</li>
+        <li>Zéro CSS — l'IA génère tout</li>
+        <li>50x moins de bande passante</li>
+        <li>Interface adaptée à l'écran exact</li>
+        <li>Accessibilité native (l'IA adapte)</li>
+        <li>Interface unique par utilisateur</li>
+        <li>Pas de bundle, pas de tree-shaking</li>
+        <li>Le débat n'existe plus — le navigateur décide</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Features -->
+<div class="section" id="features">
+  <div class="section-label">Fonctionnalités</div>
+  <h2>Pourquoi c'est révolutionnaire</h2>
+  <p class="subtitle">Six raisons pour lesquelles IRP change tout.</p>
+
+  <div class="features">
+    <div class="feature">
+      <div class="icon">📡</div>
+      <h4>50x moins de bande passante</h4>
+      <p>2KB d'intent JSON au lieu de 100-500KB de HTML/CSS/JS. Idéal pour les connexions lentes et le mobile data.</p>
+    </div>
+    <div class="feature">
+      <div class="icon">♿</div>
+      <h4>Accessibilité native</h4>
+      <p>L'IA adapte l'interface au handicap de l'utilisateur. Plus besoin d'ARIA en post-traitement. Conformité EU 2025.</p>
+    </div>
+    <div class="feature">
+      <div class="icon">🎨</div>
+      <h4>Personnalisation totale</h4>
+      <p>Chaque utilisateur voit une interface optimisée pour son écran, ses préférences, son contexte. Pas de compromis.</p>
+    </div>
+    <div class="feature">
+      <div class="icon">🔧</div>
+      <h4>Zéro build, zéro framework</h4>
+      <p>Pas de Webpack, pas de React, pas de Tailwind. Le serveur envoie du JSON, le navigateur fait tout le reste.</p>
+    </div>
+    <div class="feature">
+      <div class="icon">🔒</div>
+      <h4>Privacy by design</h4>
+      <p>Le modèle IA tourne localement (Chrome API, WebLLM). Les données utilisateur ne quittent jamais le navigateur.</p>
+    </div>
+    <div class="feature">
+      <div class="icon">⚡</div>
+      <h4>Cache intelligent</h4>
+      <p>Le rendu est caché localement par intent + contexte. Les visites suivantes sont instantanées, même hors ligne.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Model Router -->
+<div class="section">
+  <div class="section-label">Model Router</div>
+  <h2>Fallback chain intelligent</h2>
+  <p class="subtitle">Le client détecte automatiquement le meilleur modèle disponible et l'utilise. Si un échoue, le suivant prend le relais.</p>
+
+  <div class="chain">
+    <div class="chain-node">
+      <div class="num">1</div>
+      <h5>Chrome Prompt API</h5>
+      <p>Gemini Nano natif<br>~200ms</p>
+    </div>
+    <div class="chain-arrow">→</div>
+    <div class="chain-node">
+      <div class="num">2</div>
+      <h5>WebLLM</h5>
+      <p>Qwen2.5-0.5B<br>~2-5s · WebGPU</p>
+    </div>
+    <div class="chain-arrow">→</div>
+    <div class="chain-node">
+      <div class="num">3</div>
+      <h5>LFM3</h5>
+      <p>Liquid AI 1.7B<br>~3-8s · ONNX</p>
+    </div>
+    <div class="chain-arrow">→</div>
+    <div class="chain-node">
+      <div class="num">4</div>
+      <h5>SGP API</h5>
+      <p>claude-qwen distant<br>~5-30s</p>
+    </div>
+  </div>
+</div>
+
+<!-- Demo -->
+<div class="section" id="demo">
+  <div class="section-label">Démo live</div>
+  <h2>9 intents, 9 interfaces générées</h2>
+  <p class="subtitle">Démarrez le serveur (<code>./start.sh</code>) puis cliquez sur un intent. Le navigateur génère l'interface en local.</p>
+
+  <div class="demo-grid">
+    <a class="demo-card" href="http://localhost:3000/index.html">
+      <div class="icon">🏠</div><h5>Landing</h5><p>show_landing</p>
+    </a>
+    <a class="demo-card" href="http://localhost:8001/product/macbook-pro-16">
+      <div class="icon">💻</div><h5>Produit</h5><p>show_product</p>
+    </a>
+    <a class="demo-card" href="http://localhost:8001/article/irp-intro">
+      <div class="icon">📰</div><h5>Article</h5><p>read_article</p>
+    </a>
+    <a class="demo-card" href="http://localhost:8001/dashboard">
+      <div class="icon">📊</div><h5>Dashboard</h5><p>show_dashboard</p>
+    </a>
+    <a class="demo-card" href="http://localhost:8001/catalog">
+      <div class="icon">🛍️</div><h5>Catalogue</h5><p>show_catalog</p>
+    </a>
+    <a class="demo-card" href="http://localhost:8001/pricing">
+      <div class="icon">💰</div><h5>Tarifs</h5><p>show_pricing</p>
+    </a>
+    <a class="demo-card" href="http://localhost:8001/contact">
+      <div class="icon">✉️</div><h5>Formulaire</h5><p>fill_form</p>
+    </a>
+    <a class="demo-card" href="http://localhost:8001/tasks">
+      <div class="icon">✅</div><h5>Tâches</h5><p>browse_list</p>
+    </a>
+    <a class="demo-card" href="http://localhost:8001/chat">
+      <div class="icon">💬</div><h5>Chat</h5><p>show_chat</p>
+    </a>
+  </div>
+</div>
+
+<!-- Quick start -->
+<div class="section" id="start">
+  <div class="section-label">Démarrage</div>
+  <h2>En 30 secondes</h2>
+  <p class="subtitle">Python 3.10+ requis. Aucune dépendance, aucun npm, aucun build.</p>
+
+  <div class="steps">
+    <div class="step">
+      <h4>Cloner et lancer</h4>
+      <p><code>./start.sh</code> — démarre le serveur IRP + le client + ouvre le navigateur</p>
+    </div>
+    <div class="step">
+      <h4>Ouvrir le client</h4>
+      <p><code>http://localhost:3000</code> — le navigateur détecte les modèles IA disponibles</p>
+    </div>
+    <div class="step">
+      <h4>Le modèle se charge</h4>
+      <p>WebLLM télécharge Qwen2.5-0.5B (266MB, 1 fois). Les visites suivantes sont instantanées.</p>
+    </div>
+    <div class="step">
+      <h4>L'interface est générée</h4>
+      <p>L'IA locale génère le HTML/CSS/JS à partir de l'intent. Adapté à votre écran et vos préférences.</p>
+    </div>
+  </div>
+
+  <h3 style="font-size:1.2rem; margin: 32px 0 16px; color: var(--accent);">Avec le SDK Python</h3>
+  <div class="code-block">
+<span class="key">from</span> irp_sdk <span class="key">import</span> show_product
+
+response = show_product(
+    product_id=<span class="str">"widget-42"</span>,
+    name=<span class="str">"Super Widget"</span>,
+    price={<span class="str">"amount"</span>: <span class="num">29.99</span>, <span class="str">"currency"</span>: <span class="str">"EUR"</span>},
+)
+<span class="comment"># response.to_json() → JSON IRP prêt à envoyer</span>
+<span class="comment"># response.headers() → {"Content-Type": "application/irp+json"}</span>
+  </div>
+
+  <h3 style="font-size:1.2rem; margin: 32px 0 16px; color: var(--accent);">Avec le SDK JavaScript</h3>
+  <div class="code-block">
+<span class="key">import</span> { IRPClient } <span class="key">from</span> <span class="str">'./irp-sdk/irp-sdk.js'</span>;
+
+<span class="key">const</span> client = <span class="key">new</span> IRPClient({
+  server: <span class="str">'http://localhost:8001'</span>,
+  mount: <span class="str">'#app'</span>,
+});
+
+<span class="key">await</span> client.init();         <span class="comment">// détecte les renderers IA</span>
+<span class="key">await</span> client.navigate(<span class="str">'/'</span>);  <span class="comment">// fetch IRP + rendu local</span>
+  </div>
+</div>
+
+<!-- Extension -->
+<div class="section">
+  <div class="section-label">Extension navigateur</div>
+  <h2>IRP sur n'importe quel site</h2>
+  <p class="subtitle">L'extension Chrome/Firefox intercepte les réponses <code>application/irp+json</code> et les rend localement. Aucune modification du site requise.</p>
+
+  <div class="code-block">
+<span class="comment"># Charger l'extension dans Chrome</span>
+chrome://extensions → Developer mode → Load unpacked → irp-extension/
+
+<span class="comment"># L'extension patche fetch() et XMLHttpRequest automatiquement</span>
+<span class="comment"># Popup avec: toggle on/off, sélecteur de renderer, stats temps réel</span>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-section">
+  <h2>Le web de demain<br>commence aujourd'hui</h2>
+  <p>IRP est un POC fonctionnel. Le modèle fonctionne. À vous de décider quand vous l'adoptez.</p>
+  <div class="cta-group">
+    <a class="btn btn-primary" href="http://localhost:3000/index.html">→ Lancer la démo</a>
+    <a class="btn btn-secondary" href="#how">Lire la doc</a>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer>
+  <p>⚡ IRP — Intent Rendering Protocol v1.0</p>
+  <p style="margin-top: 8px;">Le web qui se code lui-même dans le navigateur.</p>
+  <p style="margin-top: 16px;">
+    <a href="#how">Architecture</a> ·
+    <a href="#compare">Comparaison</a> ·
+    <a href="#features">Features</a> ·
+    <a href="#demo">Démo</a> ·
+    <a href="#start">Démarrage</a>
+  </p>
+</footer>
+
+</body>
+</html>

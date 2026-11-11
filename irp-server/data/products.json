@@ -1,0 +1,64 @@
+[
+  {
+    "id": "macbook-pro-16",
+    "name": "MacBook Pro 16\"",
+    "price": { "amount": 2799, "currency": "EUR" },
+    "category": "Laptop",
+    "specs": [
+      { "label": "CPU", "value": "M4 Max" },
+      { "label": "RAM", "value": "36GB" },
+      { "label": "Storage", "value": "1TB SSD" },
+      { "label": "Display", "value": "16.2\" Liquid Retina XDR" },
+      { "label": "Battery", "value": "22h" }
+    ],
+    "description": "Le MacBook Pro 16 pouces avec la puce M4 Max offre des performances exceptionnelles pour les professionnels créatifs. Jusqu'à 22 heures d'autonomie.",
+    "images": ["macbook-pro-16.webp"],
+    "actions": [
+      { "id": "buy", "label": "Acheter", "type": "primary", "href": "/api/order/macbook-pro-16" },
+      { "id": "compare", "label": "Comparer", "type": "secondary", "href": "/compare/macbook-pro-16" },
+      { "id": "specs", "label": "Spécifications complètes", "type": "tertiary", "href": "/specs/macbook-pro-16" }
+    ],
+    "rating": { "score": 4.8, "count": 1247 },
+    "availability": "in_stock"
+  },
+  {
+    "id": "iphone-16-pro",
+    "name": "iPhone 16 Pro",
+    "price": { "amount": 1329, "currency": "EUR" },
+    "category": "Smartphone",
+    "specs": [
+      { "label": "Écran", "value": "6.3\" Super Retina XDR" },
+      { "label": "Puce", "value": "A18 Pro" },
+      { "label": "Stockage", "value": "256GB" },
+      { "label": "Caméra", "value": "48MP + 48MP + 12MP" },
+      { "label": "Batterie", "value": "27h vidéo" }
+    ],
+    "description": "iPhone 16 Pro avec puce A18 Pro, caméra Pro 48MP, et Action Button. Titane de grade aérospatial.",
+    "images": ["iphone-16-pro.webp"],
+    "actions": [
+      { "id": "buy", "label": "Acheter", "type": "primary", "href": "/api/order/iphone-16-pro" },
+      { "id": "compare", "label": "Comparer", "type": "secondary", "href": "/compare/iphone-16-pro" }
+    ],
+    "rating": { "score": 4.9, "count": 3421 },
+    "availability": "in_stock"
+  },
+  {
+    "id": "airpods-pro-3",
+    "name": "AirPods Pro 3",
+    "price": { "amount": 279, "currency": "EUR" },
+    "category": "Audio",
+    "specs": [
+      { "label": "Réduction de bruit", "value": "Active (ANC)" },
+      { "label": "Autonomie", "value": "6h (30h avec boîtier)" },
+      { "label": "Connectivité", "value": "Bluetooth 5.3" },
+      { "label": "Audio", "value": "Audio spatial" }
+    ],
+    "description": "AirPods Pro 3 avec réduction de bruit active améliorée, audio spatial, et boîtier de charge MagSafe.",
+    "images": ["airpods-pro-3.webp"],
+    "actions": [
+      { "id": "buy", "label": "Acheter", "type": "primary", "href": "/api/order/airpods-pro-3" }
+    ],
+    "rating": { "score": 4.7, "count": 892 },
+    "availability": "in_stock"
+  }
+]
