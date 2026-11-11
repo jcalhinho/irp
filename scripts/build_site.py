@@ -22,7 +22,7 @@ for f in sorted(os.listdir(os.path.join(ROOT, "irp-core"))):
 cp("irp-site/home.html", "index.html")
 
 CSP_TOOL = "default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'self' data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
-CSP_LOCAL = ("default-src 'none'; script-src 'self' 'wasm-unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; "
+CSP_LOCAL = ("default-src 'none'; script-src 'self' blob: 'wasm-unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; "
              "connect-src 'self' https://huggingface.co https://*.huggingface.co https://*.hf.co https://cdn.jsdelivr.net; "
              "worker-src 'self' blob:; img-src 'self' data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'")
 open(os.path.join(OUT, "_headers"), "w", encoding="utf-8").write(f"""/*

@@ -202,7 +202,7 @@ _TOOL_CSP = ("default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-in
 _STATIC = {"/tool": ("irp-site/tool.html", "text/html; charset=utf-8"), "/tool.js": ("irp-site/tool.js", "text/javascript; charset=utf-8"),
            "/privacy": ("irp-site/privacy.html", "text/html; charset=utf-8")}
 # Démo modèles locaux : CSP dédiée (bibliothèque d'inférence + poids depuis des hôtes nommés, jamais d'inline script).
-_LOCAL_CSP = ("default-src 'none'; script-src 'self' 'wasm-unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; "
+_LOCAL_CSP = ("default-src 'none'; script-src 'self' blob: 'wasm-unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; "
               "connect-src 'self' https://huggingface.co https://*.huggingface.co https://*.hf.co https://cdn.jsdelivr.net; "
               "worker-src 'self' blob:; img-src 'self' data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'")
 _LOCAL_PAGES = {"/local": ("irp-site/local.html", "text/html; charset=utf-8"), "/local.js": ("irp-site/local.js", "text/javascript; charset=utf-8")}

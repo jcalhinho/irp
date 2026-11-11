@@ -44,3 +44,12 @@ test('un petit modèle qui perd un montant est rejeté : le contrat ne dépend p
 });
 
 test('badge sans modèle = règles déterministes', () => assert.match(modelBadge(null), /Règles déterministes/));
+
+test('LFM : sortie sous forme de Tensor (.data) — cas réel de transformers.js 4.x', async () => {
+  const T = {
+    AutoTokenizer: { from_pretrained: async () => ({ apply_chat_template: () => ({ input_ids: { dims: [1, 2] } }), decode: (ids) => ids.map(String).join(' ') }) },
+    AutoModelForCausalLM: { from_pretrained: async () => ({ generate: async () => ({ dims: [1, 5], data: BigInt64Array.from([1n, 2n, 7n, 8n, 9n]) }) }) },
+  };
+  const r = await createLocalAdapter('lfm2.5-1.2b', { env: { navigator: { gpu: {} } }, loadTransformers: async () => T });
+  assert.equal(await r.adapter('x'), '7 8 9');
+});

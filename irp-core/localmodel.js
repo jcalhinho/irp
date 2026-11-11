@@ -52,9 +52,10 @@ export async function createLocalAdapter(id, opts = {}) {
       const messages = [{ role: 'system', content: SYSTEM_PROMPT }, { role: 'user', content: text }];
       const input = tokenizer.apply_chat_template(messages, { add_generation_prompt: true, return_dict: true });
       const out = await lm.generate({ ...input, max_new_tokens: 512, do_sample: false });
-      const seq = out[0] || out;
+      // transformers.js renvoie un Tensor [1, n] (champ .data) ; les anciennes versions, un tableau de séquences.
+      const ids = out && out.data ? Array.from(out.data) : Array.from(out[0] || out);
       const start = input.input_ids.dims[input.input_ids.dims.length - 1];
-      return tokenizer.decode(seq.slice(start), { skip_special_tokens: true }).trim();
+      return tokenizer.decode(ids.slice(start), { skip_special_tokens: true }).trim();
     };
     return { model, adapter };
   } catch { return null; }
