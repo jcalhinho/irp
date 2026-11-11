@@ -14,7 +14,7 @@ for (const m of models) {
 }
 if (!$('pick').options.length) {
   $('load').disabled = true;
-  $('status').textContent = "Aucun modèle local n'est disponible dans ce navigateur. Essayez Chrome récent (WebGPU activé).";
+  $('status').textContent = "Aucun modèle local n'est disponible dans ce navigateur. LFM2.5 demande WebGPU (Chrome ou Edge récents, sur ordinateur) ; Gemini Nano est intégré à Chrome sur ordinateur récent. Safari et Firefox : selon la version. Vous pouvez quand même utiliser la page « Adapter une page » avec les règles, sans modèle.";
 }
 
 $('load').addEventListener('click', async () => {
