@@ -101,6 +101,7 @@ done
 echo ""
 echo -e "${BLUE}📋 Routes disponibles:${NC}"
 echo -e "  ${GREEN}http://localhost:$PORT_CLIENT/index.html${NC}  → Landing (rendu IA)"
+echo -e "  ${GREEN}http://localhost:$PORT_SERVER/tool${NC}              → ⭐ Outil « colle une URL » (lecture adaptée)"
 echo -e "  ${GREEN}http://localhost:$PORT_SERVER/${NC}                  → Intent show_landing"
 echo -e "  ${GREEN}http://localhost:$PORT_SERVER/product/macbook-pro-16${NC}  → show_product"
 echo -e "  ${GREEN}http://localhost:$PORT_SERVER/article/irp-intro${NC}       → read_article"
@@ -116,9 +117,9 @@ echo ""
 
 echo -e "${GREEN}🌐 Ouverture du navigateur...${NC}"
 if command -v open &> /dev/null; then
-  open "http://localhost:$PORT_CLIENT/index.html"
+  open "http://localhost:$PORT_SERVER/tool"
 elif command -v xdg-open &> /dev/null; then
-  xdg-open "http://localhost:$PORT_CLIENT/index.html"
+  xdg-open "http://localhost:$PORT_SERVER/tool"
 fi
 
 echo ""
