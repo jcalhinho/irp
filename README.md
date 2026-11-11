@@ -12,6 +12,18 @@
 - 🔒 Un modèle qui génère du HTML est une surface d'attaque et un risque de dérive. IRP n'en génère jamais : **aucun HTML ne vient d'un modèle**.
 - 🧠 Chacun lit à sa façon (dyslexie, faible vision, langue seconde, fatigue) : mêmes faits, présentation adaptée, **sans rien perdre** (contrat `must_show` vérifié).
 
+## 🚀 Installer sur un site : une ligne
+
+```html
+<script src="https://VOTRE-SERVEUR/widget.js" defer></script>
+```
+
+Un bouton « Lecture adaptée » apparaît (et Alt+Maj+L). Rien n'est chargé avant le clic, aucun cookie, aucune donnée envoyée : l'extraction, l'adaptation et le rendu se font dans le navigateur du visiteur, dans un Shadow DOM fermé. Options : `data-profile="dyslexie"`, `data-label="…"`.
+
+## 🔭 Vision
+
+Le web actuel envoie du HTML que le navigateur affiche sans comprendre. IRP part de l'idée inverse : **le serveur envoie du sens, le navigateur l'adapte à la personne**. IRP-Doc en est la première brique, prouvable aujourd'hui (lecture, accessibilité, agents). La suite : appliquer le même principe — composants déclarés, rendu vérifié, IA cantonnée à l'adaptation — aux formulaires, tableaux de bord et applications. Le mode « intents » de la v1 (`irp-client/`) en est le prototype.
+
 ## 🧩 Ce que contient le projet
 
 | Brique | Rôle | Dossier |

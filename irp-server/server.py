@@ -201,6 +201,9 @@ _TOOL_CSP = ("default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-in
              "img-src 'self' data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'")
 _STATIC = {"/tool": ("irp-site/tool.html", "text/html; charset=utf-8"), "/tool.js": ("irp-site/tool.js", "text/javascript; charset=utf-8"),
            "/privacy": ("irp-site/privacy.html", "text/html; charset=utf-8")}
+# Scripts publics du widget (lecture seule, sans secret) : intégrables depuis n'importe quel site → CORS ouvert.
+_WIDGET = {"/widget.js": "irp-site/widget.js", "/reader.js": "irp-extension/reader.js"}
+_CORS_OPEN = {"Access-Control-Allow-Origin": "*", "Cross-Origin-Resource-Policy": "cross-origin"}
 
 
 def configure_fetch(enabled: bool, per_minute: int = 10) -> None:
@@ -454,6 +457,15 @@ class IRPHandler(BaseHTTPRequestHandler):
             self._serve_fetch()
             return True
         rel = None
+        if path in _WIDGET or (path.startswith("/core/") and re.fullmatch(r"/core/[a-z]+\.js", path)):
+            rel = _WIDGET.get(path) or "irp-core/" + path[len("/core/"):]
+            try:
+                with open(os.path.join(_REPO_DIR, rel), "rb") as f:
+                    body = f.read()
+            except OSError:
+                return False
+            self._send_bytes(200, body, "text/javascript; charset=utf-8", {**_CORS_OPEN, "Cache-Control": "public, max-age=300"})
+            return True
         if path in _STATIC:
             rel, ctype = _STATIC[path]
         elif path.startswith("/core/") and re.fullmatch(r"/core/[a-z]+\.js", path):

@@ -11,10 +11,16 @@
   let host = null, core = null, prevFocus = null, inertChanged = [];
   const state = { profile: 'standard', size: 1, simplify: false, ai: false, doc: null, adapted: null };
 
-  const loadCore = async () => (core ||= await import(chrome.runtime.getURL('core/index.js')));
-  const store = {
+  // Deux contextes : extension (chrome.runtime) ou widget intégré à un site (base = origine du widget.js).
+  const EXT = typeof chrome !== 'undefined' && !!(chrome.runtime && chrome.runtime.id);
+  const loadCore = async () => (core ||= await import(EXT ? chrome.runtime.getURL('core/index.js') : String(window.__IRP_BASE || '') + '/core/index.js'));
+  const LS = 'irp-reader-prefs';
+  const store = EXT ? {
     get: () => new Promise((res) => { try { chrome.storage.local.get(['readerPrefs'], (r) => res((r && r.readerPrefs) || {})); } catch { res({}); } }),
     set: (v) => { try { chrome.storage.local.set({ readerPrefs: v }); } catch { /* best effort */ } },
+  } : {
+    get: () => { try { return Promise.resolve(JSON.parse(localStorage.getItem(LS)) || {}); } catch { return Promise.resolve({}); } },
+    set: (v) => { try { localStorage.setItem(LS, JSON.stringify(v)); } catch { /* best effort */ } },
   };
 
   function el(tag, props = {}, children = []) {
@@ -145,8 +151,12 @@
     if (prevFocus && prevFocus.focus) { try { prevFocus.focus(); } catch { /* ignore */ } }
   }
 
-  chrome.runtime.onMessage.addListener((msg, _s, send) => {
-    if (msg && msg.type === 'IRP_READER_TOGGLE') { if (host) close(); else open({ profile: msg.profile }); send({ ok: true, open: !!host }); }
-    return false;
-  });
+  if (EXT) {
+    chrome.runtime.onMessage.addListener((msg, _s, send) => {
+      if (msg && msg.type === 'IRP_READER_TOGGLE') { if (host) close(); else open({ profile: msg.profile }); send({ ok: true, open: !!host }); }
+      return false;
+    });
+  } else {
+    window.__irpReaderToggle = (profile) => { if (host) close(); else return open({ profile }); };
+  }
 })();
