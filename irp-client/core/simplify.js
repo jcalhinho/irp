@@ -126,6 +126,29 @@ export function checkPreserved(original, adapted) {
 }
 
 /**
+ * Détecte ce qu'une reformulation AJOUTE : chiffres, adresses ou noms propres absents de l'original, et trop de mots
+ * nouveaux (un modèle qui invente des phrases). Le vocabulaire des règles de simplification est autorisé.
+ * Heuristique : l'objectif est d'attraper les inventions, pas de refuser tout synonyme.
+ * @returns {{ok:boolean, added:string[], novelRatio:number}}
+ */
+export function checkAdditions(original, adapted, opts = {}) {
+  const maxRatio = opts.maxNovelRatio ?? 0.35;
+  const orig = String(original), out = String(adapted);
+  const hay = norm(orig).replace(/\s/g, '').toLowerCase();
+  // 1) éléments sensibles apparus de nulle part
+  const added = protectedTokens(out).filter((t) => !hay.includes(t));
+  // 2) mots de contenu nouveaux (racine = 5 premières lettres, sans accents)
+  const stem = (w) => norm(w).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').slice(0, 5);
+  const words = (t) => (String(t).match(/[A-Za-zÀ-ÿ]{4,}/g) || []).map(stem);
+  const known = new Set([...words(orig), ...words(simplifyText(orig))]);
+  const content = words(out);
+  const novel = content.filter((w) => !known.has(w));
+  const novelRatio = content.length ? novel.length / content.length : 0;
+  const ok = added.length === 0 && !(novel.length >= 3 && novelRatio > maxRatio);
+  return { ok, added, novelRatio: Math.round(novelRatio * 100) / 100 };
+}
+
+/**
  * Adapte un texte : règles d'abord, puis (optionnellement) un adaptateur IA, vérifié.
  * @param {string} text
  * @param {{adapter?: (t:string)=>Promise<string>|string, maxGrowth?: number}} [opts]
@@ -145,6 +168,8 @@ export async function adaptText(text, opts = {}) {
     if (/[<>]/.test(out) && !/[<>]/.test(original)) return { text: base, source: 'rules', reason: 'ia-balises' };
     const c = checkPreserved(original, out);
     if (!c.ok) return { text: base, source: 'rules', reason: 'ia-perte: ' + c.missing.slice(0, 3).join(', ') };
+    const a = checkAdditions(original, out);
+    if (!a.ok) return { text: base, source: 'rules', reason: 'ia-ajout: ' + (a.added.length ? a.added.slice(0, 3).join(', ') : Math.round(a.novelRatio * 100) + ' % de mots nouveaux') };
     return { text: out.trim(), source: 'ai' };
   } catch (e) {
     return { text: base, source: 'rules', reason: 'ia-erreur' };

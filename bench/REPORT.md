@@ -12,9 +12,9 @@
 | idem profils dyslexie / FALC / basse vision | 20 / 20 / 20 pages 100 % |
 | `must_show` respecté après simplification FALC | 100 % — pages 100 % : 20 / 20 |
 | Garde-fou « rien de perdu » (nombres, dates, noms) après FALC | 20 / 20 pages |
-| Latence extraction p50 / p95 | 1.7 ms / 6.8 ms |
-| Latence rendu p50 / p95 | 0.6 ms / 3.4 ms |
-| Latence adaptation (règles) p50 / p95 | 0.1 ms / 1.6 ms |
+| Latence extraction p50 / p95 | 1.7 ms / 7.5 ms |
+| Latence rendu p50 / p95 | 0.6 ms / 3.9 ms |
+| Latence adaptation (règles) p50 / p95 | 0.1 ms / 1.7 ms |
 | Lisibilité (Kandel-Moles, plus haut = plus facile) | 61.4 → **65.2** |
 | Mots par phrase (moyenne) | 19.3 → **15.9** |
 | Phrases de plus de 20 mots | 33 → **25** |

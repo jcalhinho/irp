@@ -1,6 +1,6 @@
 # Politique de confidentialité — IRP Lecture
 
-*Dernière mise à jour : 11 novembre 2026. À compléter : éditeur et contact entre crochets.*
+*Dernière mise à jour : 11 novembre 2026. À compléter : adresse e-mail de contact et adresse postale de l'éditeur (entre crochets).*
 
 ## En résumé
 L'extension **ne collecte, ne transmet et ne vend aucune donnée**. Elle fonctionne entièrement dans votre navigateur.
@@ -12,16 +12,18 @@ L'extension **ne collecte, ne transmet et ne vend aucune donnée**. Elle fonctio
 - **Réseau** : l'extension n'effectue aucune requête réseau. Elle n'inclut ni publicité, ni suivi, ni statistiques d'usage.
 - **Presse-papiers** : écrit uniquement quand vous cliquez sur « Copier en Markdown ».
 
-## Outil en ligne « colle une URL » (si vous l'utilisez)
-- L'adresse que vous saisissez est envoyée à notre serveur, qui télécharge cette page publique et vous la renvoie. L'analyse et l'affichage se font ensuite dans votre navigateur.
-- Le serveur n'accepte que des pages publiques (http/https). Il ne conserve ni la page ni son contenu. Des journaux techniques standard (adresse IP, adresse demandée, date) peuvent être conservés **[durée, par ex. 7 jours]** pour la sécurité et le bon fonctionnement, puis supprimés.
+## Site web (irp-lecture.netlify.app) : outil de collage, démo « modèle local », widget
+- **Hébergement** : site statique hébergé par Netlify. Comme tout hébergeur, Netlify peut conserver des journaux techniques (adresse IP, page demandée, date) selon sa propre politique. L'éditeur n'exploite aucun serveur applicatif et ne reçoit aucune donnée personnelle.
+- **Outil « collez le contenu »** : le texte que vous collez est analysé dans votre navigateur. Il n'est envoyé à aucun serveur.
+- **Démo « modèle local »** (`/local`) : le modèle s'exécute sur votre appareil. Au premier chargement, votre navigateur télécharge la bibliothèque d'inférence depuis jsDelivr (cdn.jsdelivr.net) et les poids du modèle depuis Hugging Face (huggingface.co) ; ces services voient votre adresse IP. Votre texte n'est envoyé à aucun de ces services. Le modèle est conservé dans le stockage de votre navigateur (vous pouvez l'effacer dans les réglages du navigateur).
+- **Widget** (`widget.js`) : s'il est installé sur un site, il ne charge rien tant que vous ne cliquez pas, puis traite la page dans votre navigateur. Il enregistre vos préférences d'affichage dans `localStorage`.
 - Aucun cookie, aucun traceur, aucune publicité.
 
 ## Vos droits (RGPD)
 Pour toute question ou pour exercer vos droits d'accès, de rectification ou d'effacement des journaux techniques : **[adresse e-mail de contact]**. Vous pouvez aussi saisir la CNIL (cnil.fr).
 
 ## Éditeur
-**[Nom / raison sociale, adresse]**
+Jean-Christophe Alhinho, France. **[adresse postale ou mention de l'hébergeur de contact]**
 
 ## Modifications
 Toute modification sera publiée sur cette page avec une nouvelle date.

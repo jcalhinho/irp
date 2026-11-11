@@ -53,3 +53,25 @@ test('LFM : sortie sous forme de Tensor (.data) — cas réel de transformers.js
   const r = await createLocalAdapter('lfm2.5-1.2b', { env: { navigator: { gpu: {} } }, loadTransformers: async () => T });
   assert.equal(await r.adapter('x'), '7 8 9');
 });
+
+import { checkAdditions } from '../irp-core/index.js';
+const ORIG = "Afin de bénéficier de l'aide annuelle de 1 200 €, il convient de déposer votre dossier auprès de la Caisse des Écoles avant le 31 octobre 2027, faute de quoi celui-ci sera rejeté. Contact : aides@ville-exemple.fr";
+
+test('ajouts : la sortie réelle de LFM2.5 (phrases inventées) est refusée', async () => {
+  const lfm = "Il faut déposer le dossier avant le 31 octobre 2027.  \nAppeler aides@ville-exemple.fr.  \nApportez les documents.  \nLe montant est 1 200 €.  \nLa date limite est le 31 octobre.  \nNe pas tarder.";
+  const r = checkAdditions(ORIG, lfm);
+  assert.equal(r.ok, false);
+  const res = await adaptText(ORIG, { adapter: async () => lfm });
+  assert.equal(res.source, 'rules');
+});
+
+test('ajouts : une simplification fidèle (synonymes, phrases courtes) passe', () => {
+  const ok = "Pour avoir l'aide annuelle de 1 200 €, déposez votre dossier à la Caisse des Écoles avant le 31 octobre 2027. Sinon, il sera rejeté. Contact : aides@ville-exemple.fr";
+  assert.equal(checkAdditions(ORIG, ok).ok, true);
+});
+
+test('ajouts : un chiffre, une adresse ou un nom inventé est refusé', () => {
+  assert.equal(checkAdditions(ORIG, ORIG + ' Appelez le 0145678901.').ok, false);
+  assert.equal(checkAdditions(ORIG, ORIG + ' Écrivez à contact@autre.fr').ok, false);
+  assert.equal(checkAdditions(ORIG, ORIG + ' Voir Mairie de Lyon').ok, false);
+});

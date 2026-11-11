@@ -1,9 +1,32 @@
 <!doctype html>
 <html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Politique de confidentialité — IRP Lecture</title>
-<style>body{max-width:46rem;margin:2rem auto;padding:0 1rem;font:17px/1.6 system-ui,sans-serif;color:#1a1a1a;background:#fff}h1,h2{line-height:1.25}a{color:#0b5cad}@media (prefers-color-scheme:dark){body{background:#121212;color:#e8e8e8}a{color:#8ab4f8}}</style></head>
+<style>body{max-width:46rem;margin:2rem auto;padding:0 1rem;font:17px/1.6 system-ui,sans-serif;color:#1a1a1a;background:#fff}h1,h2{line-height:1.25}a{color:#0b5cad}code{font-size:.9em}@media (prefers-color-scheme:dark){body{background:#121212;color:#e8e8e8}a{color:#8ab4f8}}</style></head>
 <body><main>
 <h1>Politique de confidentialité — IRP Lecture</h1>
-<p><strong>Résumé :</strong> l'extension ne collecte, ne transmet et ne vend aucune donnée. Elle fonctionne entièrement dans votre navigateur.</p>
-<p>Le texte complet (extension et outil en ligne) est dans le fichier <code>store/PRIVACY.md</code> du dépôt. <em>Avant publication, remplacez cette page par ce texte, une fois les informations d'éditeur et de contact renseignées.</em></p>
+<p><em>Dernière mise à jour : 11 novembre 2026. À compléter : adresse e-mail de contact et adresse postale de l&#x27;éditeur (entre crochets).</em></p>
+<h2>En résumé</h2>
+<p>L&#x27;extension <strong>ne collecte, ne transmet et ne vend aucune donnée</strong>. Elle fonctionne entièrement dans votre navigateur.</p>
+<h2>Extension « IRP Lecture »</h2>
+<ul>
+<li><strong>Ce qu&#x27;elle lit</strong> : le texte et la structure de la page de l&#x27;onglet actif, <strong>uniquement</strong> quand vous cliquez sur l&#x27;icône ou utilisez le raccourci. Ce contenu est analysé sur votre appareil et n&#x27;est envoyé nulle part.</li>
+<li><strong>Ce qu&#x27;elle enregistre</strong> : vos préférences d&#x27;affichage (profil, taille du texte, option de simplification), dans le stockage local de votre navigateur (<code>chrome.storage.local</code>). Elles ne quittent pas votre appareil et peuvent être effacées en désinstallant l&#x27;extension.</li>
+<li><strong>IA locale (optionnelle)</strong> : si vous cliquez sur « IA locale » et que votre Chrome propose son IA intégrée, la reformulation est faite sur votre appareil par Chrome. L&#x27;extension n&#x27;appelle aucun service d&#x27;IA distant.</li>
+<li><strong>Réseau</strong> : l&#x27;extension n&#x27;effectue aucune requête réseau. Elle n&#x27;inclut ni publicité, ni suivi, ni statistiques d&#x27;usage.</li>
+<li><strong>Presse-papiers</strong> : écrit uniquement quand vous cliquez sur « Copier en Markdown ».</li>
+</ul>
+<h2>Site web (irp-lecture.netlify.app) : outil de collage, démo « modèle local », widget</h2>
+<ul>
+<li><strong>Hébergement</strong> : site statique hébergé par Netlify. Comme tout hébergeur, Netlify peut conserver des journaux techniques (adresse IP, page demandée, date) selon sa propre politique. L&#x27;éditeur n&#x27;exploite aucun serveur applicatif et ne reçoit aucune donnée personnelle.</li>
+<li><strong>Outil « collez le contenu »</strong> : le texte que vous collez est analysé dans votre navigateur. Il n&#x27;est envoyé à aucun serveur.</li>
+<li><strong>Démo « modèle local »</strong> (<code>/local</code>) : le modèle s&#x27;exécute sur votre appareil. Au premier chargement, votre navigateur télécharge la bibliothèque d&#x27;inférence depuis jsDelivr (cdn.jsdelivr.net) et les poids du modèle depuis Hugging Face (huggingface.co) ; ces services voient votre adresse IP. Votre texte n&#x27;est envoyé à aucun de ces services. Le modèle est conservé dans le stockage de votre navigateur (vous pouvez l&#x27;effacer dans les réglages du navigateur).</li>
+<li><strong>Widget</strong> (<code>widget.js</code>) : s&#x27;il est installé sur un site, il ne charge rien tant que vous ne cliquez pas, puis traite la page dans votre navigateur. Il enregistre vos préférences d&#x27;affichage dans <code>localStorage</code>.</li>
+<li>Aucun cookie, aucun traceur, aucune publicité.</li>
+</ul>
+<h2>Vos droits (RGPD)</h2>
+<p>Pour toute question ou pour exercer vos droits d&#x27;accès, de rectification ou d&#x27;effacement des journaux techniques : <strong>[adresse e-mail de contact]</strong>. Vous pouvez aussi saisir la CNIL (cnil.fr).</p>
+<h2>Éditeur</h2>
+<p>Jean-Christophe Alhinho, France. <strong>[adresse postale ou mention de l&#x27;hébergeur de contact]</strong></p>
+<h2>Modifications</h2>
+<p>Toute modification sera publiée sur cette page avec une nouvelle date.</p>
 </main></body></html>
