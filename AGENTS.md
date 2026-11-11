@@ -824,7 +824,7 @@ curl -s http://localhost:8000/__intents | python3 -m json.tool
 
 ---
 
-## 15. ÉTAT DU PROJET (session 2026-11-10)
+## 16. ÉTAT DU PROJET (session 2026-11-10, historique)
 
 ### ✅ Phase 1 — POC (terminé)
 - Serveur IRP Python stdlib (zéro dépendance) — 12 routes, Content-Type `application/irp+json`
@@ -932,3 +932,39 @@ ai-runtime-web/
 3. **IRP spec v1.1** : streaming intents, server-side rendering fallback, SEO via prerender
 4. **Browser API standard** : proposer un standard W3C/WHATWG pour `application/irp+json`
 5. **Marketplace d'intents** : bibliothèque d'intents réutilisables (show_product, fill_form, etc.)
+
+
+---
+
+## 17. ÉTAT ACTUEL ET DÉCISIONS (2026-11-11) — À LIRE EN PREMIER
+
+**Pivot assumé** : l'ancien chemin « le navigateur fait générer du HTML par un LLM » reste dans le dépôt (expérimental) mais n'est plus la direction.
+La direction est **IRP-Doc** : contenu = composants JSON ; rendu = code déterministe ; IA = adaptation de texte sous garde-fous.
+Spécification : `irp-spec/irp-doc-v1.0.md`. Positionnement : `business/positioning.md`. Entretiens à mener : `business/interviews.md`.
+
+### Ce qui existe (vérifié par les tests)
+- `irp-core/` (source canonique, copiée par `scripts/sync-core.sh` dans `irp-extension/core`, `irp-client/core`) :
+  `doc.js` (validation, `safeHref`), `render.js` (rendu + profils + thèmes WCAG), `simplify.js` (FALC par règles, lisibilité, `adaptText`/`adaptDoc` avec garde-fous),
+  `extract.js` (page HTML → IRP-Doc), `verify.js` (`must_show`, `verifyPreserved`), `agent.js` (Markdown), `index.js`.
+- Serveur : `irp-server/irpdoc.py` (intents → IRP-Doc, Markdown, llms.txt) ; routes `.md`, `.irpdoc.json`, `Accept`, `/llms.txt`, `/.well-known/irp.json`.
+- Client web : `?mode=doc` (ou automatique si aucun moteur IA) → `irp-client/doc-mode.js`.
+- Extension : `reader.js` (mode lecture, Alt+Maj+L), popup « Mode lecture adapté ».
+- Sécurité : assainisseur à liste blanche pour l'ancien chemin ; proxy durci (`proxy.py`) ; plus de clé dans l'URL.
+- Tests : `tests/` — 50 JS, 31 Python, e2e 27. Benchmark : `bench/` (`REPORT.md`).
+
+### Variables d'environnement du proxy
+`SGP_API_KEY` (sinon, en loopback uniquement, `~/.local/share/opencode/auth.json`), `IRP_PROXY_TOKEN` (≥ 16 car., obligatoire hors localhost), `IRP_ALLOWED_ORIGINS` (liste séparée par des virgules), `IRP_PROXY_RATE` (requêtes/min/client, défaut 30), `IRP_SGP_URL` (amont). Options serveur : `--allow-origin`, `--no-proxy`.
+
+### Règles pour les agents qui modifient ce code
+1. **Ne jamais** faire produire du HTML par un modèle dans le chemin IRP-Doc. L'IA ne reçoit/renvoie que du texte, toujours via `adaptText` (vérification obligatoire).
+2. Toute modification d'`irp-core/` → `scripts/sync-core.sh`, puis `node --test` (dans `tests/`) et `python3 -m unittest discover -s tests -p "test_*.py"`.
+3. Pas de caractères `\u` littéraux dans les regex écrites via un shell : construire les classes à l'exécution (voir `doc.js`).
+4. Le Markdown de `agent.js` et celui d'`irpdoc.py` doivent rester identiques (test de contrat).
+5. Ne pas affirmer de chiffres non mesurés (l'ancien « 50x » a été retiré). Citer `bench/REPORT.md` et ses limites.
+6. Un FALC n'est **pas** certifié : toujours parler d'« aide de lecture ».
+
+### Limites connues / prochaines étapes
+- Extraction : heuristique ; mesurée sur corpus synthétique seulement → tester sur de vraies pages (`bench/README.md`).
+- Pas de composant `form` dans IRP-Doc (à concevoir avec soin : actions, validation, CSRF).
+- Écrans publiés non testés dans Firefox/Safari (extension MV3 testée sous Chromium headless).
+- Aucune validation commerciale : mener les 5 entretiens avant d'investir davantage.

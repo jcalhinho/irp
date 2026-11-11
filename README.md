@@ -1,49 +1,76 @@
 # ⚡ IRP — Intent Rendering Protocol
 
-> **Le web qui se code lui-même dans le navigateur.**
-> Le serveur envoie des intentions, pas du HTML. Le navigateur génère l'interface via IA locale.
+> **Un seul document de contenu, trois lecteurs : l'humain (rendu adapté), l'agent IA (Markdown/JSON), le moteur de recherche.**
+> Le contenu est décrit par des composants JSON ; le rendu est déterministe ; l'IA n'adapte que le texte, sous garde-fous.
 
 ---
 
-## 🎯 Le problème
+## 🎯 Pourquoi
 
-Depuis 30 ans, le modèle web est : **serveur → HTML/CSS/JS → navigateur passif qui affiche**.
+- ♿ L'accessibilité est ajoutée après coup (et les « overlays » JavaScript sont contestés) : le rendu IRP est **accessible par construction** et **auditable**.
+- 🤖 Les agents IA lisent désormais le web : IRP publie le **même contenu en Markdown compact**, avec `/llms.txt` et `/.well-known/irp.json`.
+- 🔒 Un modèle qui génère du HTML est une surface d'attaque et un risque de dérive. IRP n'en génère jamais : **aucun HTML ne vient d'un modèle**.
+- 🧠 Chacun lit à sa façon (dyslexie, faible vision, langue seconde, fatigue) : mêmes faits, présentation adaptée, **sans rien perdre** (contrat `must_show` vérifié).
 
-Le navigateur ne "pense" pas, il exécute. Conséquences :
-- 📦 100-500KB transférés par page (HTML + CSS + JS + fonts + images)
-- 🔧 Build step obligatoire (Webpack, Vite, Next.js)
-- 📱 Responsive design générique (media queries pour tous)
-- ♿ Accessibilité en post-traitement (96% des sites non conformes)
-- 🧠 Un même document servi à un senior, un enfant, un dev — adapté à personne
+## 🧩 Ce que contient le projet
 
-## 💡 La solution
-
-**Inverser le modèle** : le serveur envoie une **intention** (JSON 2KB), et c'est le **navigateur** qui, via un agent IA embarqué, génère l'interface optimale pour CET utilisateur, CETTE machine, CE contexte.
-
-```
-Aujourd'hui:  Serveur ──HTML/CSS/JS (500KB)──► Navigateur (passif) ──► Utilisateur
-
-IRP:          Serveur ──intent + data (2KB)──► Navigateur (actif)
-                                                │
-                                                ├─ Détecte le contexte (écran, a11y, prefs)
-                                                ├─ Choisit le meilleur modèle IA local
-                                                ├─ Génère le DOM optimal
-                                                └─ Injecte + cache le résultat
-```
-
----
-
-## 📊 Résultats
-
-| Métrique | Web classique | IRP |
+| Brique | Rôle | Dossier |
 |---|---|---|
-| Bande passante par page | 100-500KB | **2KB** (50x moins) |
-| Build step | Requis | **Aucun** |
-| Framework frontend | React/Vue/Svelte | **Aucun** |
-| CSS framework | Tailwind/Bootstrap | **Aucun** (l'IA génère) |
-| Accessibilité | Post-trichage ARIA | **Native** (l'IA adapte) |
-| Personnalisation | Générique (media queries) | **Unique par utilisateur** |
-| Privacy | Données envoyées au serveur | **Locale** (WebGPU) |
+| **IRP-Doc** | format de composants JSON + validateur + rendu déterministe + profils (dyslexie, FALC, basse vision, nuit) | `irp-core/`, `irp-spec/irp-doc-v1.0.md` |
+| **Mode lecture** (extension) | extrait n'importe quelle page et l'affiche adaptée, 100 % local (Alt+Maj+L) | `irp-extension/` |
+| **Adaptation sous garde-fous** | règles FALC + IA locale optionnelle ; toute sortie qui perd un nombre, une date, un nom est rejetée | `irp-core/simplify.js` |
+| **Vue agent** | `.md`, `.irpdoc.json`, `/llms.txt`, `/.well-known/irp.json` | `irp-server/irpdoc.py` |
+| **Intents IRP** (v1) | ancien chemin : le client génère l'interface via IA (expérimental) | `irp-client/`, `irp-server/` |
+| **Benchmark** | 20 pages : `must_show`, latence, axe-core, lisibilité, poids | `bench/` |
+
+## 📊 Résultats mesurés (`bench/REPORT.md`)
+
+Corpus **synthétique** de 20 pages françaises imparfaites (menus, cookies, images sans alt, tableaux de mise en page…). À refaire sur de vraies pages : voir `bench/README.md`.
+
+| Mesure | Résultat |
+|---|---|
+| Faits `must_show` conservés (extraction → rendu → FALC) | **100 %** (20/20 pages) |
+| Garde-fou « rien de perdu » après FALC | 20/20 pages |
+| Violations axe-core de la page rendue (vs page d'origine) | **0** (vs 166) |
+| Lisibilité (Kandel-Moles) / mots par phrase | 61.4 → **65.2** / 19.3 → **15.9** |
+| Latence extraction + rendu + adaptation (p95) | 6.7 + 3 + 1.6 ms |
+| Tokens pour un agent : HTML → Markdown | 7941 → **2851** (÷2.8) |
+| Reformulations IA « hostiles » qui auraient perdu un fait | 20 → **0 laissée(s) passer** |
+
+> Lecture honnête : « 0 violation axe » est vrai **par construction** pour le rendu IRP ; ce n'est pas une correction de la page d'origine.
+> axe sous jsdom ne mesure pas les contrastes ; ceux des thèmes sont vérifiés par calcul (WCAG AA ≥ 4,5:1) dans `tests/core.test.mjs`.
+> L'ancienne affirmation « 50x moins de bande passante » n'a **pas** été démontrée et a été retirée.
+
+## 🔒 Sécurité
+
+- **Pas de HTML généré** dans le chemin IRP-Doc ; l'ancien chemin (HTML produit par IA) passe par un assainisseur à liste blanche (`irp-sdk/irp-sanitizer.js`, testé sur 51 charges) et **n'exécute aucun JavaScript** (les interactions sont en CSS).
+- **Proxy LLM durci** (`irp-server/proxy.py`) : jeton (`IRP_PROXY_TOKEN`), origines autorisées (`IRP_ALLOWED_ORIGINS`, jamais `*`), limite de débit (`IRP_PROXY_RATE`), JSON obligatoire (anti-CSRF), tailles bornées, modèle imposé, erreurs amont opaques. La clé `SGP_API_KEY` reste **côté serveur** ; plus de `?key=` dans l'URL.
+- Le proxy se **désactive** si le serveur est exposé hors localhost sans jeton, ou sans clé (`--no-proxy` pour le couper).
+- Extension : permissions minimales (`storage`, `activeTab`), mode lecture dans un **Shadow DOM fermé**.
+
+## 🧪 Tests
+
+```bash
+python3 -m unittest discover -s tests -p "test_*.py"     # proxy, vue agent (31 tests)
+(cd tests && npm install && node --test)                # sanitizer, rendu, extraction, contrat serveur↔client (50 tests)
+python3 irp-server/server.py & python3 tests/e2e_test.py # e2e (27 vérifications)
+node bench/run.mjs                                       # benchmark
+```
+
+## ▶️ Essayer en 2 minutes
+
+```bash
+./start.sh                      # serveur :8001 + client :3000
+# http://localhost:3000/?mode=doc   → rendu déterministe, sélecteur de profil
+curl localhost:8001/pricing.md       # la même page, pour un agent
+curl localhost:8001/llms.txt
+```
+Extension : `chrome://extensions` → mode développeur → « Charger l'extension non empaquetée » → `irp-extension/` ; sur une page, **Alt+Maj+L**.
+Après modification d'`irp-core/` : `scripts/sync-core.sh`.
+
+## 🗺️ Suite
+
+`business/positioning.md` (positionnement) · `business/interviews.md` (5 entretiens à mener avant d'écrire plus de code) · `irp-spec/irp-doc-v1.0.md` (spécification).
 
 ---
 
@@ -51,9 +78,15 @@ IRP:          Serveur ──intent + data (2KB)──► Navigateur (actif)
 
 ```
 ai-runtime-web/
+├── irp-core/                # IRP-Doc : validateur, rendu déterministe, FALC, extraction, vue agent (source canonique)
+├── bench/                   # Benchmark 20 pages (+ REPORT.md)
+├── business/                # Positionnement, kit d'entretiens
+├── tests/                   # 50 tests JS (node:test + jsdom + axe-core), 31 tests Python, e2e
 ├── irp-server/              # Serveur IRP (Python stdlib, zéro dépendance)
-│   ├── server.py            # 12 routes + proxy SGP + CORS
-│   ├── intents/             # 8 modules d'intents
+│   ├── server.py            # routes intents + vue agent + proxy
+│   ├── proxy.py             # proxy LLM durci
+│   ├── irpdoc.py            # intents → IRP-Doc, Markdown, llms.txt
+│   ├── intents/             # 9 modules d'intents
 │   └── data/                # Données de démo (JSON)
 ├── irp-client/              # Client IRP (HTML/JS pur, pas de build)
 │   ├── irp-client.js        # Orchestrateur principal
@@ -188,6 +221,10 @@ await client.clearCache();   // vider le cache
 ---
 
 ## 🔌 Extension navigateur
+
+**Nouveau — Mode lecture adapté** (`reader.js`) : sur n'importe quelle page, Alt+Maj+L (ou le popup) extrait le contenu et l'affiche avec le profil choisi (dyslexie, FALC, basse vision, nuit), dans un Shadow DOM fermé, sans réseau. Le bouton « IA locale » utilise la Chrome Prompt API si elle existe ; une reformulation qui perdrait un nombre, une date ou un nom est refusée et le badge l'indique. Échap ferme et rend le focus à la page.
+
+L'interception des réponses `application/irp+json` (ancien chemin) reste disponible :
 
 L'extension Chrome/Firefox intercepte les réponses `application/irp+json` sur **n'importe quel site** et les rend localement.
 

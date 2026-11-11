@@ -112,3 +112,12 @@ chrome.storage.onChanged.addListener((changes) => {
 });
 
 updateBadge();
+
+
+// ─── Raccourci clavier : mode lecture adapté ─────────────────────────────────
+chrome.commands.onCommand.addListener((command) => {
+  if (command !== 'toggle-reader') return;
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    if (tabs && tabs[0]) chrome.tabs.sendMessage(tabs[0].id, { type: 'IRP_READER_TOGGLE' }, () => void chrome.runtime.lastError);
+  });
+});

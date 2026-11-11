@@ -1,18 +1,36 @@
 {
   "manifest_version": 3,
   "name": "IRP — Intent Rendering Protocol",
-  "version": "1.0.0",
-  "description": "Intercepte les réponses application/irp+json et génère l'interface localement via IA.",
-  "permissions": ["storage", "activeTab"],
-  "host_permissions": ["<all_urls>"],
+  "version": "1.1.0",
+  "description": "Mode lecture adapté (dyslexie, FALC, basse vision) sur n'importe quel site, 100 % local ; interception IRP optionnelle.",
+  "permissions": [
+    "storage",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
   "background": {
     "service_worker": "background.js"
   },
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
-      "js": ["content.js"],
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content.js"
+      ],
       "run_at": "document_start"
+    },
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "reader.js"
+      ],
+      "run_at": "document_idle"
     }
   ],
   "action": {
@@ -30,8 +48,29 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["irp-renderer.js", "irp-sanitizer.js"],
-      "matches": ["<all_urls>"]
+      "resources": [
+        "irp-renderer.js",
+        "irp-sanitizer.js"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    },
+    {
+      "resources": [
+        "core/*.js"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
     }
-  ]
+  ],
+  "commands": {
+    "toggle-reader": {
+      "suggested_key": {
+        "default": "Alt+Shift+L"
+      },
+      "description": "Activer/désactiver le mode lecture adapté"
+    }
+  }
 }

@@ -1,0 +1,225 @@
+[
+  {
+    "id": "mairie-cni",
+    "kind": "admin",
+    "layout": "semantic",
+    "title": "Carte nationale d'identité",
+    "must_show": [
+      "25 €",
+      "15 mars 2027",
+      "3 semaines",
+      "04 72 10 30 30"
+    ]
+  },
+  {
+    "id": "mairie-cantine",
+    "kind": "admin",
+    "layout": "divsoup",
+    "title": "Inscription à la cantine scolaire",
+    "must_show": [
+      "4,20 €",
+      "30 juin 2027",
+      "cantine@ville-test.fr"
+    ]
+  },
+  {
+    "id": "mairie-urbanisme",
+    "kind": "admin",
+    "layout": "tablelayout",
+    "title": "Permis de construire : démarches",
+    "must_show": [
+      "2 mois",
+      "15 jours",
+      "Service urbanisme"
+    ]
+  },
+  {
+    "id": "mairie-etatcivil",
+    "kind": "admin",
+    "layout": "semantic",
+    "title": "Acte de naissance : comment l'obtenir",
+    "must_show": [
+      "gratuit",
+      "48 heures",
+      "état civil"
+    ]
+  },
+  {
+    "id": "shop-casque",
+    "kind": "shop",
+    "layout": "divsoup",
+    "title": "Casque audio sans fil Aria",
+    "must_show": [
+      "129,90 €",
+      "30 heures",
+      "2 ans",
+      "En stock"
+    ]
+  },
+  {
+    "id": "shop-velo",
+    "kind": "shop",
+    "layout": "semantic",
+    "title": "Vélo de ville Cadence 7 vitesses",
+    "must_show": [
+      "449 €",
+      "18 kg",
+      "5 ans",
+      "Rupture de stock"
+    ]
+  },
+  {
+    "id": "shop-cafetiere",
+    "kind": "shop",
+    "layout": "tablelayout",
+    "title": "Cafetière filtre Matin 1,2 L",
+    "must_show": [
+      "59 €",
+      "1,2 L",
+      "1 an"
+    ]
+  },
+  {
+    "id": "shop-livre",
+    "kind": "shop",
+    "layout": "divsoup",
+    "title": "Roman « Les Heures claires » — édition poche",
+    "must_show": [
+      "8,90 €",
+      "312 pages",
+      "ISBN 978-2-0000-1234-5"
+    ]
+  },
+  {
+    "id": "news-transport",
+    "kind": "article",
+    "layout": "article",
+    "title": "Le tramway prolongé jusqu’à la gare en 2028",
+    "must_show": [
+      "18 millions d’euros",
+      "mars 2028",
+      "Marie Durand"
+    ]
+  },
+  {
+    "id": "news-ecole",
+    "kind": "article",
+    "layout": "article",
+    "title": "Rentrée : dix écoles passent à la semaine de quatre jours",
+    "must_show": [
+      "dix écoles",
+      "2 septembre",
+      "Paul Martin"
+    ]
+  },
+  {
+    "id": "news-sante",
+    "kind": "article",
+    "layout": "article",
+    "title": "Grippe : la vaccination ouverte à tous dès octobre",
+    "must_show": [
+      "octobre",
+      "70 %",
+      "Agence régionale de santé"
+    ]
+  },
+  {
+    "id": "legal-cgu",
+    "kind": "legal",
+    "layout": "semantic",
+    "title": "Conditions générales d'utilisation",
+    "must_show": [
+      "30 jours",
+      "contact@exemple-test.fr",
+      "1er janvier 2027"
+    ]
+  },
+  {
+    "id": "legal-rgpd",
+    "kind": "legal",
+    "layout": "divsoup",
+    "title": "Politique de confidentialité",
+    "must_show": [
+      "3 ans",
+      "dpo@exemple-test.fr",
+      "droit d’accès"
+    ]
+  },
+  {
+    "id": "sante-urgences",
+    "kind": "health",
+    "layout": "semantic",
+    "title": "Centre hospitalier : urgences et consultations",
+    "must_show": [
+      "24h/24",
+      "15",
+      "04 78 00 00 00"
+    ]
+  },
+  {
+    "id": "sante-vaccins",
+    "kind": "health",
+    "layout": "divsoup",
+    "title": "Centre de vaccination : horaires et tarifs",
+    "must_show": [
+      "mardi",
+      "11 €",
+      "10h-16h"
+    ]
+  },
+  {
+    "id": "ecole-inscription",
+    "kind": "edu",
+    "layout": "tablelayout",
+    "title": "Inscription à l'université : calendrier",
+    "must_show": [
+      "1er mars",
+      "15 avril",
+      "170 €"
+    ]
+  },
+  {
+    "id": "ecole-bourses",
+    "kind": "edu",
+    "layout": "semantic",
+    "title": "Aides financières pour étudiants",
+    "must_show": [
+      "1 200 €",
+      "31 octobre",
+      "dossier social étudiant"
+    ]
+  },
+  {
+    "id": "banque-faq",
+    "kind": "faq",
+    "layout": "divsoup",
+    "title": "Questions fréquentes : carte bancaire",
+    "must_show": [
+      "0892 00 00 00",
+      "48 heures",
+      "3 000 €"
+    ]
+  },
+  {
+    "id": "transport-ter",
+    "kind": "transport",
+    "layout": "tablelayout",
+    "title": "TER Lyon – Grenoble : horaires et tarifs",
+    "must_show": [
+      "7h42",
+      "18,50 €",
+      "1h35"
+    ]
+  },
+  {
+    "id": "transport-velo",
+    "kind": "transport",
+    "layout": "semantic",
+    "title": "Abonnement vélos en libre-service",
+    "must_show": [
+      "35 €",
+      "30 minutes",
+      "12 mois"
+    ]
+  }
+]

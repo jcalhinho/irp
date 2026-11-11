@@ -37,6 +37,15 @@ async function main() {
   await initRouter({ proxyUrl, proxyToken: PROXY_TOKEN });
 
   const renderers = getAvailableRenderers();
+
+  // Mode déterministe (IRP-Doc) : forcé par ?mode=doc, ou automatique quand aucun moteur IA n'est disponible.
+  // Même contenu, rendu identique à chaque visite, sans HTML généré : c'est le chemin recommandé en production.
+  if (renderers.length === 0 || new URLSearchParams(window.location.search).get('mode') === 'doc') {
+    const { runDocMode } = await import('./doc-mode.js');
+    const p = window.location.pathname;
+    return runDocMode({ server: IRP_SERVER, path: p === '/index.html' ? '/' : p });
+  }
+
   if (renderers.length === 0) {
     builder.showError(
       'Aucun modèle IA disponible',

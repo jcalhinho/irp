@@ -42,6 +42,22 @@
   </div>
 
   <div class="section">
+    <h2>Mode lecture adapté</h2>
+    <div class="select-row">
+      <label for="readerProfile">Profil</label>
+      <select id="readerProfile">
+        <option value="standard">Standard</option>
+        <option value="dyslexie">Dyslexie</option>
+        <option value="falc">Langage simplifié (FALC)</option>
+        <option value="basse_vision">Basse vision</option>
+        <option value="lecture_nuit">Lecture de nuit</option>
+      </select>
+    </div>
+    <button class="btn" id="readerOpen">Lire cette page en mode adapté (Alt+Maj+L)</button>
+    <p id="readerMsg" role="status" style="font-size:11px;color:#f5a623;margin-top:6px"></p>
+  </div>
+
+  <div class="section">
     <div class="toggle-row">
       <label>Interception active</label>
       <label class="toggle">
@@ -96,5 +112,6 @@
   </div>
 
   <script src="popup.js"></script>
+  <script src="reader-popup.js"></script>
 </body>
 </html>

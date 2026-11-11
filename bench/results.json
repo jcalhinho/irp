@@ -1,0 +1,1554 @@
+{
+  "summary": {
+    "pages": 20,
+    "baselineMust": 1,
+    "extractValid": 20,
+    "mustAfterExtract": 1,
+    "mustFalc": 1,
+    "pagesFullMust": {
+      "standard": 20,
+      "dyslexie": 20,
+      "falc": 20,
+      "basse_vision": 20
+    },
+    "preservedOk": 20,
+    "falcPagesFullMust": 20,
+    "latency": {
+      "extractP50": 1.4,
+      "extractP95": 6.8,
+      "renderP50": 0.6,
+      "renderP95": 3.5,
+      "adaptP50": 0.1,
+      "adaptP95": 1.6
+    },
+    "readability": {
+      "before": 61.4,
+      "after": 65.2,
+      "avgWordsBefore": 19.3,
+      "avgWordsAfter": 15.9,
+      "longBefore": 33,
+      "longAfter": 25
+    },
+    "axe": {
+      "before": 166,
+      "after": 0,
+      "pagesCleanBefore": 0,
+      "pagesCleanAfter": 20,
+      "seriousBefore": 120,
+      "seriousAfter": 0,
+      "rulesBefore": {
+        "heading-order": 10,
+        "html-has-lang": 20,
+        "image-alt": 60,
+        "link-name": 40,
+        "region": 36
+      },
+      "rulesAfter": {}
+    },
+    "hostile": {
+      "total": 58,
+      "unsafe": 20,
+      "blocked": 20,
+      "leaked": 0
+    },
+    "size": {
+      "html": 32287,
+      "doc": 20596,
+      "md": 11681,
+      "tokHtml": 7941,
+      "tokMd": 2851
+    }
+  },
+  "rows": [
+    {
+      "id": "mairie-cni",
+      "kind": "admin",
+      "layout": "semantic",
+      "htmlBytes": 1955,
+      "baselineMust": 1,
+      "extractMs": 6.808582999976352,
+      "valid": true,
+      "extractRoot": "main",
+      "blocks": 9,
+      "imagesNoAlt": 1,
+      "render": {
+        "standard": {
+          "ms": 8.176042000064626,
+          "must": 1
+        },
+        "dyslexie": {
+          "ms": 4.330583000089973,
+          "must": 1
+        },
+        "falc": {
+          "ms": 3.071250000037253,
+          "must": 1
+        },
+        "basse_vision": {
+          "ms": 2.6999580000992864,
+          "must": 1
+        }
+      },
+      "adaptMs": 1.6440830000210553,
+      "readBefore": 49.6,
+      "readAfter": 65.5,
+      "avgWordsBefore": 28.5,
+      "avgWordsAfter": 16.4,
+      "longBefore": 3,
+      "longAfter": 2,
+      "falcMust": 1,
+      "preservedOk": true,
+      "hostile": {
+        "total": 3,
+        "unsafe": 3,
+        "blocked": 3,
+        "leaked": 0
+      },
+      "axeBefore": {
+        "violations": 8,
+        "byImpact": {
+          "critical": 3,
+          "serious": 3,
+          "moderate": 2,
+          "minor": 0
+        },
+        "rules": {
+          "heading-order": 1,
+          "html-has-lang": 1,
+          "image-alt": 3,
+          "link-name": 2,
+          "region": 1
+        }
+      },
+      "axeAfter": {
+        "violations": 0,
+        "byImpact": {
+          "critical": 0,
+          "serious": 0,
+          "moderate": 0,
+          "minor": 0
+        },
+        "rules": {}
+      },
+      "docBytes": 1434,
+      "mdBytes": 923,
+      "tokHtml": 479,
+      "tokMd": 224
+    },
+    {
+      "id": "mairie-cantine",
+      "kind": "admin",
+      "layout": "divsoup",
+      "htmlBytes": 1846,
+      "baselineMust": 1,
+      "extractMs": 2.7472920001018792,
+      "valid": true,
+      "extractRoot": "score",
+      "blocks": 9,
+      "imagesNoAlt": 1,
+      "render": {
+        "standard": {
+          "ms": 1.2752079998608679,
+          "must": 1
+        },
+        "dyslexie": {
+          "ms": 0.8058339999988675,
+          "must": 1
+        },
+        "falc": {
+          "ms": 0.7219169999007136,
+          "must": 1
+        },
+        "basse_vision": {
+          "ms": 1.0701250000856817,
+          "must": 1
+        }
+      },
+      "adaptMs": 0.5666660000570118,
+      "readBefore": 50.2,
+      "readAfter": 61.3,
+      "avgWordsBefore": 25.3,
+      "avgWordsAfter": 16.7,
+      "longBefore": 2,
+      "longAfter": 1,
+      "falcMust": 1,
+      "preservedOk": true,
+      "hostile": {
+        "total": 4,
+        "unsafe": 0,
+        "blocked": 0,
+        "leaked": 0
+      },
+      "axeBefore": {
+        "violations": 8,
+        "byImpact": {
+          "critical": 3,
+          "serious": 3,
+          "moderate": 2,
+          "minor": 0
+        },
+        "rules": {
+          "html-has-lang": 1,
+          "image-alt": 3,
+          "link-name": 2,
+          "region": 2
+        }
+      },
+      "axeAfter": {
+        "violations": 0,
+        "byImpact": {
+          "critical": 0,
+          "serious": 0,
+          "moderate": 0,
+          "minor": 0
+        },
+        "rules": {}
+      },
+      "docBytes": 1312,
+      "mdBytes": 797,
+      "tokHtml": 454,
+      "tokMd": 194
+    },
+    {
+      "id": "mairie-urbanisme",
+      "kind": "admin",
+      "layout": "tablelayout",
+      "htmlBytes": 1728,
+      "baselineMust": 1,
+      "extractMs": 2.2540420000441372,
+      "valid": true,
+      "extractRoot": "score",
+      "blocks": 8,
+      "imagesNoAlt": 1,
+      "render": {
+        "standard": {
+          "ms": 1.1603749999776483,
+          "must": 1
+        },
+        "dyslexie": {
+          "ms": 0.6635000000242144,
+          "must": 1
+        },
+        "falc": {
+          "ms": 0.6855419999919832,
+          "must": 1
+        },
+        "basse_vision": {
+          "ms": 0.7369999999646097,
+          "must": 1
+        }
+      },
+      "adaptMs": 0.31837500003166497,
+      "readBefore": 61.3,
+      "readAfter": 68.6,
+      "avgWordsBefore": 23.8,
+      "avgWordsAfter": 15.5,
+      "longBefore": 2,
+      "longAfter": 1,
+      "falcMust": 1,
+      "preservedOk": true,
+      "hostile": {
+        "total": 3,
+        "unsafe": 0,
+        "blocked": 0,
+        "leaked": 0
+      },
+      "axeBefore": {
+        "violations": 9,
+        "byImpact": {
+          "critical": 3,
+          "serious": 3,
+          "moderate": 3,
+          "minor": 0
+        },
+        "rules": {
+          "heading-order": 1,
+          "html-has-lang": 1,
+          "image-alt": 3,
+          "link-name": 2,
+          "region": 2
+        }
+      },
+      "axeAfter": {
+        "violations": 0,
+        "byImpact": {
+          "critical": 0,
+          "serious": 0,
+          "moderate": 0,
+          "minor": 0
+        },
+        "rules": {}
+      },
+      "docBytes": 1213,
+      "mdBytes": 730,
+      "tokHtml": 426,
+      "tokMd": 179
+    },
+    {
+      "id": "mairie-etatcivil",
+      "kind": "admin",
+      "layout": "semantic",
+      "htmlBytes": 1604,
+      "baselineMust": 1,
+      "extractMs": 2.262624999973923,
+      "valid": true,
+      "extractRoot": "main",
+      "blocks": 7,
+      "imagesNoAlt": 1,
+      "render": {
+        "standard": {
+          "ms": 0.8544589998200536,
+          "must": 1
+        },
+        "dyslexie": {
+          "ms": 0.5402499998454005,
+          "must": 1
+        },
+        "falc": {
+          "ms": 0.5904169999994338,
+          "must": 1
+        },
+        "basse_vision": {
+          "ms": 0.5217089999932796,
+          "must": 1
+        }
+      },
+      "adaptMs": 0.1478750000242144,
+      "readBefore": 63.3,
+      "readAfter": 77,
+      "avgWordsBefore": 27,
+      "avgWordsAfter": 16.2,
+      "longBefore": 2,
+      "longAfter": 1,
+      "falcMust": 1,
+      "preservedOk": true,
+      "hostile": {
+        "total": 2,
+        "unsafe": 1,
+        "blocked": 1,
+        "leaked": 0
+      },
+      "axeBefore": {
+        "violations": 8,
+        "byImpact": {
+          "critical": 3,
+          "serious": 3,
+          "moderate": 2,
+          "minor": 0
+        },
+        "rules": {
+          "heading-order": 1,
+          "html-has-lang": 1,
+          "image-alt": 3,
+          "link-name": 2,
+          "region": 1
+        }
+      },
+      "axeAfter": {
+        "violations": 0,
+        "byImpact": {
+          "critical": 0,
+          "serious": 0,
+          "moderate": 0,
+          "minor": 0
+        },
+        "rules": {}
+      },
+      "docBytes": 1079,
+      "mdBytes": 625,
+      "tokHtml": 395,
+      "tokMd": 153
+    },
+    {
+      "id": "shop-casque",
+      "kind": "shop",
+      "layout": "divsoup",
+      "htmlBytes": 1704,
+      "baselineMust": 1,
+      "extractMs": 2.32674999977462,
+      "valid": true,
+      "extractRoot": "score",
+      "blocks": 10,
+      "imagesNoAlt": 1,
+      "render": {
+        "standard": {
+          "ms": 1.1379169998690486,
+          "must": 1
+        },
+        "dyslexie": {
+          "ms": 0.8254999998025596,
+          "must": 1
+        },
+        "falc": {
+          "ms": 0.6447919998317957,
+          "must": 1
+        },
+        "basse_vision": {
+          "ms": 0.6537500000558794,
+          "must": 1
+        }
+      },
+      "adaptMs": 0.1644170000217855,
+      "readBefore": 72.8,
+      "readAfter": 72.8,
+      "avgWordsBefore": 12.2,
+      "avgWordsAfter": 12.2,
+      "longBefore": 2,
+      "longAfter": 2,
+      "falcMust": 1,
+      "preservedOk": true,
+      "hostile": {
+        "total": 4,
+        "unsafe": 2,
+        "blocked": 2,
+        "leaked": 0
+      },
+      "axeBefore": {
+        "violations": 8,
+        "byImpact": {
+          "critical": 3,
+          "serious": 3,
+          "moderate": 2,
+          "minor": 0
+        },
+        "rules": {
+          "html-has-lang": 1,
+          "image-alt": 3,
+          "link-name": 2,
+          "region": 2
+        }
+      },
+      "axeAfter": {
+        "violations": 0,
+        "byImpact": {
+          "critical": 0,
+          "serious": 0,
+          "moderate": 0,
+          "minor": 0
+        },
+        "rules": {}
+      },
+      "docBytes": 1092,
+      "mdBytes": 580,
+      "tokHtml": 421,
+      "tokMd": 143
+    },
+    {
+      "id": "shop-velo",
+      "kind": "shop",
+      "layout": "semantic",
+      "htmlBytes": 1619,
+      "baselineMust": 1,
+      "extractMs": 1.6534590001683682,
+      "valid": true,
+      "extractRoot": "main",
+      "blocks": 9,
+      "imagesNoAlt": 1,
+      "render": {
+        "standard": {
+          "ms": 1.006624999921769,
+          "must": 1
+        },
+        "dyslexie": {
+          "ms": 0.7007500000763685,
+          "must": 1
+        },
+        "falc": {
+          "ms": 0.6094169998541474,
+          "must": 1
+        },
+        "basse_vision": {
+          "ms": 0.5902090000454336,
+          "must": 1
+        }
+      },
+      "adaptMs": 0.13204099982976913,
+      "readBefore": 53.2,
+      "readAfter": 53.2,
+      "avgWordsBefore": 18.3,
+      "avgWordsAfter": 18.3,
+      "longBefore": 2,
+      "longAfter": 2,
+      "falcMust": 1,
+      "preservedOk": true,
+      "hostile": {
+        "total": 3,
+        "unsafe": 0,
+        "blocked": 0,
+        "leaked": 0
+      },
+      "axeBefore": {
+        "violations": 8,
+        "byImpact": {
+          "critical": 3,
+          "serious": 3,
+          "moderate": 2,
+          "minor": 0
+        },
+        "rules": {
+          "heading-order": 1,
+          "html-has-lang": 1,
+          "image-alt": 3,
+          "link-name": 2,
+          "region": 1
+        }
+      },
+      "axeAfter": {
+        "violations": 0,
+        "byImpact": {
+          "critical": 0,
+          "serious": 0,
+          "moderate": 0,
+          "minor": 0
+        },
+        "rules": {}
+      },
+      "docBytes": 1046,
+      "mdBytes": 545,
+      "tokHtml": 398,
+      "tokMd": 132
+    },
+    {
+      "id": "shop-cafetiere",
+      "kind": "shop",
+      "layout": "tablelayout",
+      "htmlBytes": 1450,
+      "baselineMust": 1,
+      "extractMs": 2.1322079999372363,
+      "valid": true,
+      "extractRoot": "score",
+      "blocks": 8,
+      "imagesNoAlt": 1,
+      "render": {
+        "standard": {
+          "ms": 3.469666999997571,
+          "must": 1
+        },
+        "dyslexie": {
+          "ms": 0.6526669999584556,
+          "must": 1
+        },
+        "falc": {
+          "ms": 0.7122909999452531,
+          "must": 1
+        },
+        "basse_vision": {
+          "ms": 0.6009169998578727,
+          "must": 1
+        }
+      },
+      "adaptMs": 0.20212500006891787,
+      "readBefore": 66.7,
+      "readAfter": 66.7,
+      "avgWordsBefore": 10.5,
+      "avgWordsAfter": 10.5,
+      "longBefore": 1,
+      "longAfter": 1,
+      "falcMust": 1,
+      "preservedOk": true,
+      "hostile": {
+        "total": 3,
+        "unsafe": 2,
+        "blocked": 2,
+        "leaked": 0
+      },
+      "axeBefore": {
+        "violations": 9,
+        "byImpact": {
+          "critical": 3,
+          "serious": 3,
+          "moderate": 3,
+          "minor": 0
+        },
+        "rules": {
+          "heading-order": 1,
+          "html-has-lang": 1,
+          "image-alt": 3,
+          "link-name": 2,
+          "region": 2
+        }
+      },
+      "axeAfter": {
+        "violations": 0,
+        "byImpact": {
+          "critical": 0,
+          "serious": 0,
+          "moderate": 0,
+          "minor": 0
+        },
+        "rules": {}
+      },
+      "docBytes": 885,
+      "mdBytes": 420,
+      "tokHtml": 356,
+      "tokMd": 102
+    },
+    {
+      "id": "shop-livre",
+      "kind": "shop",
+      "layout": "divsoup",
+      "htmlBytes": 1541,
+      "baselineMust": 1,
+      "extractMs": 1.4431670000776649,
+      "valid": true,
+      "extractRoot": "score",
+      "blocks": 9,
+      "imagesNoAlt": 1,
+      "render": {
+        "standard": {
+          "ms": 1.783250000094995,
+          "must": 1
+        },
+        "dyslexie": {
+          "ms": 0.6059999999124557,
+          "must": 1
+        },
+        "falc": {
+          "ms": 0.48416699981316924,
+          "must": 1
+        },
+        "basse_vision": {
+          "ms": 0.5361250001005828,
+          "must": 1
+        }
+      },
+      "adaptMs": 0.13320800010114908,
+      "readBefore": 84.2,
+      "readAfter": 84.2,
+      "avgWordsBefore": 10.5,
+      "avgWordsAfter": 10.5,
+      "longBefore": 1,
+      "longAfter": 1,
+      "falcMust": 1,
+      "preservedOk": true,
+      "hostile": {
+        "total": 4,
+        "unsafe": 1,
+        "blocked": 1,
+        "leaked": 0
+      },
+      "axeBefore": {
+        "violations": 8,
+        "byImpact": {
+          "critical": 3,
+          "serious": 3,
+          "moderate": 2,
+          "minor": 0
+        },
+        "rules": {
+          "html-has-lang": 1,
+          "image-alt": 3,
+          "link-name": 2,
+          "region": 2
+        }
+      },
+      "axeAfter": {
+        "violations": 0,
+        "byImpact": {
+          "critical": 0,
+          "serious": 0,
+          "moderate": 0,
+          "minor": 0
+        },
+        "rules": {}
+      },
+      "docBytes": 946,
+      "mdBytes": 437,
+      "tokHtml": 379,
+      "tokMd": 106
+    },
+    {
+      "id": "news-transport",
+      "kind": "article",
+      "layout": "article",
+      "htmlBytes": 1802,
+      "baselineMust": 1,
+      "extractMs": 1.1417080000974238,
+      "valid": true,
+      "extractRoot": "article",
+      "blocks": 7,
+      "imagesNoAlt": 1,
+      "render": {
+        "standard": {
+          "ms": 0.788458000170067,
+          "must": 1
+        },
+        "dyslexie": {
+          "ms": 0.5859999998938292,
+          "must": 1
+        },
+        "falc": {
+          "ms": 0.49829099979251623,
+          "must": 1
+        },
+        "basse_vision": {
+          "ms": 0.5071670000907034,
+          "must": 1
+        }
+      },
+      "adaptMs": 0.15704199997708201,
+      "readBefore": 54.6,
+      "readAfter": 59.9,
+      "avgWordsBefore": 22.3,
+      "avgWordsAfter": 17.8,
+      "longBefore": 2,
+      "longAfter": 1,
+      "falcMust": 1,
+      "preservedOk": true,
+      "hostile": {
+        "total": 4,
+        "unsafe": 2,
+        "blocked": 2,
+        "leaked": 0
+      },
+      "axeBefore": {
+        "violations": 10,
+        "byImpact": {
+          "critical": 3,
+          "serious": 3,
+          "moderate": 4,
+          "minor": 0
+        },
+        "rules": {
+          "heading-order": 1,
+          "html-has-lang": 1,
+          "image-alt": 3,
+          "link-name": 2,
+          "region": 3
+        }
+      },
+      "axeAfter": {
+        "violations": 0,
+        "byImpact": {
+          "critical": 0,
+          "serious": 0,
+          "moderate": 0,
+          "minor": 0
+        },
+        "rules": {}
+      },
+      "docBytes": 1162,
+      "mdBytes": 717,
+      "tokHtml": 440,
+      "tokMd": 173
+    },
+    {
+      "id": "news-ecole",
+      "kind": "article",
+      "layout": "article",
+      "htmlBytes": 1701,
+      "baselineMust": 1,
+      "extractMs": 1.0635830000974238,
+      "valid": true,
+      "extractRoot": "article",
+      "blocks": 6,
+      "imagesNoAlt": 1,
+      "render": {
+        "standard": {
+          "ms": 0.754541999893263,
+          "must": 1
+        },
+        "dyslexie": {
+          "ms": 0.5277499998919666,
+          "must": 1
+        },
+        "falc": {
+          "ms": 0.5042079999111593,
+          "must": 1
+        },
+        "basse_vision": {
+          "ms": 0.48745799995958805,
+          "must": 1
+        }
+      },
+      "adaptMs": 0.12154199997894466,
+      "readBefore": 63.8,
+      "readAfter": 70.5,
+      "avgWordsBefore": 26.3,
+      "avgWordsAfter": 19.8,
+      "longBefore": 2,
+      "longAfter": 1,
+      "falcMust": 1,
+      "preservedOk": true,
+      "hostile": {
+        "total": 3,
+        "unsafe": 1,
+        "blocked": 1,
+        "leaked": 0
+      },
+      "axeBefore": {
+        "violations": 10,
+        "byImpact": {
+          "critical": 3,
+          "serious": 3,
+          "moderate": 4,
+          "minor": 0
+        },
+        "rules": {
+          "heading-order": 1,
+          "html-has-lang": 1,
+          "image-alt": 3,
+          "link-name": 2,
+          "region": 3
+        }
+      },
+      "axeAfter": {
+        "violations": 0,
+        "byImpact": {
+          "critical": 0,
+          "serious": 0,
+          "moderate": 0,
+          "minor": 0
+        },
+        "rules": {}
+      },
+      "docBytes": 1017,
+      "mdBytes": 609,
+      "tokHtml": 418,
+      "tokMd": 149
+    },
+    {
+      "id": "news-sante",
+      "kind": "article",
+      "layout": "article",
+      "htmlBytes": 1684,
+      "baselineMust": 1,
+      "extractMs": 0.9349159998819232,
+      "valid": true,
+      "extractRoot": "article",
+      "blocks": 6,
+      "imagesNoAlt": 1,
+      "render": {
+        "standard": {
+          "ms": 0.703207999933511,
+          "must": 1
+        },
+        "dyslexie": {
+          "ms": 0.5583330001682043,
+          "must": 1
+        },
+        "falc": {
+          "ms": 0.5031659998930991,
+          "must": 1
+        },
+        "basse_vision": {
+          "ms": 0.5282079998869449,
+          "must": 1
+        }
+      },
+      "adaptMs": 0.10670800018124282,
+      "readBefore": 51.8,
+      "readAfter": 51.8,
+      "avgWordsBefore": 24,
+      "avgWordsAfter": 24,
+      "longBefore": 2,
+      "longAfter": 2,
+      "falcMust": 1,
+      "preservedOk": true,
+      "hostile": {
+        "total": 3,
+        "unsafe": 2,
+        "blocked": 2,
+        "leaked": 0
+      },
+      "axeBefore": {
+        "violations": 10,
+        "byImpact": {
+          "critical": 3,
+          "serious": 3,
+          "moderate": 4,
+          "minor": 0
+        },
+        "rules": {
+          "heading-order": 1,
+          "html-has-lang": 1,
+          "image-alt": 3,
+          "link-name": 2,
+          "region": 3
+        }
+      },
+      "axeAfter": {
+        "violations": 0,
+        "byImpact": {
+          "critical": 0,
+          "serious": 0,
+          "moderate": 0,
+          "minor": 0
+        },
+        "rules": {}
+      },
+      "docBytes": 1013,
+      "mdBytes": 600,
+      "tokHtml": 413,
+      "tokMd": 146
+    },
+    {
+      "id": "legal-cgu",
+      "kind": "legal",
+      "layout": "semantic",
+      "htmlBytes": 1617,
+      "baselineMust": 1,
+      "extractMs": 1.1300419999752194,
+      "valid": true,
+      "extractRoot": "main",
+      "blocks": 6,
+      "imagesNoAlt": 1,
+      "render": {
+        "standard": {
+          "ms": 0.7834999999031425,
+          "must": 1
+        },
+        "dyslexie": {
+          "ms": 0.5087079999502748,
+          "must": 1
+        },
+        "falc": {
+          "ms": 0.6254169999156147,
+          "must": 1
+        },
+        "basse_vision": {
+          "ms": 0.45374999986961484,
+          "must": 1
+        }
+      },
+      "adaptMs": 0.11216600006446242,
+      "readBefore": 56,
+      "readAfter": 56.1,
+      "avgWordsBefore": 20.5,
+      "avgWordsAfter": 20,
+      "longBefore": 3,
+      "longAfter": 3,
+      "falcMust": 1,
+      "preservedOk": true,
+      "hostile": {
+        "total": 3,
+        "unsafe": 1,
+        "blocked": 1,
+        "leaked": 0
+      },
+      "axeBefore": {
+        "violations": 7,
+        "byImpact": {
+          "critical": 3,
+          "serious": 3,
+          "moderate": 1,
+          "minor": 0
+        },
+        "rules": {
+          "html-has-lang": 1,
+          "image-alt": 3,
+          "link-name": 2,
+          "region": 1
+        }
+      },
+      "axeAfter": {
+        "violations": 0,
+        "byImpact": {
+          "critical": 0,
+          "serious": 0,
+          "moderate": 0,
+          "minor": 0
+        },
+        "rules": {}
+      },
+      "docBytes": 1079,
+      "mdBytes": 661,
+      "tokHtml": 397,
+      "tokMd": 161
+    },
+    {
+      "id": "legal-rgpd",
+      "kind": "legal",
+      "layout": "divsoup",
+      "htmlBytes": 1531,
+      "baselineMust": 1,
+      "extractMs": 1.1198330000042915,
+      "valid": true,
+      "extractRoot": "score",
+      "blocks": 6,
+      "imagesNoAlt": 1,
+      "render": {
+        "standard": {
+          "ms": 0.8093750001862645,
+          "must": 1
+        },
+        "dyslexie": {
+          "ms": 0.5470830001868308,
+          "must": 1
+        },
+        "falc": {
+          "ms": 0.5619159999769181,
+          "must": 1
+        },
+        "basse_vision": {
+          "ms": 0.5534159999806434,
+          "must": 1
+        }
+      },
+      "adaptMs": 0.09795800014398992,
+      "readBefore": 38.2,
+      "readAfter": 41.6,
+      "avgWordsBefore": 18.7,
+      "avgWordsAfter": 14,
+      "longBefore": 1,
+      "longAfter": 1,
+      "falcMust": 1,
+      "preservedOk": true,
+      "hostile": {
+        "total": 3,
+        "unsafe": 1,
+        "blocked": 1,
+        "leaked": 0
+      },
+      "axeBefore": {
+        "violations": 8,
+        "byImpact": {
+          "critical": 3,
+          "serious": 3,
+          "moderate": 2,
+          "minor": 0
+        },
+        "rules": {
+          "html-has-lang": 1,
+          "image-alt": 3,
+          "link-name": 2,
+          "region": 2
+        }
+      },
+      "axeAfter": {
+        "violations": 0,
+        "byImpact": {
+          "critical": 0,
+          "serious": 0,
+          "moderate": 0,
+          "minor": 0
+        },
+        "rules": {}
+      },
+      "docBytes": 929,
+      "mdBytes": 516,
+      "tokHtml": 376,
+      "tokMd": 125
+    },
+    {
+      "id": "sante-urgences",
+      "kind": "health",
+      "layout": "semantic",
+      "htmlBytes": 1655,
+      "baselineMust": 1,
+      "extractMs": 1.233417000155896,
+      "valid": true,
+      "extractRoot": "main",
+      "blocks": 8,
+      "imagesNoAlt": 1,
+      "render": {
+        "standard": {
+          "ms": 0.8992090001702309,
+          "must": 1
+        },
+        "dyslexie": {
+          "ms": 0.6719580001663417,
+          "must": 1
+        },
+        "falc": {
+          "ms": 0.5952500000130385,
+          "must": 1
+        },
+        "basse_vision": {
+          "ms": 0.5828329999931157,
+          "must": 1
+        }
+      },
+      "adaptMs": 0.10908399987965822,
+      "readBefore": 65.8,
+      "readAfter": 68.7,
+      "avgWordsBefore": 17.3,
+      "avgWordsAfter": 13.6,
+      "longBefore": 2,
+      "longAfter": 1,
+      "falcMust": 1,
+      "preservedOk": true,
+      "hostile": {
+        "total": 2,
+        "unsafe": 1,
+        "blocked": 1,
+        "leaked": 0
+      },
+      "axeBefore": {
+        "violations": 8,
+        "byImpact": {
+          "critical": 3,
+          "serious": 3,
+          "moderate": 2,
+          "minor": 0
+        },
+        "rules": {
+          "heading-order": 1,
+          "html-has-lang": 1,
+          "image-alt": 3,
+          "link-name": 2,
+          "region": 1
+        }
+      },
+      "axeAfter": {
+        "violations": 0,
+        "byImpact": {
+          "critical": 0,
+          "serious": 0,
+          "moderate": 0,
+          "minor": 0
+        },
+        "rules": {}
+      },
+      "docBytes": 1078,
+      "mdBytes": 610,
+      "tokHtml": 409,
+      "tokMd": 151
+    },
+    {
+      "id": "sante-vaccins",
+      "kind": "health",
+      "layout": "divsoup",
+      "htmlBytes": 1573,
+      "baselineMust": 1,
+      "extractMs": 1.2757500000298023,
+      "valid": true,
+      "extractRoot": "score",
+      "blocks": 7,
+      "imagesNoAlt": 1,
+      "render": {
+        "standard": {
+          "ms": 4.0252910000272095,
+          "must": 1
+        },
+        "dyslexie": {
+          "ms": 0.5925409998744726,
+          "must": 1
+        },
+        "falc": {
+          "ms": 0.5851670000702143,
+          "must": 1
+        },
+        "basse_vision": {
+          "ms": 0.5519169999752194,
+          "must": 1
+        }
+      },
+      "adaptMs": 0.08445899980142713,
+      "readBefore": 60.5,
+      "readAfter": 60.5,
+      "avgWordsBefore": 19.3,
+      "avgWordsAfter": 19.3,
+      "longBefore": 1,
+      "longAfter": 1,
+      "falcMust": 1,
+      "preservedOk": true,
+      "hostile": {
+        "total": 3,
+        "unsafe": 0,
+        "blocked": 0,
+        "leaked": 0
+      },
+      "axeBefore": {
+        "violations": 8,
+        "byImpact": {
+          "critical": 3,
+          "serious": 3,
+          "moderate": 2,
+          "minor": 0
+        },
+        "rules": {
+          "html-has-lang": 1,
+          "image-alt": 3,
+          "link-name": 2,
+          "region": 2
+        }
+      },
+      "axeAfter": {
+        "violations": 0,
+        "byImpact": {
+          "critical": 0,
+          "serious": 0,
+          "moderate": 0,
+          "minor": 0
+        },
+        "rules": {}
+      },
+      "docBytes": 938,
+      "mdBytes": 538,
+      "tokHtml": 389,
+      "tokMd": 133
+    },
+    {
+      "id": "ecole-inscription",
+      "kind": "edu",
+      "layout": "tablelayout",
+      "htmlBytes": 1572,
+      "baselineMust": 1,
+      "extractMs": 1.3025000002235174,
+      "valid": true,
+      "extractRoot": "score",
+      "blocks": 7,
+      "imagesNoAlt": 1,
+      "render": {
+        "standard": {
+          "ms": 0.7184999999590218,
+          "must": 1
+        },
+        "dyslexie": {
+          "ms": 0.4642079998739064,
+          "must": 1
+        },
+        "falc": {
+          "ms": 0.49529200000688434,
+          "must": 1
+        },
+        "basse_vision": {
+          "ms": 0.4204169998411089,
+          "must": 1
+        }
+      },
+      "adaptMs": 0.10754200001247227,
+      "readBefore": 49.6,
+      "readAfter": 54.3,
+      "avgWordsBefore": 21.3,
+      "avgWordsAfter": 15.8,
+      "longBefore": 1,
+      "longAfter": 1,
+      "falcMust": 1,
+      "preservedOk": true,
+      "hostile": {
+        "total": 2,
+        "unsafe": 1,
+        "blocked": 1,
+        "leaked": 0
+      },
+      "axeBefore": {
+        "violations": 9,
+        "byImpact": {
+          "critical": 3,
+          "serious": 3,
+          "moderate": 3,
+          "minor": 0
+        },
+        "rules": {
+          "heading-order": 1,
+          "html-has-lang": 1,
+          "image-alt": 3,
+          "link-name": 2,
+          "region": 2
+        }
+      },
+      "axeAfter": {
+        "violations": 0,
+        "byImpact": {
+          "critical": 0,
+          "serious": 0,
+          "moderate": 0,
+          "minor": 0
+        },
+        "rules": {}
+      },
+      "docBytes": 1024,
+      "mdBytes": 572,
+      "tokHtml": 385,
+      "tokMd": 138
+    },
+    {
+      "id": "ecole-bourses",
+      "kind": "edu",
+      "layout": "semantic",
+      "htmlBytes": 1392,
+      "baselineMust": 1,
+      "extractMs": 0.8750830001663417,
+      "valid": true,
+      "extractRoot": "main",
+      "blocks": 5,
+      "imagesNoAlt": 1,
+      "render": {
+        "standard": {
+          "ms": 2.5072079999372363,
+          "must": 1
+        },
+        "dyslexie": {
+          "ms": 0.5093340000603348,
+          "must": 1
+        },
+        "falc": {
+          "ms": 0.47333299997262657,
+          "must": 1
+        },
+        "basse_vision": {
+          "ms": 0.41387499985285103,
+          "must": 1
+        }
+      },
+      "adaptMs": 0.07687500002793968,
+      "readBefore": 54.4,
+      "readAfter": 56,
+      "avgWordsBefore": 15,
+      "avgWordsAfter": 15,
+      "longBefore": 1,
+      "longAfter": 1,
+      "falcMust": 1,
+      "preservedOk": true,
+      "hostile": {
+        "total": 2,
+        "unsafe": 0,
+        "blocked": 0,
+        "leaked": 0
+      },
+      "axeBefore": {
+        "violations": 7,
+        "byImpact": {
+          "critical": 3,
+          "serious": 3,
+          "moderate": 1,
+          "minor": 0
+        },
+        "rules": {
+          "html-has-lang": 1,
+          "image-alt": 3,
+          "link-name": 2,
+          "region": 1
+        }
+      },
+      "axeAfter": {
+        "violations": 0,
+        "byImpact": {
+          "critical": 0,
+          "serious": 0,
+          "moderate": 0,
+          "minor": 0
+        },
+        "rules": {}
+      },
+      "docBytes": 838,
+      "mdBytes": 444,
+      "tokHtml": 342,
+      "tokMd": 108
+    },
+    {
+      "id": "banque-faq",
+      "kind": "faq",
+      "layout": "divsoup",
+      "htmlBytes": 1493,
+      "baselineMust": 1,
+      "extractMs": 1.3890419998206198,
+      "valid": true,
+      "extractRoot": "score",
+      "blocks": 6,
+      "imagesNoAlt": 1,
+      "render": {
+        "standard": {
+          "ms": 3.1912089998368174,
+          "must": 1
+        },
+        "dyslexie": {
+          "ms": 0.5130409998819232,
+          "must": 1
+        },
+        "falc": {
+          "ms": 0.4477500000502914,
+          "must": 1
+        },
+        "basse_vision": {
+          "ms": 0.43533400003798306,
+          "must": 1
+        }
+      },
+      "adaptMs": 0.11570800002664328,
+      "readBefore": 76.6,
+      "readAfter": 76.6,
+      "avgWordsBefore": 17.7,
+      "avgWordsAfter": 17.7,
+      "longBefore": 2,
+      "longAfter": 2,
+      "falcMust": 1,
+      "preservedOk": true,
+      "hostile": {
+        "total": 3,
+        "unsafe": 0,
+        "blocked": 0,
+        "leaked": 0
+      },
+      "axeBefore": {
+        "violations": 8,
+        "byImpact": {
+          "critical": 3,
+          "serious": 3,
+          "moderate": 2,
+          "minor": 0
+        },
+        "rules": {
+          "html-has-lang": 1,
+          "image-alt": 3,
+          "link-name": 2,
+          "region": 2
+        }
+      },
+      "axeAfter": {
+        "violations": 0,
+        "byImpact": {
+          "critical": 0,
+          "serious": 0,
+          "moderate": 0,
+          "minor": 0
+        },
+        "rules": {}
+      },
+      "docBytes": 882,
+      "mdBytes": 478,
+      "tokHtml": 369,
+      "tokMd": 118
+    },
+    {
+      "id": "transport-ter",
+      "kind": "transport",
+      "layout": "tablelayout",
+      "htmlBytes": 1500,
+      "baselineMust": 1,
+      "extractMs": 1.5214999997988343,
+      "valid": true,
+      "extractRoot": "score",
+      "blocks": 6,
+      "imagesNoAlt": 1,
+      "render": {
+        "standard": {
+          "ms": 0.9242499999236315,
+          "must": 1
+        },
+        "dyslexie": {
+          "ms": 0.6251249997876585,
+          "must": 1
+        },
+        "falc": {
+          "ms": 1.2356249999720603,
+          "must": 1
+        },
+        "basse_vision": {
+          "ms": 0.5042920000851154,
+          "must": 1
+        }
+      },
+      "adaptMs": 0.06491700001060963,
+      "readBefore": 83.5,
+      "readAfter": 83.5,
+      "avgWordsBefore": 14.8,
+      "avgWordsAfter": 14.8,
+      "longBefore": 0,
+      "longAfter": 0,
+      "falcMust": 1,
+      "preservedOk": true,
+      "hostile": {
+        "total": 2,
+        "unsafe": 1,
+        "blocked": 1,
+        "leaked": 0
+      },
+      "axeBefore": {
+        "violations": 8,
+        "byImpact": {
+          "critical": 3,
+          "serious": 3,
+          "moderate": 2,
+          "minor": 0
+        },
+        "rules": {
+          "html-has-lang": 1,
+          "image-alt": 3,
+          "link-name": 2,
+          "region": 2
+        }
+      },
+      "axeAfter": {
+        "violations": 0,
+        "byImpact": {
+          "critical": 0,
+          "serious": 0,
+          "moderate": 0,
+          "minor": 0
+        },
+        "rules": {}
+      },
+      "docBytes": 882,
+      "mdBytes": 507,
+      "tokHtml": 370,
+      "tokMd": 125
+    },
+    {
+      "id": "transport-velo",
+      "kind": "transport",
+      "layout": "semantic",
+      "htmlBytes": 1320,
+      "baselineMust": 1,
+      "extractMs": 0.7866250001825392,
+      "valid": true,
+      "extractRoot": "main",
+      "blocks": 5,
+      "imagesNoAlt": 1,
+      "render": {
+        "standard": {
+          "ms": 0.7601669998839498,
+          "must": 1
+        },
+        "dyslexie": {
+          "ms": 0.48733399994671345,
+          "must": 1
+        },
+        "falc": {
+          "ms": 0.4731659998651594,
+          "must": 1
+        },
+        "basse_vision": {
+          "ms": 2.2621669999789447,
+          "must": 1
+        }
+      },
+      "adaptMs": 0.0697089999448508,
+      "readBefore": 72,
+      "readAfter": 74.4,
+      "avgWordsBefore": 13.3,
+      "avgWordsAfter": 9.8,
+      "longBefore": 1,
+      "longAfter": 0,
+      "falcMust": 1,
+      "preservedOk": true,
+      "hostile": {
+        "total": 2,
+        "unsafe": 1,
+        "blocked": 1,
+        "leaked": 0
+      },
+      "axeBefore": {
+        "violations": 7,
+        "byImpact": {
+          "critical": 3,
+          "serious": 3,
+          "moderate": 1,
+          "minor": 0
+        },
+        "rules": {
+          "html-has-lang": 1,
+          "image-alt": 3,
+          "link-name": 2,
+          "region": 1
+        }
+      },
+      "axeAfter": {
+        "violations": 0,
+        "byImpact": {
+          "critical": 0,
+          "serious": 0,
+          "moderate": 0,
+          "minor": 0
+        },
+        "rules": {}
+      },
+      "docBytes": 747,
+      "mdBytes": 372,
+      "tokHtml": 325,
+      "tokMd": 91
+    }
+  ]
+}

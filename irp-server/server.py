@@ -33,6 +33,9 @@ from seo import is_bot, prerender
 # Proxy LLM durci (auth, CORS en liste blanche, limites) — voir proxy.py
 import proxy as _proxy
 
+# IRP-Doc : même contenu pour humains (rendu déterministe) et agents (Markdown, JSON-LD, llms.txt)
+import irpdoc as _irpdoc
+
 # ─── Chargement des données ──────────────────────────────────────────────────
 
 _DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
@@ -192,6 +195,10 @@ class IRPHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         path = urlparse(self.path).path
         user_agent = self.headers.get("User-Agent", "")
+
+        # ── Vue agent / IRP-Doc (négociation de contenu explicite) ──
+        if self._serve_agent_view(path):
+            return
 
         # ── SEO: si c'est un bot, servir du HTML prerenderisé ──
         if is_bot(user_agent) and not path.startswith("/__"):
@@ -406,6 +413,70 @@ class IRPHandler(BaseHTTPRequestHandler):
         status, headers, body = _proxy.forward(cfg, payload)
         extra = dict(self._proxy_cors_headers())
         self._send_bytes(status, body, headers.get("Content-Type", "application/json; charset=utf-8"), extra)
+
+    # ── Vue agent : IRP-Doc, Markdown, llms.txt, manifeste ──
+
+    _AGENT_ROUTES = ["/", "/product/macbook-pro-16", "/article/irp-intro", "/dashboard", "/catalog", "/pricing"]
+
+    def _origin(self) -> str:
+        host = self.headers.get("Host", "")
+        return f"http://{host}" if host else ""
+
+    def _doc_for(self, path: str):
+        irp = self._resolve_irp(path)
+        if not irp:
+            return None, 500
+        status = 404 if irp["irp"]["intent"] == "show_error" else 200
+        return _irpdoc.irp_to_doc(irp, path), status
+
+    def _serve_agent_view(self, path: str) -> bool:
+        """Retourne True si la requête a été traitée comme vue agent."""
+        accept = (self.headers.get("Accept") or "").lower()
+        fmt = None
+        if path == "/llms.txt":
+            lines = []
+            for p in self._AGENT_ROUTES:
+                doc, st = self._doc_for(p)
+                if doc and st == 200:
+                    href = "/index.md" if p == "/" else p + ".md"
+                    lines.append((doc["title"], href, doc.get("description", "")))
+            self._send_agent(200, _irpdoc.llms_txt("IRP", lines).encode("utf-8"), "text/plain; charset=utf-8")
+            return True
+        if path == "/.well-known/irp.json":
+            origin = self._origin()
+            manifest = {
+                "irp_manifest": "1.0",
+                "formats": {"irp_doc": "application/irp-doc+json", "markdown": "text/markdown", "intent": "application/irp+json"},
+                "access": {"how": "Accept header or suffix (.md, .irpdoc.json)", "auth": "none", "license": "public"},
+                "pages": [{"path": p, "irp_doc": origin + (p if p != "/" else "/index") + ".irpdoc.json",
+                           "markdown": origin + (p if p != "/" else "/index") + ".md"} for p in self._AGENT_ROUTES],
+            }
+            self._send_agent(200, json.dumps(manifest, ensure_ascii=False, indent=2).encode("utf-8"), "application/json; charset=utf-8")
+            return True
+        if path.endswith(".irpdoc.json"):
+            fmt, path = "doc", path[: -len(".irpdoc.json")]
+        elif path.endswith(".md"):
+            fmt, path = "md", path[:-3]
+        elif "application/irp-doc+json" in accept:
+            fmt = "doc"
+        elif "text/markdown" in accept:
+            fmt = "md"
+        if fmt is None or path.startswith("/__"):
+            return False
+        if path in ("/index", ""):
+            path = "/"
+        doc, status = self._doc_for(path)
+        if doc is None:
+            return False
+        if fmt == "doc":
+            self._send_agent(status, json.dumps(doc, ensure_ascii=False, indent=2).encode("utf-8"), "application/irp-doc+json; charset=utf-8")
+        else:
+            self._send_agent(status, _irpdoc.to_markdown(doc).encode("utf-8"), "text/markdown; charset=utf-8")
+        return True
+
+    def _send_agent(self, status: int, body: bytes, ctype: str):
+        # contenu public en lecture seule → CORS ouvert, mais jamais de cookies/credentials
+        self._send_bytes(status, body, ctype, {"Access-Control-Allow-Origin": "*", "Vary": "Accept", "Cache-Control": "public, max-age=300"})
 
     def _resolve_irp(self, path: str) -> dict | None:
         """Résout une route vers un objet IRP (pour le prerender SEO)."""
