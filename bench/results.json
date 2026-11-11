@@ -14,10 +14,10 @@
     "preservedOk": 20,
     "falcPagesFullMust": 20,
     "latency": {
-      "extractP50": 1.4,
+      "extractP50": 1.7,
       "extractP95": 6.8,
       "renderP50": 0.6,
-      "renderP95": 3.5,
+      "renderP95": 3.4,
       "adaptP50": 0.1,
       "adaptP95": 1.6
     },
@@ -66,30 +66,30 @@
       "layout": "semantic",
       "htmlBytes": 1955,
       "baselineMust": 1,
-      "extractMs": 6.808582999976352,
+      "extractMs": 6.771499999973457,
       "valid": true,
       "extractRoot": "main",
       "blocks": 9,
       "imagesNoAlt": 1,
       "render": {
         "standard": {
-          "ms": 8.176042000064626,
+          "ms": 8.064000000013039,
           "must": 1
         },
         "dyslexie": {
-          "ms": 4.330583000089973,
+          "ms": 4.866792000015266,
           "must": 1
         },
         "falc": {
-          "ms": 3.071250000037253,
+          "ms": 3.1488329999847338,
           "must": 1
         },
         "basse_vision": {
-          "ms": 2.6999580000992864,
+          "ms": 3.10833299998194,
           "must": 1
         }
       },
-      "adaptMs": 1.6440830000210553,
+      "adaptMs": 1.5960419999901205,
       "readBefore": 49.6,
       "readAfter": 65.5,
       "avgWordsBefore": 28.5,
@@ -141,30 +141,30 @@
       "layout": "divsoup",
       "htmlBytes": 1846,
       "baselineMust": 1,
-      "extractMs": 2.7472920001018792,
+      "extractMs": 3.3401670000166632,
       "valid": true,
       "extractRoot": "score",
       "blocks": 9,
       "imagesNoAlt": 1,
       "render": {
         "standard": {
-          "ms": 1.2752079998608679,
+          "ms": 1.1237500000279397,
           "must": 1
         },
         "dyslexie": {
-          "ms": 0.8058339999988675,
+          "ms": 0.6669589999946766,
           "must": 1
         },
         "falc": {
-          "ms": 0.7219169999007136,
+          "ms": 0.6992500000051223,
           "must": 1
         },
         "basse_vision": {
-          "ms": 1.0701250000856817,
+          "ms": 1.0845419999677688,
           "must": 1
         }
       },
-      "adaptMs": 0.5666660000570118,
+      "adaptMs": 0.478166000044439,
       "readBefore": 50.2,
       "readAfter": 61.3,
       "avgWordsBefore": 25.3,
@@ -215,30 +215,30 @@
       "layout": "tablelayout",
       "htmlBytes": 1728,
       "baselineMust": 1,
-      "extractMs": 2.2540420000441372,
+      "extractMs": 2.427124999987427,
       "valid": true,
       "extractRoot": "score",
       "blocks": 8,
       "imagesNoAlt": 1,
       "render": {
         "standard": {
-          "ms": 1.1603749999776483,
+          "ms": 1.2033330000122078,
           "must": 1
         },
         "dyslexie": {
-          "ms": 0.6635000000242144,
+          "ms": 0.7055420000106096,
           "must": 1
         },
         "falc": {
-          "ms": 0.6855419999919832,
+          "ms": 0.6792499999864958,
           "must": 1
         },
         "basse_vision": {
-          "ms": 0.7369999999646097,
+          "ms": 0.6447909999988042,
           "must": 1
         }
       },
-      "adaptMs": 0.31837500003166497,
+      "adaptMs": 0.3219169999938458,
       "readBefore": 61.3,
       "readAfter": 68.6,
       "avgWordsBefore": 23.8,
@@ -290,30 +290,30 @@
       "layout": "semantic",
       "htmlBytes": 1604,
       "baselineMust": 1,
-      "extractMs": 2.262624999973923,
+      "extractMs": 2.6369159999885596,
       "valid": true,
       "extractRoot": "main",
       "blocks": 7,
       "imagesNoAlt": 1,
       "render": {
         "standard": {
-          "ms": 0.8544589998200536,
+          "ms": 0.9124590000137687,
           "must": 1
         },
         "dyslexie": {
-          "ms": 0.5402499998454005,
+          "ms": 0.631374999997206,
           "must": 1
         },
         "falc": {
-          "ms": 0.5904169999994338,
+          "ms": 0.6002080000471324,
           "must": 1
         },
         "basse_vision": {
-          "ms": 0.5217089999932796,
+          "ms": 0.5198749999981374,
           "must": 1
         }
       },
-      "adaptMs": 0.1478750000242144,
+      "adaptMs": 0.14754199999151751,
       "readBefore": 63.3,
       "readAfter": 77,
       "avgWordsBefore": 27,
@@ -365,30 +365,30 @@
       "layout": "divsoup",
       "htmlBytes": 1704,
       "baselineMust": 1,
-      "extractMs": 2.32674999977462,
+      "extractMs": 2.43791700003203,
       "valid": true,
       "extractRoot": "score",
       "blocks": 10,
       "imagesNoAlt": 1,
       "render": {
         "standard": {
-          "ms": 1.1379169998690486,
+          "ms": 1.2072909999988042,
           "must": 1
         },
         "dyslexie": {
-          "ms": 0.8254999998025596,
+          "ms": 0.7608340000151657,
           "must": 1
         },
         "falc": {
-          "ms": 0.6447919998317957,
+          "ms": 0.6330420000012964,
           "must": 1
         },
         "basse_vision": {
-          "ms": 0.6537500000558794,
+          "ms": 0.605582999996841,
           "must": 1
         }
       },
-      "adaptMs": 0.1644170000217855,
+      "adaptMs": 0.14608299999963492,
       "readBefore": 72.8,
       "readAfter": 72.8,
       "avgWordsBefore": 12.2,
@@ -439,30 +439,30 @@
       "layout": "semantic",
       "htmlBytes": 1619,
       "baselineMust": 1,
-      "extractMs": 1.6534590001683682,
+      "extractMs": 1.743125000037253,
       "valid": true,
       "extractRoot": "main",
       "blocks": 9,
       "imagesNoAlt": 1,
       "render": {
         "standard": {
-          "ms": 1.006624999921769,
+          "ms": 1.2063750000088476,
           "must": 1
         },
         "dyslexie": {
-          "ms": 0.7007500000763685,
+          "ms": 0.8018750000046566,
           "must": 1
         },
         "falc": {
-          "ms": 0.6094169998541474,
+          "ms": 0.6917089999769814,
           "must": 1
         },
         "basse_vision": {
-          "ms": 0.5902090000454336,
+          "ms": 0.6313329999684356,
           "must": 1
         }
       },
-      "adaptMs": 0.13204099982976913,
+      "adaptMs": 0.12929100001929328,
       "readBefore": 53.2,
       "readAfter": 53.2,
       "avgWordsBefore": 18.3,
@@ -514,30 +514,30 @@
       "layout": "tablelayout",
       "htmlBytes": 1450,
       "baselineMust": 1,
-      "extractMs": 2.1322079999372363,
+      "extractMs": 1.789708000025712,
       "valid": true,
       "extractRoot": "score",
       "blocks": 8,
       "imagesNoAlt": 1,
       "render": {
         "standard": {
-          "ms": 3.469666999997571,
+          "ms": 0.979209000011906,
           "must": 1
         },
         "dyslexie": {
-          "ms": 0.6526669999584556,
+          "ms": 0.6189999999478459,
           "must": 1
         },
         "falc": {
-          "ms": 0.7122909999452531,
+          "ms": 0.5262920000241138,
           "must": 1
         },
         "basse_vision": {
-          "ms": 0.6009169998578727,
+          "ms": 0.5419999999576248,
           "must": 1
         }
       },
-      "adaptMs": 0.20212500006891787,
+      "adaptMs": 0.18575000000419095,
       "readBefore": 66.7,
       "readAfter": 66.7,
       "avgWordsBefore": 10.5,
@@ -589,30 +589,30 @@
       "layout": "divsoup",
       "htmlBytes": 1541,
       "baselineMust": 1,
-      "extractMs": 1.4431670000776649,
+      "extractMs": 1.5268329999526031,
       "valid": true,
       "extractRoot": "score",
       "blocks": 9,
       "imagesNoAlt": 1,
       "render": {
         "standard": {
-          "ms": 1.783250000094995,
+          "ms": 0.8964169999817386,
           "must": 1
         },
         "dyslexie": {
-          "ms": 0.6059999999124557,
+          "ms": 0.5877080000354908,
           "must": 1
         },
         "falc": {
-          "ms": 0.48416699981316924,
+          "ms": 0.5561670000315644,
           "must": 1
         },
         "basse_vision": {
-          "ms": 0.5361250001005828,
+          "ms": 0.4882089999737218,
           "must": 1
         }
       },
-      "adaptMs": 0.13320800010114908,
+      "adaptMs": 0.13299999997252598,
       "readBefore": 84.2,
       "readAfter": 84.2,
       "avgWordsBefore": 10.5,
@@ -663,30 +663,30 @@
       "layout": "article",
       "htmlBytes": 1802,
       "baselineMust": 1,
-      "extractMs": 1.1417080000974238,
+      "extractMs": 1.1550419999985024,
       "valid": true,
       "extractRoot": "article",
       "blocks": 7,
       "imagesNoAlt": 1,
       "render": {
         "standard": {
-          "ms": 0.788458000170067,
+          "ms": 0.7986250000540167,
           "must": 1
         },
         "dyslexie": {
-          "ms": 0.5859999998938292,
+          "ms": 0.5222090000170283,
           "must": 1
         },
         "falc": {
-          "ms": 0.49829099979251623,
+          "ms": 0.45341600000392646,
           "must": 1
         },
         "basse_vision": {
-          "ms": 0.5071670000907034,
+          "ms": 0.44279200001619756,
           "must": 1
         }
       },
-      "adaptMs": 0.15704199997708201,
+      "adaptMs": 0.16016699996544048,
       "readBefore": 54.6,
       "readAfter": 59.9,
       "avgWordsBefore": 22.3,
@@ -738,30 +738,30 @@
       "layout": "article",
       "htmlBytes": 1701,
       "baselineMust": 1,
-      "extractMs": 1.0635830000974238,
+      "extractMs": 1.1194159999722615,
       "valid": true,
       "extractRoot": "article",
       "blocks": 6,
       "imagesNoAlt": 1,
       "render": {
         "standard": {
-          "ms": 0.754541999893263,
+          "ms": 0.7406670000054874,
           "must": 1
         },
         "dyslexie": {
-          "ms": 0.5277499998919666,
+          "ms": 0.4606250000069849,
           "must": 1
         },
         "falc": {
-          "ms": 0.5042079999111593,
+          "ms": 0.5187080000177957,
           "must": 1
         },
         "basse_vision": {
-          "ms": 0.48745799995958805,
+          "ms": 0.45204199996078387,
           "must": 1
         }
       },
-      "adaptMs": 0.12154199997894466,
+      "adaptMs": 0.11999999999534339,
       "readBefore": 63.8,
       "readAfter": 70.5,
       "avgWordsBefore": 26.3,
@@ -813,30 +813,30 @@
       "layout": "article",
       "htmlBytes": 1684,
       "baselineMust": 1,
-      "extractMs": 0.9349159998819232,
+      "extractMs": 0.9975420000264421,
       "valid": true,
       "extractRoot": "article",
       "blocks": 6,
       "imagesNoAlt": 1,
       "render": {
         "standard": {
-          "ms": 0.703207999933511,
+          "ms": 0.7514169999631122,
           "must": 1
         },
         "dyslexie": {
-          "ms": 0.5583330001682043,
+          "ms": 0.5060830000438727,
           "must": 1
         },
         "falc": {
-          "ms": 0.5031659998930991,
+          "ms": 0.49825000000419095,
           "must": 1
         },
         "basse_vision": {
-          "ms": 0.5282079998869449,
+          "ms": 0.44454199995379895,
           "must": 1
         }
       },
-      "adaptMs": 0.10670800018124282,
+      "adaptMs": 0.10633300000336021,
       "readBefore": 51.8,
       "readAfter": 51.8,
       "avgWordsBefore": 24,
@@ -888,30 +888,30 @@
       "layout": "semantic",
       "htmlBytes": 1617,
       "baselineMust": 1,
-      "extractMs": 1.1300419999752194,
+      "extractMs": 1.4731670000473969,
       "valid": true,
       "extractRoot": "main",
       "blocks": 6,
       "imagesNoAlt": 1,
       "render": {
         "standard": {
-          "ms": 0.7834999999031425,
+          "ms": 0.7756250000093132,
           "must": 1
         },
         "dyslexie": {
-          "ms": 0.5087079999502748,
+          "ms": 0.47641600004862994,
           "must": 1
         },
         "falc": {
-          "ms": 0.6254169999156147,
+          "ms": 0.47108300001127645,
           "must": 1
         },
         "basse_vision": {
-          "ms": 0.45374999986961484,
+          "ms": 0.37458299996796995,
           "must": 1
         }
       },
-      "adaptMs": 0.11216600006446242,
+      "adaptMs": 0.12800000002607703,
       "readBefore": 56,
       "readAfter": 56.1,
       "avgWordsBefore": 20.5,
@@ -962,30 +962,30 @@
       "layout": "divsoup",
       "htmlBytes": 1531,
       "baselineMust": 1,
-      "extractMs": 1.1198330000042915,
+      "extractMs": 1.3089160000090487,
       "valid": true,
       "extractRoot": "score",
       "blocks": 6,
       "imagesNoAlt": 1,
       "render": {
         "standard": {
-          "ms": 0.8093750001862645,
+          "ms": 3.716041999985464,
           "must": 1
         },
         "dyslexie": {
-          "ms": 0.5470830001868308,
+          "ms": 0.6045409999787807,
           "must": 1
         },
         "falc": {
-          "ms": 0.5619159999769181,
+          "ms": 3.019542000023648,
           "must": 1
         },
         "basse_vision": {
-          "ms": 0.5534159999806434,
+          "ms": 0.5404160000034608,
           "must": 1
         }
       },
-      "adaptMs": 0.09795800014398992,
+      "adaptMs": 0.09829199995147064,
       "readBefore": 38.2,
       "readAfter": 41.6,
       "avgWordsBefore": 18.7,
@@ -1036,30 +1036,30 @@
       "layout": "semantic",
       "htmlBytes": 1655,
       "baselineMust": 1,
-      "extractMs": 1.233417000155896,
+      "extractMs": 3.486166000016965,
       "valid": true,
       "extractRoot": "main",
       "blocks": 8,
       "imagesNoAlt": 1,
       "render": {
         "standard": {
-          "ms": 0.8992090001702309,
+          "ms": 1.0172909999964759,
           "must": 1
         },
         "dyslexie": {
-          "ms": 0.6719580001663417,
+          "ms": 0.6469580000266433,
           "must": 1
         },
         "falc": {
-          "ms": 0.5952500000130385,
+          "ms": 0.6669579999870621,
           "must": 1
         },
         "basse_vision": {
-          "ms": 0.5828329999931157,
+          "ms": 0.5728329999838024,
           "must": 1
         }
       },
-      "adaptMs": 0.10908399987965822,
+      "adaptMs": 0.11716700001852587,
       "readBefore": 65.8,
       "readAfter": 68.7,
       "avgWordsBefore": 17.3,
@@ -1111,30 +1111,30 @@
       "layout": "divsoup",
       "htmlBytes": 1573,
       "baselineMust": 1,
-      "extractMs": 1.2757500000298023,
+      "extractMs": 1.3024589999695309,
       "valid": true,
       "extractRoot": "score",
       "blocks": 7,
       "imagesNoAlt": 1,
       "render": {
         "standard": {
-          "ms": 4.0252910000272095,
+          "ms": 3.409457999980077,
           "must": 1
         },
         "dyslexie": {
-          "ms": 0.5925409998744726,
+          "ms": 0.6484579999814741,
           "must": 1
         },
         "falc": {
-          "ms": 0.5851670000702143,
+          "ms": 0.49987500003771856,
           "must": 1
         },
         "basse_vision": {
-          "ms": 0.5519169999752194,
+          "ms": 0.5197090000147,
           "must": 1
         }
       },
-      "adaptMs": 0.08445899980142713,
+      "adaptMs": 0.08695799997076392,
       "readBefore": 60.5,
       "readAfter": 60.5,
       "avgWordsBefore": 19.3,
@@ -1185,30 +1185,30 @@
       "layout": "tablelayout",
       "htmlBytes": 1572,
       "baselineMust": 1,
-      "extractMs": 1.3025000002235174,
+      "extractMs": 1.4621249999618158,
       "valid": true,
       "extractRoot": "score",
       "blocks": 7,
       "imagesNoAlt": 1,
       "render": {
         "standard": {
-          "ms": 0.7184999999590218,
+          "ms": 0.7782090000109747,
           "must": 1
         },
         "dyslexie": {
-          "ms": 0.4642079998739064,
+          "ms": 0.5115409999853,
           "must": 1
         },
         "falc": {
-          "ms": 0.49529200000688434,
+          "ms": 0.5529159999568947,
           "must": 1
         },
         "basse_vision": {
-          "ms": 0.4204169998411089,
+          "ms": 0.5003329999744892,
           "must": 1
         }
       },
-      "adaptMs": 0.10754200001247227,
+      "adaptMs": 0.1133329999865964,
       "readBefore": 49.6,
       "readAfter": 54.3,
       "avgWordsBefore": 21.3,
@@ -1260,30 +1260,30 @@
       "layout": "semantic",
       "htmlBytes": 1392,
       "baselineMust": 1,
-      "extractMs": 0.8750830001663417,
+      "extractMs": 0.913165999983903,
       "valid": true,
       "extractRoot": "main",
       "blocks": 5,
       "imagesNoAlt": 1,
       "render": {
         "standard": {
-          "ms": 2.5072079999372363,
+          "ms": 0.8303329999907874,
           "must": 1
         },
         "dyslexie": {
-          "ms": 0.5093340000603348,
+          "ms": 0.5684999999939464,
           "must": 1
         },
         "falc": {
-          "ms": 0.47333299997262657,
+          "ms": 2.491749999986496,
           "must": 1
         },
         "basse_vision": {
-          "ms": 0.41387499985285103,
+          "ms": 0.49937500001396984,
           "must": 1
         }
       },
-      "adaptMs": 0.07687500002793968,
+      "adaptMs": 0.09533400001237169,
       "readBefore": 54.4,
       "readAfter": 56,
       "avgWordsBefore": 15,
@@ -1334,30 +1334,30 @@
       "layout": "divsoup",
       "htmlBytes": 1493,
       "baselineMust": 1,
-      "extractMs": 1.3890419998206198,
+      "extractMs": 4.618999999947846,
       "valid": true,
       "extractRoot": "score",
       "blocks": 6,
       "imagesNoAlt": 1,
       "render": {
         "standard": {
-          "ms": 3.1912089998368174,
+          "ms": 1.06208299996797,
           "must": 1
         },
         "dyslexie": {
-          "ms": 0.5130409998819232,
+          "ms": 0.5494590000016615,
           "must": 1
         },
         "falc": {
-          "ms": 0.4477500000502914,
+          "ms": 0.5162080000154674,
           "must": 1
         },
         "basse_vision": {
-          "ms": 0.43533400003798306,
+          "ms": 0.5746250000083819,
           "must": 1
         }
       },
-      "adaptMs": 0.11570800002664328,
+      "adaptMs": 0.10479200002737343,
       "readBefore": 76.6,
       "readAfter": 76.6,
       "avgWordsBefore": 17.7,
@@ -1408,30 +1408,30 @@
       "layout": "tablelayout",
       "htmlBytes": 1500,
       "baselineMust": 1,
-      "extractMs": 1.5214999997988343,
+      "extractMs": 1.6992089999839664,
       "valid": true,
       "extractRoot": "score",
       "blocks": 6,
       "imagesNoAlt": 1,
       "render": {
         "standard": {
-          "ms": 0.9242499999236315,
+          "ms": 0.9667909999843687,
           "must": 1
         },
         "dyslexie": {
-          "ms": 0.6251249997876585,
+          "ms": 0.6937080000061542,
           "must": 1
         },
         "falc": {
-          "ms": 1.2356249999720603,
+          "ms": 0.6429580000112765,
           "must": 1
         },
         "basse_vision": {
-          "ms": 0.5042920000851154,
+          "ms": 0.5536670000292361,
           "must": 1
         }
       },
-      "adaptMs": 0.06491700001060963,
+      "adaptMs": 0.06433299998752773,
       "readBefore": 83.5,
       "readAfter": 83.5,
       "avgWordsBefore": 14.8,
@@ -1482,30 +1482,30 @@
       "layout": "semantic",
       "htmlBytes": 1320,
       "baselineMust": 1,
-      "extractMs": 0.7866250001825392,
+      "extractMs": 1.0031660000095144,
       "valid": true,
       "extractRoot": "main",
       "blocks": 5,
       "imagesNoAlt": 1,
       "render": {
         "standard": {
-          "ms": 0.7601669998839498,
+          "ms": 0.9607079999987036,
           "must": 1
         },
         "dyslexie": {
-          "ms": 0.48733399994671345,
+          "ms": 0.4942500000470318,
           "must": 1
         },
         "falc": {
-          "ms": 0.4731659998651594,
+          "ms": 0.4174159999820404,
           "must": 1
         },
         "basse_vision": {
-          "ms": 2.2621669999789447,
+          "ms": 2.391834000009112,
           "must": 1
         }
       },
-      "adaptMs": 0.0697089999448508,
+      "adaptMs": 0.07425000000512227,
       "readBefore": 72,
       "readAfter": 74.4,
       "avgWordsBefore": 13.3,

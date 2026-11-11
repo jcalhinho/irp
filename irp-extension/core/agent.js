@@ -29,7 +29,7 @@ export function toMarkdown(doc) {
         const h = b.headers && b.headers.length ? b.headers : (b.rows[0] || []).map((_, i) => `Col ${i + 1}`);
         out.push(`| ${h.map(cell).join(' | ')} |`, `| ${h.map(() => '---').join(' | ')} |`);
         b.rows.forEach((r) => out.push(`| ${r.map(cell).join(' | ')} |`)); break; }
-      case 'image': out.push('', `![${b.alt || ''}](${b.src || ''})`.replace('()', '')); break;
+      case 'image': if (b.alt || b.src) out.push('', `![${b.alt || ''}](${b.src || ''})`.replace('()', '')); break;
       case 'section': if (b.title) out.push('', `${'#'.repeat(Math.min(6, depth + 2))} ${b.title}`); b.blocks.forEach((x) => blk(x, depth + 1)); break;
     }
   };

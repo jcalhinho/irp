@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { JSDOM } from 'jsdom';
 import {
   validateDoc, renderDoc, visibleText, THEMES, PROFILES, resolveProfile, buildCss, safeHref, safeImgSrc,
-  simplifyText, readability, protectedTokens, adaptText, adaptDoc, checkPreserved, extractDoc, verifyMustShow, toMarkdown, approxTokens, syllables,
+  simplifyText, readability, protectedTokens, adaptText, adaptDoc, checkPreserved, extractDoc, auditSource, verifyMustShow, toMarkdown, approxTokens, syllables,
 } from '../irp-core/index.js';
 
 const mk = (html = '<!doctype html><html lang="fr"><body></body></html>', url = 'https://exemple.fr/') => new JSDOM(html, { url }).window.document;
@@ -247,4 +247,16 @@ test('lexique : aucune tournure bancale (« s\'payer ») après remplacement', (
   assert.equal(simplifyText("Il doit s’acquitter de la somme de 25 €."), 'Il doit payer la somme de 25 €.');
   assert.equal(simplifyText('Il doit s’acquitter rapidement.'), 'Il doit payer rapidement.');
   for (const out of [simplifyText(ADMIN)]) assert.doesNotMatch(out, /\bs[’']payer\b|\bs[’']pay/);
+});
+
+test('auditSource : repère les défauts courants de la page source, et seulement eux', () => {
+  const bad = mk('<html><body><h3>Titre</h3><img src="a.png"><img src="b.png" alt=""><a href="/x"><img src="i.png"></a><a href="/y">cliquez ici</a>'
+    + '<table><tr><td>a</td></tr><tr><td>b</td></tr></table><input type="text"></body></html>');
+  const r = auditSource(bad); const by = Object.fromEntries(r.issues.map((i) => [i.id, i.count]));
+  assert.equal(by['image-alt'], 2); assert.equal(by['link-name'], 1); assert.equal(by['link-generic'], 1);
+  assert.equal(by['heading-order'], 1); assert.equal(by.h1, 1); assert.equal(by.lang, 1); assert.equal(by.title, 1);
+  assert.equal(by['table-headers'], 1); assert.equal(by.label, 1);
+  const good = mk('<!doctype html><html lang="fr"><head><title>ok</title></head><body><h1>T</h1><h2>S</h2><img src="a.png" alt="x"><a href="/x">Voir les tarifs</a>'
+    + '<label for="n">Nom</label><input id="n"></body></html>');
+  assert.deepEqual(auditSource(good).issues, []);
 });

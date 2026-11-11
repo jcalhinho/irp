@@ -23,9 +23,10 @@ Routes:
 import argparse
 import json
 import os
+import re
 import sys
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
-from urllib.parse import urlparse, unquote
+from urllib.parse import urlparse, unquote, parse_qs
 
 # SEO: prerender HTML pour les bots
 from seo import is_bot, prerender
@@ -35,6 +36,9 @@ import proxy as _proxy
 
 # IRP-Doc : même contenu pour humains (rendu déterministe) et agents (Markdown, JSON-LD, llms.txt)
 import irpdoc as _irpdoc
+
+# Outil « colle une URL » : récupération de pages publiques, anti-SSRF — voir fetcher.py
+import fetcher as _fetcher
 
 # ─── Chargement des données ──────────────────────────────────────────────────
 
@@ -187,6 +191,24 @@ def configure_proxy(cfg) -> None:
     _RATE = _proxy.RateLimiter(cfg.rate_per_min)
 
 
+# ─── Outil « colle une URL » ────────────────────────────────────────────────
+
+_REPO_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_FETCH_ENABLED = False
+_FETCH_RATE = None
+_TRUST_PROXY = os.environ.get("IRP_TRUST_PROXY") == "1"  # derrière un reverse proxy de confiance : lire X-Forwarded-For
+_TOOL_CSP = ("default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self'; "
+             "img-src 'self' data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'")
+_STATIC = {"/tool": ("irp-site/tool.html", "text/html; charset=utf-8"), "/tool.js": ("irp-site/tool.js", "text/javascript; charset=utf-8"),
+           "/privacy": ("irp-site/privacy.html", "text/html; charset=utf-8")}
+
+
+def configure_fetch(enabled: bool, per_minute: int = 10) -> None:
+    global _FETCH_ENABLED, _FETCH_RATE
+    _FETCH_ENABLED = enabled
+    _FETCH_RATE = _proxy.RateLimiter(per_minute)
+
+
 # ─── Serveur HTTP ────────────────────────────────────────────────────────────
 
 class IRPHandler(BaseHTTPRequestHandler):
@@ -195,6 +217,10 @@ class IRPHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         path = urlparse(self.path).path
         user_agent = self.headers.get("User-Agent", "")
+
+        # ── Outil « colle une URL » (page, scripts, endpoint de récupération) ──
+        if self._serve_tool(path):
+            return
 
         # ── Vue agent / IRP-Doc (négociation de contenu explicite) ──
         if self._serve_agent_view(path):
@@ -414,6 +440,65 @@ class IRPHandler(BaseHTTPRequestHandler):
         extra = dict(self._proxy_cors_headers())
         self._send_bytes(status, body, headers.get("Content-Type", "application/json; charset=utf-8"), extra)
 
+    # ── Outil « colle une URL » ──
+
+    def _client_key(self) -> str:
+        if _TRUST_PROXY:
+            xff = (self.headers.get("X-Forwarded-For") or "").split(",")[-1].strip()
+            if xff:
+                return xff
+        return self.client_address[0]
+
+    def _serve_tool(self, path: str) -> bool:
+        if path == "/__fetch":
+            self._serve_fetch()
+            return True
+        rel = None
+        if path in _STATIC:
+            rel, ctype = _STATIC[path]
+        elif path.startswith("/core/") and re.fullmatch(r"/core/[a-z]+\.js", path):
+            rel, ctype = "irp-core/" + path[len("/core/"):], "text/javascript; charset=utf-8"
+        if rel is None:
+            return False
+        full = os.path.join(_REPO_DIR, rel)
+        try:
+            with open(full, "rb") as f:
+                body = f.read()
+        except OSError:
+            return False
+        self._send_bytes(200, body, ctype, {"Content-Security-Policy": _TOOL_CSP, "Referrer-Policy": "no-referrer",
+                                            "X-Frame-Options": "DENY", "Cache-Control": "no-cache"})
+        return True
+
+    def _fetch_json(self, status: int, payload: dict):
+        self._send_bytes(status, json.dumps(payload, ensure_ascii=False).encode("utf-8"), "application/json; charset=utf-8",
+                         {"Cache-Control": "no-store", "Referrer-Policy": "no-referrer"})
+
+    def _serve_fetch(self):
+        if not _FETCH_ENABLED:
+            return self._fetch_json(503, {"error": "fetch_disabled", "message": "La récupération d'adresses est désactivée sur ce serveur."})
+        if (self.headers.get("Sec-Fetch-Site") or "same-origin") == "cross-site":
+            return self._fetch_json(403, {"error": "forbidden", "message": "Requête inter-sites refusée."})
+        if not _FETCH_RATE.allow(self._client_key()):
+            self.send_response(429)
+            self.send_header("Retry-After", "60")
+            body = json.dumps({"error": "rate_limited", "message": "Trop de requêtes. Réessayez dans une minute."}).encode()
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+            return
+        qs = parse_qs(urlparse(self.path).query)
+        url = (qs.get("url") or [""])[0]
+        try:
+            page = _fetcher.fetch_page(url)
+        except _fetcher.FetchError as e:
+            return self._fetch_json(e.status, {"error": e.code, "message": e.message})
+        except Exception as e:  # jamais de détail interne vers le visiteur
+            print(f"[FETCH] erreur inattendue: {type(e).__name__}", file=sys.stderr)
+            return self._fetch_json(500, {"error": "internal", "message": "Erreur interne."})
+        self._fetch_json(200, {"url": page.url, "status": page.status, "html": page.html, "truncated": page.truncated, "bytes": page.bytes})
+
     # ── Vue agent : IRP-Doc, Markdown, llms.txt, manifeste ──
 
     _AGENT_ROUTES = ["/", "/product/macbook-pro-16", "/article/irp-intro", "/dashboard", "/catalog", "/pricing"]
@@ -547,10 +632,13 @@ def main():
                         help="Origine navigateur autorisée pour le proxy SGP (répétable). "
                              "Défaut : http://localhost:3000 et http://127.0.0.1:3000")
     parser.add_argument("--no-proxy", action="store_true", help="Désactive le proxy SGP")
+    parser.add_argument("--fetch", action="store_true",
+                        help="Active /__fetch (outil « colle une URL ») même hors localhost (actif par défaut en local)")
     args = parser.parse_args()
 
     cfg = _proxy.build_config(args.host, args.allow_origin, enabled_flag=not args.no_proxy)
     configure_proxy(cfg)
+    configure_fetch(args.fetch or cfg.loopback, int(os.environ.get("IRP_FETCH_RATE", "10")))
 
     server = ThreadingHTTPServer((args.host, args.port), IRPHandler)
     print(f"🚀 IRP Server — http://{args.host}:{args.port}")
@@ -563,6 +651,7 @@ def main():
     print(f"     /dashboard               → show_dashboard")
     print(f"     /__intents               → liste des intents (debug)")
     print(f"     /__health                → healthcheck")
+    print(f"     /tool                    → outil « colle une URL » ({'actif' if _FETCH_ENABLED else 'récupération désactivée : --fetch'})")
     if cfg.enabled:
         print(f"   Proxy SGP : actif (clé : {cfg.key_source}, jeton : {'oui' if cfg.token else 'non'}, "
               f"origines : {', '.join(cfg.origins)})")

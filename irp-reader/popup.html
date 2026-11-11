@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IRP Lecture</title>
+<style>
+  :root{color-scheme:light dark;--bg:#fff;--fg:#1a1a1a;--accent:#0b5cad;--border:#767676;--muted:#4a4a4a}
+  @media (prefers-color-scheme:dark){:root{--bg:#1c1c1e;--fg:#f0f0f0;--accent:#8ab4f8;--border:#9a9a9a;--muted:#c4c4c4}}
+  body{margin:0;width:320px;padding:16px;background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,sans-serif}
+  h1{font-size:17px;margin:0 0 4px}
+  p{margin:.3em 0;color:var(--muted);font-size:13px}
+  label{display:block;font-weight:600;margin:12px 0 4px}
+  select,button{width:100%;min-height:44px;font:inherit;border-radius:8px;padding:.4rem .7rem}
+  select{background:var(--bg);color:var(--fg);border:2px solid var(--border)}
+  button{margin-top:12px;background:var(--accent);color:#fff;border:2px solid var(--accent);cursor:pointer;font-weight:600}
+  @media (prefers-color-scheme:dark){button{color:#101010}}
+  :focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+  #msg{min-height:1.4em;color:#b00020;font-weight:600}
+  @media (prefers-color-scheme:dark){#msg{color:#ff8a80}}
+</style>
+</head>
+<body>
+  <h1>Lecture adaptée</h1>
+  <p>Affiche la page en cours dans un format plus lisible. Tout reste sur votre appareil.</p>
+  <label for="profile">Profil</label>
+  <select id="profile">
+    <option value="standard">Standard</option>
+    <option value="dyslexie">Dyslexie</option>
+    <option value="falc">Langage simplifié (FALC)</option>
+    <option value="basse_vision">Basse vision</option>
+    <option value="lecture_nuit">Lecture de nuit</option>
+  </select>
+  <button id="open" type="button">Lire cette page</button>
+  <p id="msg" role="status" aria-live="polite"></p>
+  <script src="popup.js"></script>
+</body>
+</html>

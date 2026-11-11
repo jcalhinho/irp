@@ -41,6 +41,17 @@ Corpus **synthétique** de 20 pages françaises imparfaites (menus, cookies, ima
 > axe sous jsdom ne mesure pas les contrastes ; ceux des thèmes sont vérifiés par calcul (WCAG AA ≥ 4,5:1) dans `tests/core.test.mjs`.
 > L'ancienne affirmation « 50x moins de bande passante » n'a **pas** été démontrée et a été retirée.
 
+## 🌐 Outil en ligne « colle une URL »
+
+`./start.sh` puis `http://localhost:8001/tool` : collez l'adresse d'une page publique → lecture adaptée, Markdown pour agents, contrôle « rien de perdu », défauts d'accessibilité repérés sur la page d'origine.
+Le serveur ne fait que **télécharger** la page (anti-SSRF : http/https, ports 80/443, adresses publiques uniquement, connexion épinglée sur l'IP validée, redirections revalidées, taille/durée bornées — `irp-server/fetcher.py`, 25 tests). L'analyse du HTML se fait dans le navigateur (`DOMParser`), sous une CSP stricte.
+Actif par défaut en local ; pour un serveur public : `--fetch` (et `IRP_FETCH_RATE`, `IRP_TRUST_PROXY=1` derrière un reverse proxy de confiance).
+
+## 🧩 Extension « IRP Lecture » (Chrome Web Store)
+
+`irp-reader/` : version minimale pour publication — **aucune permission d'hôte**, n'agit que sur clic/raccourci (Alt+Maj+L), sur l'onglet actif. `python3 scripts/build_reader.py` → `dist/irp-reader-<version>.zip`.
+Pack de publication : `store/` (fiche FR/EN, politique de confidentialité, checklist, 5 captures). Kit de lancement : `business/launch-kit.md`. Article : `business/article.md`.
+
 ## 🔒 Sécurité
 
 - **Pas de HTML généré** dans le chemin IRP-Doc ; l'ancien chemin (HTML produit par IA) passe par un assainisseur à liste blanche (`irp-sdk/irp-sanitizer.js`, testé sur 51 charges) et **n'exécute aucun JavaScript** (les interactions sont en CSS).

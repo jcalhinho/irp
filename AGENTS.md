@@ -968,3 +968,10 @@ Spécification : `irp-spec/irp-doc-v1.0.md`. Positionnement : `business/position
 - Pas de composant `form` dans IRP-Doc (à concevoir avec soin : actions, validation, CSRF).
 - Écrans publiés non testés dans Firefox/Safari (extension MV3 testée sous Chromium headless).
 - Aucune validation commerciale : mener les 5 entretiens avant d'investir davantage.
+
+### Ajouts du 2026-11-11 (soir)
+- **Outil « colle une URL »** : `irp-server/fetcher.py` (anti-SSRF, 25 tests dans `tests/test_fetcher.py`), routes `/__fetch`, `/tool`, `/tool.js`, `/core/*.js`, `/privacy` ; page `irp-site/tool.html` + `tool.js` ; CSP stricte. Ne jamais assouplir `fetcher.py` sans ajouter le test correspondant ; `allow_private`/`_plain_ports` sont **réservés aux tests**.
+- **`irp-core/audit.js`** : repérage de défauts de la page source (ce n'est pas un audit RGAA).
+- **`irp-reader/`** : extension minimale pour le Web Store (activeTab + scripting + storage, sans permission d'hôte). `scripts/build_reader.py` assemble `dist/irp-reader/` (reader.js vient de `irp-extension/reader.js`, core de `irp-core/`). L'ancienne `irp-extension/` est un outil de développement (interception IRP) : ne pas la publier.
+- **`store/`** : fiches FR/EN, `PRIVACY.md` (crochets à compléter par l'éditeur), `CHECKLIST.md`, `screenshots/`. **`business/`** : `article.md`, `launch-kit.md`, `interviews.md` (facultatif), `positioning.md`.
+- `scripts/sync-core.sh` n'efface plus rien (copie seulement).
