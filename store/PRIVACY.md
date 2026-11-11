@@ -1,6 +1,6 @@
 # Politique de confidentialité — IRP Lecture
 
-*Dernière mise à jour : 11 novembre 2026. À compléter : adresse e-mail de contact et adresse postale de l'éditeur (entre crochets).*
+*Dernière mise à jour : 11 novembre 2026.*
 
 ## En résumé
 L'extension **ne collecte, ne transmet et ne vend aucune donnée**. Elle fonctionne entièrement dans votre navigateur.
@@ -20,10 +20,10 @@ L'extension **ne collecte, ne transmet et ne vend aucune donnée**. Elle fonctio
 - Aucun cookie, aucun traceur, aucune publicité.
 
 ## Vos droits (RGPD)
-Pour toute question ou pour exercer vos droits d'accès, de rectification ou d'effacement des journaux techniques : **[adresse e-mail de contact]**. Vous pouvez aussi saisir la CNIL (cnil.fr).
+Pour toute question ou pour exercer vos droits d'accès, de rectification ou d'effacement des journaux techniques : **lamaprod93@gmail.com**. Vous pouvez aussi saisir la CNIL (cnil.fr).
 
 ## Éditeur
-Jean-Christophe Alhinho, France. **[adresse postale ou mention de l'hébergeur de contact]**
+Jean-Christophe Alhinho, France. Hébergeur du site : Netlify, Inc., San Francisco (États-Unis).
 
 ## Modifications
 Toute modification sera publiée sur cette page avec une nouvelle date.
