@@ -43,6 +43,8 @@ class Target(BaseHTTPRequestHandler):
             body = "<p>caf\xe9 12 €</p>".encode("latin-1", "replace"); self.send_response(200); self.send_header("Content-Type", "text/html; charset=iso-8859-1")
         elif p == "/big":
             body = b"<p>" + b"a" * 5000 + b"</p>"; self.send_response(200); self.send_header("Content-Type", "text/html")
+        elif p == "/403":
+            body = b"blocked"; self.send_response(403); self.send_header("Content-Type", "text/html")
         elif p == "/404":
             body = b"nope"; self.send_response(404); self.send_header("Content-Type", "text/html")
         elif p == "/slow":
@@ -159,6 +161,12 @@ class TestFetch(unittest.TestCase):
         with self.assertRaises(fetcher.FetchError) as cm:
             self.fetch("/404")
         self.assertEqual(cm.exception.code, "upstream_status")
+
+    def test_bot_protection_gives_actionable_message(self):
+        with self.assertRaises(fetcher.FetchError) as cm:
+            self.fetch("/403")
+        self.assertEqual(cm.exception.code, "blocked")
+        self.assertIn("extension", cm.exception.message)
 
     def test_size_cap_truncates(self):
         p = self.fetch("/big", max_bytes=2000)

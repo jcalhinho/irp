@@ -18,12 +18,16 @@ async function load(url) {
   catch { return msg("Le serveur est injoignable.", true); }
   let data = {};
   try { data = await res.json(); } catch { /* corps non JSON */ }
-  if (!res.ok) return msg(data.message || `Erreur ${res.status}`, true);
+  if (!res.ok) { $('pastebox').open = true; return msg(data.message || `Erreur ${res.status}`, true); }
 
+  await show(data, url);
+}
+
+async function show(data, url) {
   msg('Analyse…');
   const parsed = new DOMParser().parseFromString(data.html, 'text/html'); // inerte : ni script ni chargement d'images
-  const { doc, report } = extractDoc(parsed, { url: data.url });
-  if (!doc.blocks.length) return msg("Aucun contenu lisible n'a pu être extrait de cette page (page vide ou entièrement dynamique).", true);
+  const { doc, report } = extractDoc(parsed, data.url ? { url: data.url } : {});
+  if (!doc.blocks.length) { $('pastebox').open = true; return msg("Aucun contenu lisible n'a pu être extrait (page vide ou entièrement dynamique).", true); }
   const audit = auditSource(parsed);
   state.url = data.url; state.doc = doc; state.md = toMarkdown(doc); state.adapted = null;
 
@@ -38,7 +42,7 @@ async function load(url) {
   for (const i of audit.issues) { const li = document.createElement('li'); li.textContent = `${i.label} : ${i.count}`; list.appendChild(li); }
   $('md').textContent = state.md;
   $('out').hidden = false;
-  history.replaceState(null, '', '#u=' + encodeURIComponent(url));
+  if (url) history.replaceState(null, '', '#u=' + encodeURIComponent(url));
   msg(data.truncated ? 'Page très longue : seule la première partie a été analysée.' : 'Terminé.');
   $('out').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
@@ -72,6 +76,12 @@ function tabs() {
 function init() {
   tabs();
   $('form').addEventListener('submit', (e) => { e.preventDefault(); const u = $('url').value.trim(); if (!u) return msg('Collez une adresse.', true); load(/^https?:\/\//i.test(u) ? u : 'https://' + u); });
+  $('paste-go').addEventListener('click', () => {
+    const raw = $('paste').value.trim(); if (!raw) return msg('Collez du contenu.', true);
+    const esc = (x) => x.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+    const html = /<\/?[a-z][\s\S]*>/i.test(raw) ? raw : '<main>' + raw.split(/\n{2,}/).map((p) => '<p>' + esc(p.trim()) + '</p>').join('') + '</main>';
+    $('out').hidden = true; show({ html, url: '', bytes: html.length, truncated: false }, '');
+  });
   $('profile').addEventListener('change', () => { state.profile = $('profile').value; paint(); });
   $('smaller').addEventListener('click', () => { state.size = Math.max(0.7, state.size - 0.1); paint(); });
   $('bigger').addEventListener('click', () => { state.size = Math.min(2.2, state.size + 0.1); paint(); });

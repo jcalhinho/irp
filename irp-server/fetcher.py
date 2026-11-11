@@ -165,6 +165,9 @@ def fetch_page(url: str, *, resolver=socket.getaddrinfo, allow_private: bool = F
                 current = urljoin(current, loc)
                 continue
             ctype = (resp.getheader("Content-Type") or "").split(";")[0].strip().lower()
+            if resp.status in (401, 403, 429, 503):
+                raise FetchError("blocked", "Ce site refuse les téléchargements automatiques (protection anti-robot). "
+                                 "Utilisez l'extension IRP Lecture sur la page ouverte, ou collez son contenu ci-dessous.", 502)
             if resp.status >= 400:
                 raise FetchError("upstream_status", f"Le site a répondu avec l'erreur {resp.status}.", 502)
             if ctype not in HTML_TYPES:

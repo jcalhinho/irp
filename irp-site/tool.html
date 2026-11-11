@@ -60,6 +60,14 @@
     <p class="examples" id="examples" hidden>Exemples : </p>
     <p id="msg" role="status" aria-live="polite"></p>
 
+    <details id="pastebox">
+      <summary>Le site bloque le téléchargement ? Collez le contenu à la place</summary>
+      <p class="lead">Ouvrez la page dans votre navigateur, sélectionnez tout (Ctrl/Cmd + A), copiez (Ctrl/Cmd + C) et collez ici. Du texte simple ou du HTML : les deux fonctionnent.</p>
+      <label for="paste">Contenu de la page</label>
+      <textarea id="paste" rows="6" style="width:100%;font:inherit;padding:.6rem;border:2px solid var(--border);border-radius:8px;background:var(--bg);color:var(--fg)"></textarea>
+      <p><button type="button" id="paste-go">Adapter ce contenu</button></p>
+    </details>
+
     <section id="out" hidden aria-label="Résultat">
       <h2>Contrôle</h2>
       <div class="grid" id="metrics"></div>
