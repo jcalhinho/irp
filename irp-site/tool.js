@@ -18,7 +18,7 @@ async function load(url) {
   catch { return msg("Le serveur est injoignable.", true); }
   let data = {};
   try { data = await res.json(); } catch { /* corps non JSON */ }
-  if (!res.ok) { $('pastebox').open = true; return msg(data.message || `Erreur ${res.status}`, true); }
+  if (!res.ok) { $('pastebox').open = true; return msg(data.message || (res.status === 404 || res.status === 405 ? "La récupération d'adresses n'est pas disponible sur cette version : collez le contenu de la page ci-dessous (ou utilisez l'extension)." : `Erreur ${res.status}`), true); }
 
   await show(data, url);
 }

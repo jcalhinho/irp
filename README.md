@@ -375,3 +375,8 @@ Voir [`AGENTS.md`](AGENTS.md) pour la documentation complète destinée aux dév
   <strong>⚡ IRP — Le web qui se code lui-même dans le navigateur.</strong><br>
   Le navigateur devient un agent IA actif. Fini le frontend tel qu'on le connaît.
 </p>
+
+## 🌐 Déployer le site statique (Netlify)
+
+`python3 scripts/build_site.py` produit `dist-site/` : accueil, `/tool` (mode collage), `/local` (démo modèles locaux), `widget.js`, `reader.js`, `/core/*.js`, `/privacy`, avec en-têtes de sécurité (`_headers`). Le dépôt contient `netlify.toml` : connectez-le à Netlify (build `python3 scripts/build_site.py`, publish `dist-site`) ou, en local, `npx netlify-cli deploy --dir dist-site --prod`.
+La récupération d'URL et la vue agent (`.md`, `llms.txt`) exigent le serveur Python (`irp-server/`).

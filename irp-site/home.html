@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IRP — Les modèles locaux feront le front</title>
+<meta name="description" content="Le serveur publie du sens, un modèle local adapte le texte à la personne, le code vérifie que rien n'est perdu. Installation en une ligne.">
+<style>
+  :root{--bg:#fff;--fg:#1a1a1a;--muted:#4a4a4a;--accent:#0b5cad;--border:#767676;--card:#f3f4f6}
+  @media (prefers-color-scheme:dark){:root{--bg:#121212;--fg:#e8e8e8;--muted:#c4c4c4;--accent:#8ab4f8;--border:#9a9a9a;--card:#1e1e1e}}
+  *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--fg);font:18px/1.65 system-ui,-apple-system,sans-serif}
+  .wrap{max-width:52rem;margin:0 auto;padding:2rem 1rem 4rem} h1{font-size:2.1rem;line-height:1.15;margin:.2em 0}
+  h2{font-size:1.3rem;margin:2em 0 .4em} .lead{font-size:1.2rem;color:var(--muted)}
+  .cta{display:flex;flex-wrap:wrap;gap:.7rem;margin:1.4rem 0}
+  a.btn{display:inline-block;min-height:48px;padding:.65rem 1.2rem;border-radius:8px;border:2px solid var(--accent);background:var(--accent);color:#fff;text-decoration:none;font-weight:600}
+  @media (prefers-color-scheme:dark){a.btn{color:#101010}} a.btn.sec{background:transparent;color:var(--accent)}
+  :focus-visible{outline:3px solid var(--accent);outline-offset:2px} a{color:var(--accent)}
+  pre{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:.8rem 1rem;overflow:auto;font:14px/1.5 ui-monospace,Menlo,monospace}
+  ol li{margin:.4em 0} small{color:var(--muted)}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <h1>Les modèles locaux feront le front.<br>IRP les rend sûrs.</h1>
+  <p class="lead">Le serveur publie du <b>sens</b>, pas du HTML. Un petit modèle qui tourne <b>sur l'appareil</b> (Gemini Nano, LFM…) adapte le texte à la personne. Le code <b>vérifie</b> qu'aucun nombre, date, montant ou nom n'est perdu, puis affiche. L'interface dit toujours quel modèle a travaillé.</p>
+  <div class="cta">
+    <a class="btn" href="/local">Voir un modèle local travailler</a>
+    <a class="btn sec" href="/tool">Adapter une page (collez le texte)</a>
+  </div>
+
+  <h2>Comment ça marche</h2>
+  <ol>
+    <li>Le contenu est décrit en composants JSON (titres, listes, étapes, tableaux, faits à ne jamais perdre).</li>
+    <li>Un modèle local reformule le texte (langage simplifié, dyslexie, basse vision…). Il ne produit jamais de HTML.</li>
+    <li>IRP rejette toute sortie qui perd une information, et garde une version sûre.</li>
+    <li>Le rendu est déterministe, accessible par construction.</li>
+  </ol>
+
+  <h2>Installer sur un site : une ligne</h2>
+  <pre id="snippet"></pre>
+  <p><small>Un bouton « Lecture adaptée » apparaît. Rien n'est chargé avant le clic, aucun cookie, aucune donnée envoyée.</small></p>
+
+  <h2>Limites assumées</h2>
+  <p>Le langage simplifié (FALC) est une aide automatique, non certifiée. Les mesures du banc d'essai portent sur un corpus synthétique. Le modèle local LFM2.5 se charge en WebGPU (environ 1 Go au premier usage).</p>
+</main>
+<script>
+  document.getElementById('snippet').textContent = '<script src="' + location.origin + '/widget.js" defer><\/script>';
+</script>
+</body>
+</html>
