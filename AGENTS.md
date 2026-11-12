@@ -997,3 +997,5 @@ La direction produit est maintenant **IRP Lecture**, le lecteur de pages/texte/f
 - Le build statique ajoute `data-fetch-mode="unavailable"` : collage par défaut, indisponibilité de l’URL expliquée avant une requête. La version Python conserve l’ouverture directe des pages publiques.
 - `npm run --prefix tests test:responsive` vérifie 16 formats dans Chromium, Firefox et WebKit ; installer les trois moteurs via Playwright. Résultats : `docs/responsive-results.json`.
 - Le site public existant est `https://irp-lecture.netlify.app`, déployé manuellement avec Netlify Drop. Le dépôt GitHub ne déclenche pas automatiquement ce déploiement. Mettre à jour le site existant plutôt qu’en créer un nouveau.
+
+Publication confirmée : interface du commit `172af9a` sur le site existant, déploiement Netlify `6af5ac0fe9fa2776531b8ec2`. `docs/DEPLOYMENT.md` décrit le paquet et la vérification réelle. `node tests/verify-production.mjs` refait les parcours sur l’URL publique et met à jour `docs/production-results.json`.

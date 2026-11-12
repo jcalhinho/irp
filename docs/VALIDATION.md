@@ -70,3 +70,7 @@ Pour les 27 contrôles HTTP historiques : lancer `./start.sh --no-open` dans un 
 - Une amélioration de compréhension pour de vrais utilisateurs, une certification FALC ou une conformité d’accessibilité.
 - Les performances sur tous les appareils physiques ou une inférence IA locale réelle. Les parcours de présentation ont été exercés sur les moteurs Firefox et WebKit, sans constituer une certification de chaque version de Safari. L’IA n’est pas requise dans le lecteur principal.
 - Une publication sur le Web Store. Le déploiement web de l’interface est effectué séparément après les contrôles locaux.
+
+## Publication confirmée
+
+L’interface a été mise en ligne le 12 novembre 2026 sur [irp-lecture.netlify.app](https://irp-lecture.netlify.app/). Les parcours ont ensuite été exercés sur le site public dans les trois moteurs, à 390 et 1 440 px. Les ressources contrôlées correspondent au paquet validé. Voir [DEPLOYMENT.md](DEPLOYMENT.md) et [production-results.json](production-results.json).
