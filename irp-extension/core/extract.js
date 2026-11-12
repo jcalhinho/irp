@@ -6,7 +6,7 @@
 import { safeHref, safeImgSrc, norm, VERSION } from './doc.js';
 
 const DROP_TAGS = 'script,style,noscript,template,iframe,object,embed,canvas,svg,form,button,input,select,textarea,dialog,link,meta,audio,video';
-const DROP_ROLES = '[role=navigation],[role=banner],[role=contentinfo],[role=complementary],[role=search],[role=dialog],[aria-hidden=true],[hidden]';
+const DROP_ROLES = '[role=navigation],[role=banner],[role=contentinfo],[role=complementary],[role=search],[role=dialog],[aria-hidden=true],[hidden],.headerlink,.mw-editsection';
 const NOISE = /(?:^|[-_\s])(nav|navbar|menu|cookie|cookies|consent|gdpr|banner|ad|ads|advert|sponsor|promo|sidebar|share|social|newsletter|popup|modal|breadcrumb|breadcrumbs|footer|comment|comments|related|skip|toolbar)(?:[-_\s]|$)/i;
 
 const txt = (s) => norm(s || '');
@@ -101,7 +101,7 @@ export function extractDoc(document, opts = {}) {
   body.querySelectorAll(DROP_ROLES).forEach((n) => n.remove());
   body.querySelectorAll('nav, aside, footer').forEach((n) => n.remove());
   body.querySelectorAll('header').forEach((h) => { if (!h.closest('article, main, section')) h.remove(); });
-  body.querySelectorAll('*').forEach((n) => { if (n.isConnected && isNoise(n) && !/^(html|body|main|article)$/i.test(n.tagName)) { report.dropped++; n.remove(); } });
+  body.querySelectorAll('*').forEach((n) => { if (body.contains(n) && isNoise(n) && !/^(html|body|main|article)$/i.test(n.tagName)) { report.dropped++; n.remove(); } });
 
   const { el: root, how } = pickRoot(body);
   report.root = how;
@@ -112,7 +112,7 @@ export function extractDoc(document, opts = {}) {
 
   const walk = (el, out) => {
     for (const ch of el.childNodes) {
-      if (ch.nodeType === 3) { const t = txt(ch.nodeValue); if (t.length > 20) out.push({ type: 'text', text: t }); continue; }
+      if (ch.nodeType === 3) { const t = txt(ch.nodeValue); if (t) out.push({ type: 'text', text: t }); continue; }
       if (ch.nodeType !== 1) continue;
       const tag = ch.tagName.toLowerCase();
       if (/^h[1-6]$/.test(tag)) {
@@ -120,6 +120,8 @@ export function extractDoc(document, opts = {}) {
         const lv = Number(tag[1]);
         if (lv === 1 && !title) { title = txt(ch.textContent); continue; }
         out.push({ type: 'heading', level: lv === 1 ? 2 : lv, text: typeof t === 'string' ? t : txt(ch.textContent) });
+      } else if (tag === 'summary') {
+        const t = txt(ch.textContent); if (t) out.push({ type: 'heading', level: 3, text: t });
       } else if (tag === 'p') {
         const t = inlineOf(ch, base); if (plainLen(t)) out.push({ type: 'text', text: t });
       } else if (tag === 'ul' || tag === 'ol') {
@@ -143,7 +145,9 @@ export function extractDoc(document, opts = {}) {
       } else if (tag === 'blockquote') {
         const t = inlineOf(ch, base); if (plainLen(t)) out.push({ type: 'quote', text: t });
       } else if (tag === 'pre') {
-        const t = ch.textContent.replace(/\s+$/, ''); if (t.trim()) out.push({ type: 'code', text: t.slice(0, 20000) });
+        const t = ch.textContent.replace(/\s+$/, '');
+        if (t.length > 20000) report.truncated = true;
+        if (t.trim()) out.push({ type: 'code', text: t.slice(0, 20000) });
       } else if (tag === 'img' || tag === 'picture') {
         const img = tag === 'img' ? ch : ch.querySelector('img'); if (!img) continue;
         const alt = txt(img.getAttribute('alt') || '');
@@ -180,5 +184,11 @@ export function extractDoc(document, opts = {}) {
     ...(opts.mustShow && opts.mustShow.length ? { must_show: opts.mustShow } : {}),
     source: { origin: 'extraction', extractor: 'irp-core/extract.js', root: how },
   };
+  report.truncated = !!report.truncated || dedup.length > 5000;
+  const textRoot = root.cloneNode(true);
+  textRoot.querySelectorAll('h1,h2,h3,h4,h5,h6,p,div,li,dt,dd,tr,td,th,pre,br').forEach((n) => {
+    n.before(document.createTextNode('\n')); n.after(document.createTextNode('\n'));
+  });
+  report.sourceText = textRoot.textContent;
   return { doc, report };
 }

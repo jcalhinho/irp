@@ -1,6 +1,6 @@
 // reader.js — Mode lecture adapté IRP (content script)
 // Extrait la page, la ré-affiche via le rendu DÉTERMINISTE d'irp-core (profils dyslexie / FALC / basse vision…)
-// dans un Shadow DOM fermé : les scripts et styles de la page ne peuvent ni lire ni altérer l'affichage.
+// dans un Shadow DOM fermé pour isoler les styles (pas une frontière de sécurité face au site hôte).
 // Aucune donnée ne quitte l'appareil. L'IA locale (Chrome Prompt API), si présente, n'est utilisée que sur clic,
 // et sa sortie est rejetée si elle perd un nombre, une date, un montant ou un nom.
 (function () {
@@ -9,7 +9,7 @@
   window.__irpReader = true;
 
   let host = null, core = null, prevFocus = null, inertChanged = [];
-  const state = { profile: 'standard', size: 1, simplify: false, ai: false, doc: null, adapted: null };
+  const state = { profile: 'standard', size: 1, simplify: false, ai: false, doc: null, adapted: null, original: false, acceptedAi: 0 };
 
   // Deux contextes : extension (chrome.runtime) ou widget intégré à un site (base = origine du widget.js).
   const EXT = typeof chrome !== 'undefined' && !!(chrome.runtime && chrome.runtime.id);
@@ -58,10 +58,11 @@
     let doc = state.doc;
     if (!doc) { doc = c.extractDoc(document, { url: location.href }).doc; state.doc = doc; }
     let shown = doc;
-    if (state.simplify) {
+    if (state.simplify && !state.original) {
       if (!state.adapted) {
         const adapter = state.ai ? await aiAdapter() : null;
-        state.adapted = (await c.adaptDoc(doc, adapter ? { adapter } : {})).doc;
+        const result = await c.adaptDoc(doc, adapter ? { adapter } : {});
+        state.adapted = result.doc; state.acceptedAi = result.stats.ai;
       }
       shown = state.adapted;
     }
@@ -78,14 +79,14 @@
     const v = c.verifyPreserved(doc, r.text);
     const badge = root.querySelector('.badge');
     badge.className = 'badge' + (v.ok ? '' : ' warn');
-    badge.textContent = (v.ok ? '✔ Nombres, dates et noms conservés' : '⚠ Éléments manquants : ' + v.missing.slice(0, 3).join(', '))
-      + (state.simplify ? ' · ' + c.modelBadge(state.ai ? aiModel : null) : '');
-    status.textContent = v.ok ? 'Mode lecture affiché. Aucun nombre ni date perdu.' : 'Attention : certains éléments sont manquants.';
+    badge.textContent = (v.ok ? 'Éléments repérés présents dans le texte extrait' : '⚠ Éléments manquants : ' + v.missing.slice(0, 3).join(', '))
+      + (state.simplify && !state.original ? ' · ' + c.modelBadge(state.acceptedAi ? aiModel : null) : ' · sans reformulation');
+    status.textContent = v.ok ? 'Lecture affichée. Contrôles heuristiques : le sens et l’extraction complète ne sont pas garantis.' : 'Attention : certains éléments sont manquants.';
     if (!v.ok && state.simplify) {
       // garde-fou : la version simplifiée perdrait une information → on affiche l'original, et on le dit
       state.simplify = false; await paint(root, status);
       badge.className = 'badge warn'; badge.textContent = '⚠ Simplification annulée : ' + v.missing.slice(0, 3).join(', ') + ' risquait d’être perdu';
-      status.textContent = 'Simplification annulée pour ne rien perdre. Texte d’origine affiché.';
+      status.textContent = 'Simplification annulée : éléments repérés manquants. Texte extrait affiché.';
       const pressed = root.querySelector('button[aria-pressed="true"]'); if (pressed && pressed.textContent === 'Texte simplifié') pressed.setAttribute('aria-pressed', 'false');
     }
   }
@@ -95,7 +96,7 @@
     state.profile = opts.profile || prefs.profile || 'standard';
     state.size = prefs.size || 1;
     state.simplify = state.profile === 'falc' || !!prefs.simplify;
-    state.doc = null; state.adapted = null; state.ai = false;
+    state.doc = null; state.adapted = null; state.ai = false; state.original = false; state.acceptedAi = 0;
     const c = await loadCore();
 
     host = document.createElement('div'); host.id = 'irp-reader-host';
@@ -111,11 +112,13 @@
     const simpBtn = mkBtn('Texte simplifié', 'Simplifier le texte'); simpBtn.setAttribute('aria-pressed', String(state.simplify));
     const aiBtn = mkBtn('IA locale', "Reformuler avec l'IA locale de votre navigateur"); aiBtn.setAttribute('aria-pressed', 'false');
     const mdBtn = mkBtn('Copier en Markdown', 'Copier le contenu en Markdown');
+    const sourceBtn = mkBtn('Texte extrait', 'Afficher le texte extrait sans reformulation'); sourceBtn.setAttribute('aria-pressed', 'false');
+    const htmlBtn = mkBtn('Garder .html', 'Télécharger une copie de lecture hors ligne');
     const closeBtn = mkBtn('Fermer', 'Fermer le mode lecture (Échap)');
     const badge = el('span', { class: 'badge', text: '…' });
     const status = el('div', { class: 'status', role: 'status', 'aria-live': 'polite' });
     const bar = el('div', { class: 'bar', role: 'toolbar', 'aria-label': 'Options de lecture' }, [
-      el('label', { for: 'p', text: 'Profil' }), profileSel, smaller, bigger, simpBtn, aiBtn, mdBtn, el('span', { class: 'grow' }), badge, closeBtn,
+      el('label', { for: 'p', text: 'Profil' }), profileSel, smaller, bigger, simpBtn, aiBtn, sourceBtn, mdBtn, htmlBtn, el('span', { class: 'grow' }), badge, closeBtn,
     ]);
     const content = el('div', { class: 'content' });
     const overlay = el('div', { class: 'overlay', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Mode lecture adapté' }, [bar, content, status]);
@@ -133,8 +136,31 @@
       repaint();
     });
     mdBtn.addEventListener('click', async () => { const { c: cc, doc } = await build(); try { await navigator.clipboard.writeText(cc.toMarkdown(doc)); status.textContent = 'Markdown copié.'; } catch { status.textContent = 'Copie impossible.'; } });
+    sourceBtn.addEventListener('click', () => { state.original = !state.original; sourceBtn.setAttribute('aria-pressed', String(state.original)); repaint(); });
+    htmlBtn.addEventListener('click', async () => {
+      const { c: cc, shown } = await build();
+      const output = document.implementation.createHTMLDocument(shown.title); output.documentElement.lang = shown.lang || 'fr';
+      const charset = output.createElement('meta'); charset.setAttribute('charset', 'utf-8'); output.head.prepend(charset);
+      const vp = output.createElement('meta'); vp.name = 'viewport'; vp.content = 'width=device-width,initial-scale=1'; output.head.append(vp);
+      const csp = output.createElement('meta'); csp.httpEquiv = 'Content-Security-Policy'; csp.content = "default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'"; output.head.append(csp);
+      const mount = output.createElement('div'); output.body.append(mount); cc.renderDoc(shown, mount, { profile: state.profile });
+      const note = output.createElement('p'); note.textContent = 'Copie de lecture IRP. Extraction et reformulation éventuelle : consulter la source pour vérifier le contenu.';
+      const link = output.createElement('a'); link.href = cc.safeHref(location.href) || '#'; link.textContent = ' Page source'; note.append(link); mount.append(note);
+      const blob = URL.createObjectURL(new Blob(['<!doctype html>' + output.documentElement.outerHTML], { type: 'text/html;charset=utf-8' }));
+      const a = document.createElement('a'); a.href = blob; a.download = cc.readingFilename(shown.title, 'html'); a.click();
+      setTimeout(() => URL.revokeObjectURL(blob), 1000); status.textContent = 'Copie de lecture téléchargée.';
+    });
     closeBtn.addEventListener('click', close);
-    shadow.addEventListener('keydown', (e) => { if (e.key === 'Escape') { e.preventDefault(); close(); } });
+    shadow.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') { e.preventDefault(); close(); }
+      if (e.key === 'Tab') {
+        const focusables = [...shadow.querySelectorAll('button,select,a[href],[tabindex="0"]')].filter((n) => !n.disabled && n.getClientRects().length);
+        const first = focusables[0], last = focusables[focusables.length - 1];
+        if (e.shiftKey && shadow.activeElement === first) { e.preventDefault(); last?.focus(); }
+        else if (!e.shiftKey && shadow.activeElement === last) { e.preventDefault(); first?.focus(); }
+      }
+    });
+    shadow.addEventListener('click', (e) => { if (e.target.matches('.irp-skip')) { e.preventDefault(); shadow.getElementById('irp-main')?.focus(); } });
 
     prevFocus = document.activeElement;
     for (const n of document.body.children) { if (!n.hasAttribute('inert')) { n.setAttribute('inert', ''); inertChanged.push(n); } }

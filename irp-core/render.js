@@ -111,7 +111,7 @@ function renderInline(d, parent, text, report) {
  * Rend `doc` dans `container` (remplace son contenu).
  * @param {object} doc IRP-Doc
  * @param {Element} container
- * @param {{profile?: string|object, allowImages?: boolean}} [opts]
+ * @param {{profile?: string|object, allowImages?: boolean, embedded?:boolean, idPrefix?:string}} [opts]
  * @returns {{ok:boolean, errors:string[], report:object, text:string}}
  */
 export function renderDoc(doc, container, opts = {}) {
@@ -129,18 +129,20 @@ export function renderDoc(doc, container, opts = {}) {
   if (doc.lang) root.setAttribute('lang', String(doc.lang).slice(0, 20));
   const style = d.createElement('style'); style.textContent = buildCss(profile); root.appendChild(style);
 
-  const skip = d.createElement('a'); skip.className = 'irp-skip'; skip.setAttribute('href', '#irp-main'); skip.textContent = 'Aller au contenu'; root.appendChild(skip);
+  const prefix = /^[a-z][a-z0-9-]{0,40}$/.test(opts.idPrefix || '') ? opts.idPrefix : 'irp';
+  const skip = d.createElement('a'); skip.className = 'irp-skip'; skip.setAttribute('href', '#' + prefix + '-main'); skip.textContent = 'Aller au contenu'; root.appendChild(skip);
   const page = d.createElement('div'); page.className = 'irp-page'; root.appendChild(page);
   const header = d.createElement('header');
-  const h1 = d.createElement('h1'); h1.textContent = doc.title; header.appendChild(h1);
+  const titleLevel = opts.embedded && opts.titleLevel !== 1 ? 2 : 1;
+  const h1 = d.createElement('h' + titleLevel); h1.className = 'irp-title'; h1.textContent = doc.title; header.appendChild(h1);
   if (doc.description) { const p = d.createElement('p'); p.className = 'irp-meta'; p.textContent = doc.description; header.appendChild(p); }
   page.appendChild(header);
-  const main = d.createElement('main'); main.id = 'irp-main'; main.setAttribute('tabindex', '-1'); page.appendChild(main);
+  const main = d.createElement(opts.embedded ? 'div' : 'main'); main.id = prefix + '-main'; main.setAttribute('tabindex', '-1'); page.appendChild(main);
 
-  let prevLevel = 1; // le h1 est le titre du document
+  let prevLevel = titleLevel;
 
   const heading = (parent, level, text) => {
-    let lv = Math.max(2, Math.min(6, level));
+    let lv = Math.max(titleLevel + 1, Math.min(6, level + titleLevel - 1));
     if (lv > prevLevel + 1) { lv = prevLevel + 1; report.headingsFixed++; }
     prevLevel = lv;
     const h = d.createElement('h' + lv); renderInline(d, h, text, report); parent.appendChild(h);
@@ -192,13 +194,17 @@ export function renderDoc(doc, container, opts = {}) {
   for (const b of doc.blocks) block(b, main, 0);
 
   container.replaceChildren(root);
-  return { ok: true, errors: [], report, text: norm(root.textContent.replace(buildCss(profile), '')) };
+  return { ok: true, errors: [], report, text: visibleText(root) };
 }
 
 /** Rend le texte visible tel qu'affiché (sans le <style>) — pour la vérification de contrat. */
 export function visibleText(root) {
   const clone = root.cloneNode(true);
   clone.querySelectorAll('style,script').forEach((n) => n.remove());
+  // textContent seul colle les cellules/titres : « 50 » et « 20 » deviennent « 5020 ».
+  clone.querySelectorAll('h1,h2,h3,h4,h5,h6,p,div,li,dt,dd,tr,td,th,pre,br').forEach((n) => {
+    n.before(clone.ownerDocument.createTextNode(' ')); n.after(clone.ownerDocument.createTextNode(' '));
+  });
   return norm(clone.textContent);
 }
 

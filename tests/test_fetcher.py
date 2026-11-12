@@ -95,6 +95,14 @@ class TestValidation(unittest.TestCase):
 
 
 class TestPublicIP(unittest.TestCase):
+    def test_numeric_internal_hosts_refused_before_dns(self):
+        def unexpected_dns(*args, **kwargs):
+            self.fail("Une IP littérale ne doit pas passer par le DNS")
+        for host in ("0177.0.0.1", "2130706433", "0x7f000001", "127.1", "::1"):
+            with self.assertRaises(fetcher.FetchError) as cm:
+                fetcher.resolve_public(host, 80, unexpected_dns)
+            self.assertEqual(cm.exception.code, "forbidden_host")
+
     def test_blocked(self):
         for ip in ["127.0.0.1", "127.1.2.3", "10.0.0.1", "172.16.5.4", "192.168.1.1", "169.254.169.254", "0.0.0.0", "100.64.0.1",
                    "224.0.0.1", "255.255.255.255", "::1", "::", "fe80::1", "fc00::1", "fd12::1", "::ffff:127.0.0.1", "::ffff:10.0.0.1",

@@ -8,11 +8,9 @@ import zipfile
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC, OUT = os.path.join(ROOT, "irp-reader"), os.path.join(ROOT, "dist", "irp-reader")
 
-if os.path.isdir(OUT):
-    shutil.rmtree(OUT)
-shutil.copytree(SRC, OUT)
+shutil.copytree(SRC, OUT, dirs_exist_ok=True)
 shutil.copy(os.path.join(ROOT, "irp-extension", "reader.js"), os.path.join(OUT, "reader.js"))
-os.makedirs(os.path.join(OUT, "core"))
+os.makedirs(os.path.join(OUT, "core"), exist_ok=True)
 for f in sorted(os.listdir(os.path.join(ROOT, "irp-core"))):
     if f.endswith(".js"):
         shutil.copy(os.path.join(ROOT, "irp-core", f), os.path.join(OUT, "core", f))

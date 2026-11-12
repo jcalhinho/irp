@@ -151,7 +151,7 @@ test('adaptText : une reformulation IA qui perd un montant ou une date est refus
   const bad = await adaptText(ADMIN, { adapter: () => 'Il faut payer et envoyer les papiers vite.' });
   assert.equal(bad.source, 'rules'); assert.match(bad.reason, /ia-perte/);
   assert.ok(bad.text.includes('45 €') && bad.text.includes('15 mars 2027'));
-  const good = await adaptText('Payez 45 € avant le 15 mars 2027 à la mairie de Lyon.', { adapter: (t) => 'Vous payez 45 € avant le 15 mars 2027. Allez à la mairie de Lyon.' });
+  const good = await adaptText('Payez 45 € avant le 15 mars 2027 à la mairie de Lyon.', { adapter: (t) => 'Vous payez 45 € avant le 15 mars 2027 à la mairie de Lyon.' });
   assert.equal(good.source, 'ai');
 });
 

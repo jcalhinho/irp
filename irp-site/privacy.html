@@ -4,7 +4,7 @@
 <style>body{max-width:46rem;margin:2rem auto;padding:0 1rem;font:17px/1.6 system-ui,sans-serif;color:#1a1a1a;background:#fff}h1,h2{line-height:1.25}a{color:#0b5cad}code{font-size:.9em}@media (prefers-color-scheme:dark){body{background:#121212;color:#e8e8e8}a{color:#8ab4f8}}</style></head>
 <body><main>
 <h1>Politique de confidentialité — IRP Lecture</h1>
-<p><em>Dernière mise à jour : 11 novembre 2026.</em></p>
+<p><em>Dernière mise à jour : 12 novembre 2026.</em></p>
 <h2>En résumé</h2>
 <p>L&#x27;extension <strong>ne collecte, ne transmet et ne vend aucune donnée</strong>. Elle fonctionne entièrement dans votre navigateur.</p>
 <h2>Extension « IRP Lecture »</h2>
@@ -18,6 +18,8 @@
 <h2>Site web (irp-lecture.netlify.app) : outil de collage, démo « modèle local », widget</h2>
 <ul>
 <li><strong>Hébergement</strong> : site statique hébergé par Netlify. Comme tout hébergeur, Netlify peut conserver des journaux techniques (adresse IP, page demandée, date) selon sa propre politique. L&#x27;éditeur n&#x27;exploite aucun serveur applicatif et ne reçoit aucune donnée personnelle.</li>
+<li><strong>Réglages du lecteur</strong> : le profil, la taille, la police, le fond et l’option de simplification sont conservés dans le stockage local du navigateur. Les textes et fichiers importés ne sont pas mémorisés par l’application. Les fichiers exportés sont enregistrés uniquement à votre demande.</li>
+<li><strong>Lecture par URL (version avec serveur Python)</strong> : l’adresse est envoyée à votre serveur IRP, qui contacte le site public. Ce site voit donc la connexion du serveur. Le contenu est renvoyé au navigateur pour extraction. L’adresse peut figurer dans l’historique de votre navigateur et les journaux techniques du serveur ; elle ne doit pas contenir de secret. L’application ne constitue pas de bibliothèque des pages récupérées.</li>
 <li><strong>Outil « collez le contenu »</strong> : le texte que vous collez est analysé dans votre navigateur. Il n&#x27;est envoyé à aucun serveur.</li>
 <li><strong>Démo « modèle local »</strong> (<code>/local</code>) : le modèle s&#x27;exécute sur votre appareil. Au premier chargement, votre navigateur télécharge la bibliothèque d&#x27;inférence depuis jsDelivr (cdn.jsdelivr.net) et les poids du modèle depuis Hugging Face (huggingface.co) ; ces services voient votre adresse IP. Votre texte n&#x27;est envoyé à aucun de ces services. Le modèle est conservé dans le stockage de votre navigateur (vous pouvez l&#x27;effacer dans les réglages du navigateur).</li>
 <li><strong>Widget</strong> (<code>widget.js</code>) : s&#x27;il est installé sur un site, il ne charge rien tant que vous ne cliquez pas, puis traite la page dans votre navigateur. Il enregistre vos préférences d&#x27;affichage dans <code>localStorage</code>.</li>

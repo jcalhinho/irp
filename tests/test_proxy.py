@@ -185,8 +185,22 @@ class TestOriginAndCsrf(Base):
 
 class TestLimits(Base):
     def test_body_too_large(self):
-        raw = json.dumps({"messages": [{"role": "user", "content": "a" * (proxy.MAX_BODY + 10)}]}).encode()
-        self.assertEqual(self.post(raw=raw)[0], 413)
+        # Le refus doit arriver sur les en-têtes, avant tout téléversement.
+        # Envoyer simultanément 256 Ko via urllib fait courir write() contre la fermeture HTTP/1.0
+        # et peut masquer le 413 par un ConnectionResetError selon l'OS.
+        import http.client
+        conn = http.client.HTTPConnection("127.0.0.1", self.port, timeout=5)
+        try:
+            conn.putrequest("POST", "/__proxy/sgp")
+            conn.putheader("Content-Type", "application/json")
+            conn.putheader("Content-Length", str(proxy.MAX_BODY + 10))
+            conn.endheaders()
+            response = conn.getresponse()
+            self.assertEqual(response.status, 413)
+            self.assertEqual(json.loads(response.read())["error"], "body_too_large")
+            self.assertEqual(Upstream.calls, [])
+        finally:
+            conn.close()
 
     def test_invalid_inputs(self):
         self.assertEqual(json.loads(self.post(raw=b"{pas du json")[2])["error"], "invalid_json")

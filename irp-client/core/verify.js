@@ -1,7 +1,7 @@
 /**
  * Vérification du contrat `must_show` : ce que l'émetteur déclare INDISPENSABLE doit être
- * présent, tel quel, dans le texte réellement rendu. C'est la garantie que l'adaptation
- * (règles ou IA) n'a rien supprimé d'important — et ce qu'on peut prouver à un auditeur.
+ * présent dans le texte rendu, après normalisation. Ce contrôle de présence littérale
+ * ne prouve ni le sens, ni l'association d'une valeur à son contexte.
  */
 import { norm } from './doc.js';
 
@@ -27,8 +27,8 @@ import { docText } from './doc.js';
 import { checkPreserved } from './simplify.js';
 
 /**
- * Garantie sans vérité terrain (pages réelles) : tout nombre, date, montant, e-mail, URL et nom propre
- * du document d'origine doit se retrouver dans le texte réellement affiché.
+ * Contrôle heuristique des nombres, montants, e-mails, URLs et noms repérés dans le
+ * document extrait. L'exhaustivité de l'extraction et le sens ne sont pas vérifiés ici.
  * @returns {{ok:boolean, missing:string[]}}
  */
 export function verifyPreserved(originalDoc, renderedText) {

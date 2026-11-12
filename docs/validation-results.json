@@ -1,0 +1,83 @@
+{
+  "checks": 28,
+  "passed": [
+    "Accueil accessible sans compte",
+    "Accueil : axe sans violation ([])",
+    "Texte inchangé par défaut",
+    "Sommaire utilisable",
+    "Sommaire : déplacement du focus",
+    "Simplification explicite, changements comptés",
+    "Négation conservée",
+    "Comparaison : passages modifiés visibles",
+    "Onglets : clavier Fin",
+    "Markdown conserve la source non simplifiée",
+    "Préférences restaurées",
+    "Mode concentration",
+    "Échap restaure la lecture",
+    "Export Markdown téléchargeable",
+    "Lecture HTML autonome sans script",
+    "Lecture exportée lisible sans réseau",
+    "Mobile : aucun débordement horizontal",
+    "Lecteur mobile : axe sans violation ([])",
+    "Lecteur bureau : axe sans violation ([])",
+    "Concurrence : une ancienne URL ne remplace pas le collage",
+    "Collage : aucun ancien lien partagé",
+    "Import HTML : aucun script ni chargement distant",
+    "Import HTML : texte conservé",
+    "Page réelle lisible : https://docs.python.org/fr/3/tutorial/introduction.html",
+    "Page réelle lisible : https://www.service-public.gouv.fr/particuliers/vosdroits/F21092",
+    "Page réelle lisible : https://fr.wikipedia.org/wiki/Lecture",
+    "Page réelle lisible : https://developer.mozilla.org/fr/docs/Web/JavaScript/Guide/Introduction",
+    "Aucune exception JavaScript ()"
+  ],
+  "realPages": [
+    {
+      "url": "https://docs.python.org/fr/3/tutorial/introduction.html",
+      "title": "3. Introduction informelle à Python",
+      "chars": 18473,
+      "sections": 5,
+      "control": "Texte extrait inchangé. Seule la présentation est adaptée.",
+      "notes": "Contenu sélectionné : main. Menus, formulaires et médias sont retirés."
+    },
+    {
+      "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F21092",
+      "title": "Renouvellement du passeport d'un mineur",
+      "chars": 65218,
+      "sections": 59,
+      "control": "Texte extrait inchangé. Seule la présentation est adaptée.",
+      "notes": "Contenu sélectionné : main. Menus, formulaires et médias sont retirés."
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Lecture",
+      "title": "Lecture",
+      "chars": 50907,
+      "sections": 39,
+      "control": "Texte extrait inchangé. Seule la présentation est adaptée.",
+      "notes": "Contenu sélectionné : main. Menus, formulaires et médias sont retirés."
+    },
+    {
+      "url": "https://developer.mozilla.org/fr/docs/Web/JavaScript/Guide/Introduction",
+      "title": "Introduction",
+      "chars": 11169,
+      "sections": 11,
+      "control": "Texte extrait inchangé. Seule la présentation est adaptée.",
+      "notes": "Contenu sélectionné : main. Menus, formulaires et médias sont retirés."
+    }
+  ],
+  "static": {
+    "urlFailureExplained": true,
+    "pasteWorks": true
+  },
+  "extension": {
+    "version": "1.3.0",
+    "loaded": true,
+    "readerOpened": true,
+    "simplificationWorks": true,
+    "originalRestored": true,
+    "htmlDownloaded": true,
+    "backgroundInert": true,
+    "escapeRestores": true
+  },
+  "date": "2026-11-12T08:37:17.981Z",
+  "browser": "158.0.8127.18"
+}

@@ -975,3 +975,16 @@ Spécification : `irp-spec/irp-doc-v1.0.md`. Positionnement : `business/position
 - **`irp-reader/`** : extension minimale pour le Web Store (activeTab + scripting + storage, sans permission d'hôte). `scripts/build_reader.py` assemble `dist/irp-reader/` (reader.js vient de `irp-extension/reader.js`, core de `irp-core/`). L'ancienne `irp-extension/` est un outil de développement (interception IRP) : ne pas la publier.
 - **`store/`** : fiches FR/EN, `PRIVACY.md` (crochets à compléter par l'éditeur), `CHECKLIST.md`, `screenshots/`. **`business/`** : `article.md`, `launch-kit.md`, `interviews.md` (facultatif), `positioning.md`.
 - `scripts/sync-core.sh` n'efface plus rien (copie seulement).
+
+## 18. Version de lecture aboutie (2026-11-12)
+
+La direction produit est maintenant **IRP Lecture**, le lecteur de pages/texte/fichiers, avec IRP-Doc comme fondation. Les descriptions historiques de « frontend remplacé par l’IA » ne décrivent pas le produit courant.
+
+- `/tool` : texte extrait inchangé par défaut, présentation configurable, sommaire, concentration, comparaison passage par passage, simplification par règles explicite, export Markdown non simplifié, export HTML autonome et impression.
+- `irp-core/reading.js` : préférences bornées, parsing HTML inerte, collage texte/Markdown élémentaire, comparaison et noms de fichiers. Ne jamais mémoriser un document ou envoyer un fichier sans demande explicite de l’utilisateur.
+- `adaptText` ajoute un filtre conservateur de marqueurs de négation, condition, modalité et ordre. Les contrôles ne prouvent PAS le sens ni l’exhaustivité de l’extraction ; ne plus employer « rien de perdu » ou « sortie vérifiée » comme garantie globale.
+- `renderDoc` accepte `embedded`, `titleLevel` et `idPrefix` pour éviter les landmarks et identifiants dupliqués. `visibleText` sépare les blocs et cellules lors du contrôle.
+- `start.sh` démarre un serveur local sans proxy IA, refuse un port occupé et ne tue aucun processus. `--port` et `--no-open` sont disponibles.
+- Extension minimale version 1.3.0 : texte extrait, export HTML, contrôle du focus et badge honnête sur les heuristiques. Les assemblages recopient sans supprimer les dossiers existants.
+- Tests : `npm ci --prefix tests`, `(cd tests && npx playwright install chromium)`, `npm run --prefix tests test:browser`. Le runner lance ses serveurs, teste quatre pages publiques et charge le vrai paquet MV3 dans un profil temporaire Chromium. Les sorties sont dans `docs/validation-results.json` et `docs/screenshots/`.
+- Bilan vérifié : `docs/VALIDATION.md`. Aucun déploiement public, publication Web Store ou test utilisateur de compréhension n’est impliqué par ces résultats.

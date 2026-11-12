@@ -200,6 +200,7 @@ _TRUST_PROXY = os.environ.get("IRP_TRUST_PROXY") == "1"  # derrière un reverse 
 _TOOL_CSP = ("default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self'; "
              "img-src 'self' data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'")
 _STATIC = {"/tool": ("irp-site/tool.html", "text/html; charset=utf-8"), "/tool.js": ("irp-site/tool.js", "text/javascript; charset=utf-8"),
+           "/tool.css": ("irp-site/tool.css", "text/css; charset=utf-8"),
            "/privacy": ("irp-site/privacy.html", "text/html; charset=utf-8")}
 # Démo modèles locaux : CSP dédiée (bibliothèque d'inférence + poids depuis des hôtes nommés, jamais d'inline script).
 _LOCAL_CSP = ("default-src 'none'; script-src 'self' blob: 'wasm-unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; "
@@ -469,7 +470,7 @@ class IRPHandler(BaseHTTPRequestHandler):
                     body = f.read()
             except OSError:
                 return False
-            self._send_bytes(200, body, "text/javascript; charset=utf-8", {**_CORS_OPEN, "Cache-Control": "public, max-age=300"})
+            self._send_bytes(200, body, "text/javascript; charset=utf-8", {**_CORS_OPEN, "Cache-Control": "no-cache"})
             return True
         if path in _LOCAL_PAGES:
             rel, ctype = _LOCAL_PAGES[path]

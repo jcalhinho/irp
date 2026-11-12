@@ -4,10 +4,12 @@
   "type": "module",
   "scripts": {
     "test": "node --test --test-reporter=spec",
-    "bench": "node ../bench/run.mjs"
+    "bench": "node ../bench/run.mjs",
+    "test:browser": "node run-browser.mjs"
   },
   "devDependencies": {
     "axe-core": "^4.10.0",
-    "jsdom": "^31.0.0"
+    "jsdom": "^31.0.0",
+    "playwright": "^1.65.0"
   }
 }

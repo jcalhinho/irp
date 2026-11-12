@@ -3,108 +3,87 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>IRP — Lire n'importe quelle page autrement</title>
-<meta name="description" content="Collez une adresse : obtenez la page en lecture adaptée (dyslexie, langage simplifié, basse vision), en Markdown pour agents IA, et la preuve que rien n'a été perdu.">
-<style>
-  :root{--bg:#fff;--fg:#1a1a1a;--muted:#4a4a4a;--accent:#0b5cad;--border:#767676;--card:#f3f4f6;--ok:#0a5c0a;--warn:#8a3b00}
-  @media (prefers-color-scheme:dark){:root{--bg:#121212;--fg:#e8e8e8;--muted:#c4c4c4;--accent:#8ab4f8;--border:#9a9a9a;--card:#1e1e1e;--ok:#7ddc7d;--warn:#ffb38a}}
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-  .wrap{max-width:68rem;margin:0 auto;padding:1.5rem 1rem 4rem}
-  h1{font-size:1.9rem;line-height:1.2;margin:.2em 0}
-  h2{font-size:1.25rem;margin:1.6em 0 .5em}
-  p.lead{color:var(--muted);max-width:46rem}
-  form.go{display:flex;flex-wrap:wrap;gap:.6rem;margin:1.2rem 0}
-  label{font-weight:600;display:block;width:100%}
-  input[type=url]{flex:1 1 18rem;min-height:48px;padding:.5rem .8rem;font:inherit;border:2px solid var(--border);border-radius:8px;background:var(--bg);color:var(--fg)}
-  button,select{min-height:44px;padding:.4rem 1rem;font:inherit;border-radius:8px;border:2px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer}
-  @media (prefers-color-scheme:dark){button{color:#101010}}
-  button.sec,select{background:transparent;color:var(--accent)}
-  select{color:var(--fg);border-color:var(--border);background:var(--bg)}
-  :focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-  .examples a{margin-right:1rem}
-  a{color:var(--accent)}
-  #msg{min-height:1.6em}
-  .err{color:var(--warn);font-weight:600}
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:.8rem;margin:1rem 0}
-  .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:.8rem 1rem}
-  .card b{display:block;font-size:1.5rem;line-height:1.2}
-  .card small{color:var(--muted)}
-  .ok{color:var(--ok)} .warn{color:var(--warn)}
-  .tabs{display:flex;gap:.4rem;flex-wrap:wrap;margin:1.2rem 0 .6rem}
-  .tabs button[aria-selected=true]{background:var(--accent);color:#fff}
-  @media (prefers-color-scheme:dark){.tabs button[aria-selected=true]{color:#101010}}
-  .tabs button[aria-selected=false]{background:transparent;color:var(--accent)}
-  .panel{border:1px solid var(--border);border-radius:10px;overflow:hidden}
-  .panel pre{margin:0;padding:1rem;white-space:pre-wrap;overflow:auto;max-height:70vh;font:14px/1.5 ui-monospace,Menlo,Consolas,monospace}
-  .bar{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;margin:.6rem 0}
-  ul.issues{padding-left:1.2rem}
-  footer{margin-top:3rem;color:var(--muted);font-size:.9rem}
-  [hidden]{display:none!important}
-  .sr{position:absolute;left:-9999px}
-</style>
+<meta name="description" content="Un espace calme pour lire une page, adapter son affichage et garder une copie. Sans compte, sans IA obligatoire.">
+<title>IRP Lecture — Faites de la place au texte</title>
+<link rel="stylesheet" href="/tool.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='8' fill='%23232c29'/%3E%3Ctext x='8' y='29' font-size='28' fill='%23fffefa' font-family='Georgia'%3Ei%3C/text%3E%3C/svg%3E">
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <h1>Lisez n'importe quelle page autrement</h1>
-    <p class="lead">Collez l'adresse d'une page : IRP l'affiche en lecture adaptée (dyslexie, langage simplifié, basse vision), la convertit en Markdown pour les agents IA, et vérifie que <strong>aucun nombre, date ou nom n'a été perdu</strong>.</p>
-  </header>
-
-  <main>
-    <form class="go" id="form" novalidate>
-      <label for="url">Adresse de la page</label>
-      <input id="url" name="url" type="url" inputmode="url" autocomplete="off" placeholder="https://www.service-public.fr/…" required aria-describedby="msg">
-      <button type="submit">Adapter cette page</button>
-    </form>
-    <p class="examples" id="examples" hidden>Exemples : </p>
-    <p id="msg" role="status" aria-live="polite"></p>
-
-    <details id="pastebox">
-      <summary>Le site bloque le téléchargement ? Collez le contenu à la place</summary>
-      <p class="lead">Ouvrez la page dans votre navigateur, sélectionnez tout (Ctrl/Cmd + A), copiez (Ctrl/Cmd + C) et collez ici. Du texte simple ou du HTML : les deux fonctionnent.</p>
-      <label for="paste">Contenu de la page</label>
-      <textarea id="paste" rows="6" style="width:100%;font:inherit;padding:.6rem;border:2px solid var(--border);border-radius:8px;background:var(--bg);color:var(--fg)"></textarea>
-      <p><button type="button" id="paste-go">Adapter ce contenu</button></p>
-    </details>
-
-    <section id="out" hidden aria-label="Résultat">
-      <h2>Contrôle</h2>
-      <div class="grid" id="metrics"></div>
-      <h2>Problèmes repérés sur la page d'origine</h2>
-      <p class="lead" id="issues-note">Repérage rapide de défauts courants. Ce n'est pas un audit RGAA : les contrastes ne sont pas évalués.</p>
-      <ul class="issues" id="issues"></ul>
-
-      <div class="tabs" role="tablist" aria-label="Affichages">
-        <button role="tab" id="t-read" aria-selected="true" aria-controls="p-read" type="button">Lecture adaptée</button>
-        <button role="tab" id="t-md" aria-selected="false" aria-controls="p-md" type="button" tabindex="-1">Markdown (agents IA)</button>
+<a class="skip" href="#workspace">Aller au lecteur</a>
+<header class="masthead">
+  <a class="brand" href="/tool" aria-label="IRP Lecture, accueil"><span class="brand-icon" aria-hidden="true">i<span>r</span>p</span> <span>LECTURE</span></a>
+  <span class="masthead-note">Moins de bruit. Plus de sens.</span>
+  <a class="quiet-link" href="https://github.com/jcalhinho/irp" target="_blank" rel="noopener noreferrer">Code ouvert ↗</a>
+</header>
+<main id="workspace">
+  <section class="intro" id="intro" aria-labelledby="welcome">
+    <p class="eyebrow">UN PEU DE CALME SUR LE WEB</p>
+    <h1 id="welcome">Faites de la place<br>au <em>texte.</em></h1>
+    <p class="intro-copy">Une page encombrée, un courrier compliqué, un article à garder.<br>Retrouvez le fil, à votre rythme.</p>
+  </section>
+  <details class="composer" id="composer" open>
+    <summary><span>Votre prochaine lecture</span><span aria-hidden="true">＋</span></summary>
+    <div class="composer-body">
+      <div class="input-tabs" role="tablist" aria-label="Importer du contenu">
+        <button id="input-url" role="tab" type="button" aria-selected="true" aria-controls="url-panel">Une adresse web</button>
+        <button id="input-text" role="tab" type="button" aria-selected="false" aria-controls="text-panel" tabindex="-1">Un texte à coller</button>
       </div>
-      <div class="bar">
-        <label for="profile" style="width:auto">Profil</label>
-        <select id="profile">
-          <option value="standard">Standard</option>
-          <option value="dyslexie">Dyslexie</option>
-          <option value="falc" selected>Langage simplifié (FALC)</option>
-          <option value="basse_vision">Basse vision</option>
-          <option value="lecture_nuit">Lecture de nuit</option>
-        </select>
-        <button class="sec" id="smaller" type="button" aria-label="Réduire le texte">A−</button>
-        <button class="sec" id="bigger" type="button" aria-label="Agrandir le texte">A+</button>
-        <button class="sec" id="copy-md" type="button">Copier le Markdown</button>
-        <button class="sec" id="dl-md" type="button">Télécharger .md</button>
-        <button class="sec" id="share" type="button">Copier le lien de ce résultat</button>
+      <div id="url-panel" role="tabpanel" aria-labelledby="input-url">
+        <form id="form" novalidate>
+          <label for="url">Adresse d’une page publique</label>
+          <div class="url-row"><input id="url" type="url" inputmode="url" autocomplete="url" placeholder="https://…" aria-describedby="url-note"><button class="primary" id="load" type="submit">Ouvrir dans le lecteur <span aria-hidden="true">↗</span></button></div>
+          <p class="hint" id="url-note">Le serveur récupère la page. Pour un contenu privé ou un site bloqué, collez le texte.</p>
+        </form>
       </div>
-      <div id="p-read" class="panel" role="tabpanel" aria-labelledby="t-read"></div>
-      <div id="p-md" class="panel" role="tabpanel" aria-labelledby="t-md" hidden><pre id="md" tabindex="0"></pre></div>
-    </section>
-  </main>
+      <div id="text-panel" role="tabpanel" aria-labelledby="input-text" hidden>
+        <label for="paste">Votre texte (traité uniquement sur cet appareil)</label>
+        <textarea id="paste" rows="7" placeholder="Collez ici un article, une note ou un courrier…" spellcheck="false"></textarea>
+        <button class="primary" id="paste-go" type="button">Lire ce texte <span aria-hidden="true">→</span></button>
+      </div>
+      <div class="composer-bottom"><button class="text-button" id="demo" type="button">Essayer avec un exemple <span aria-hidden="true">→</span></button><label class="file-button" for="file">Importer un fichier .txt ou .html<input id="file" type="file" accept=".txt,.md,.html,.htm,text/plain,text/html,text/markdown"></label></div>
+    </div>
+  </details>
+  <div class="status-row"><p id="msg" role="status" aria-live="polite" aria-atomic="true"></p><button id="cancel" class="text-button" type="button" hidden>Annuler</button></div>
 
-  <footer>
-    <p>Rien n'est stocké. L'adresse est téléchargée par le serveur (pages publiques uniquement), puis analysée dans <em>votre</em> navigateur. Le « langage simplifié » est une aide de lecture automatique, pas un FALC certifié.
-    Code libre (MIT) · <a href="https://github.com/">GitHub</a></p>
-  </footer>
-<footer style="margin-top:3rem;padding-top:1rem;border-top:1px solid #9a9a9a;font-size:.95rem"><a href="https://github.com/jcalhinho/irp/issues/new">Signaler un problème</a> · <a href="https://github.com/jcalhinho/irp">Code (MIT)</a> · <a href="/privacy">Confidentialité</a></footer>
-</div>
+  <section id="out" hidden aria-label="Espace de lecture">
+    <div class="reading-meta"><span id="source-kind" class="eyebrow">VOTRE LECTURE</span><span id="reading-time"></span><a id="source-link" target="_blank" rel="noopener noreferrer" hidden>Ouvrir la page source ↗</a></div>
+    <div class="reader-grid">
+      <aside class="reading-sidebar" aria-label="Réglages et sommaire">
+        <div class="settings">
+          <h2>À votre façon</h2>
+          <label for="profile">Confort de lecture</label>
+          <select id="profile"><option value="standard">Classique</option><option value="dyslexie">Espacé · dyslexie</option><option value="basse_vision">Grand contraste</option><option value="lecture_nuit">Lecture de nuit</option><option value="falc">Lecture accompagnée</option></select>
+          <div class="size-row"><span>Taille du texte</span><button id="smaller" type="button" aria-label="A− : réduire le texte">A−</button><output id="size-label" aria-live="polite">100 %</output><button id="bigger" type="button" aria-label="A+ : agrandir le texte">A+</button></div>
+          <label for="font">Police</label><select id="font"><option value="serif">Livre · Georgia</option><option value="lisible">Lisible · Verdana</option><option value="systeme">Système</option></select>
+          <label for="theme">Fond de page</label><select id="theme"><option value="sepia">Papier</option><option value="standard">Blanc</option><option value="sombre">Nuit</option><option value="contrast">Contraste élevé</option></select>
+          <label class="check-label"><input type="checkbox" id="simplify">Simplifier le vocabulaire</label>
+          <p class="hint">Règles locales, sans IA. Une aide de lecture, pas un FALC certifié.</p>
+          <button class="text-button" id="reset-prefs" type="button">Réglages par défaut</button>
+        </div>
+        <nav id="outline" aria-label="Sommaire"><h2>Dans cette lecture</h2><ol id="toc"></ol></nav>
+        <div class="privacy-note"><span aria-hidden="true">◌</span><p>Pas de compte. Pas de suivi.<br>Seuls vos réglages sont mémorisés.</p></div>
+      </aside>
+      <div class="reading-body">
+        <div class="reader-toolbar">
+          <div class="view-tabs" role="tablist" aria-label="Vue du document">
+            <button id="t-read" type="button" role="tab" aria-selected="true" aria-controls="p-read">Lire</button>
+            <button id="t-compare" type="button" role="tab" aria-selected="false" aria-controls="p-compare" tabindex="-1">Comparer <span id="change-count"></span></button>
+            <button id="t-md" type="button" role="tab" aria-selected="false" aria-controls="p-md" tabindex="-1">Markdown</button>
+          </div>
+          <button id="focus-mode" class="text-button" type="button" aria-pressed="false">Mode concentration</button>
+        </div>
+        <div class="fidelity" id="fidelity"><span class="fidelity-dot" aria-hidden="true"></span><p id="fidelity-text"></p></div>
+        <div id="p-read" role="tabpanel" aria-labelledby="t-read" tabindex="0" class="reading-sheet"></div>
+        <div id="p-compare" role="tabpanel" aria-labelledby="t-compare" tabindex="0" hidden><p class="compare-note">Le texte extrait à gauche, votre version à droite. Les passages modifiés sont signalés. L’extraction peut omettre du contenu : consultez aussi la page source.</p><div class="compare-head"><span>Texte extrait</span><span>Version de lecture</span></div><div id="comparison"></div></div>
+        <div id="p-md" role="tabpanel" aria-labelledby="t-md" tabindex="0" hidden><p class="compare-note">Le Markdown conserve le texte extrait, sans simplification. Les balises et menus retirés ne font pas partie de cet export.</p><pre id="md"></pre></div>
+        <div class="export-bar"><span>À garder, à partager.</span><button id="copy-md" type="button">Copier le Markdown</button><button id="dl-md" type="button">Télécharger .md</button><button id="dl-html" type="button">Garder la lecture .html</button><button id="print" type="button">Imprimer</button><button id="share" type="button" hidden>Copier le lien</button></div>
+        <details class="diagnostics"><summary>Ce qui a été extrait et contrôlé</summary><div id="metrics" class="metrics"></div><p id="extraction-note"></p><p class="hint">Les contrôles de nombres et de noms sont heuristiques. Ils ne prouvent ni la conservation de tout le contenu, ni l’équivalence du sens. Les formulaires, médias et éléments interactifs ne sont pas reproduits.</p><h3>Repérage sur la page source</h3><ul id="issues"></ul><p class="hint">Ce repérage automatique n’est pas un audit d’accessibilité.</p></details>
+      </div>
+    </div>
+  </section>
+</main>
+<footer class="site-footer"><span>IRP Lecture <span aria-hidden="true">/</span> Le contenu, à votre rythme.</span><nav aria-label="Liens utiles"><a href="/privacy">Confidentialité</a><a href="https://github.com/jcalhinho/irp/issues/new" target="_blank" rel="noopener noreferrer">Un problème ?</a></nav></footer>
+<button id="exit-focus" class="primary" type="button" hidden>Quitter la concentration <span aria-hidden="true">×</span></button>
 <script type="module" src="/tool.js"></script>
 </body>
 </html>

@@ -25,7 +25,7 @@ test('LFM via transformers.js (simulé) : adaptateur utilisable, modèle nommé'
   assert.equal(r.model.hf, 'LiquidAI/LFM2.5-1.2B-Instruct-ONNX');
   assert.deepEqual(calls, ['LiquidAI/LFM2.5-1.2B-Instruct-ONNX', 'webgpu/q4']);
   assert.equal(await r.adapter('x'), 'Paie 25 €');
-  assert.match(modelBadge(r.model), /LFM2\.5.*local, sur cet appareil.*sortie vérifiée/);
+  assert.match(modelBadge(r.model), /LFM2\.5.*local, sur cet appareil.*contrôles heuristiques/);
 });
 
 test('sans loader ou sans WebGPU : null (jamais d’exception)', async () => {

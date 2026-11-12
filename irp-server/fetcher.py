@@ -92,6 +92,20 @@ def validate_url(url: str):
 
 def resolve_public(host: str, port: int, resolver=socket.getaddrinfo, allow_private: bool = False) -> str:
     """Résout `host` et retourne UNE adresse publique ; refuse si une seule des adresses est non publique."""
+    # Les formes historiques (0177.0.0.1, 0x7f000001, 2130706433) dépendent du résolveur OS.
+    # Les interpréter avant DNS évite qu'un résolveur réseau les traite comme un domaine public.
+    literal = None
+    try:
+        literal = str(ipaddress.ip_address(host))
+    except ValueError:
+        try:
+            literal = socket.inet_ntoa(socket.inet_aton(host))
+        except OSError:
+            pass
+    if literal is not None:
+        if not allow_private and not is_public_ip(literal):
+            raise FetchError("forbidden_host", "Cette adresse pointe vers un réseau non public : refusée.", 403)
+        return literal
     try:
         infos = resolver(host, port, type=socket.SOCK_STREAM)
     except OSError:

@@ -26,7 +26,7 @@ export function detectLocalModels(env = globalThis) {
 /** Texte à afficher : toujours dire QUEL modèle a travaillé, et où. */
 export function modelBadge(m, source = 'local') {
   if (!m) return 'Règles déterministes (aucun modèle)';
-  return `${m.label} · ${source === 'local' ? 'local, sur cet appareil' : source} · sortie vérifiée`;
+  return `${m.label} · ${source === 'local' ? 'local, sur cet appareil' : source} · contrôles heuristiques (sens non garanti)`;
 }
 
 /**

@@ -108,7 +108,8 @@ export function protectedTokens(text) {
   const t = String(text), set = new Set();
   const add = (m) => set.add(norm(m).replace(/\s/g, '').toLowerCase());
   (t.match(/https?:\/\/[^\s)]+|[\w.+-]+@[\w-]+\.[\w.-]+/g) || []).forEach(add);
-  (t.match(/\d[\d\s.,:/h€%-]*\d|\d/g) || []).forEach(add);
+  (t.match(/\d[\d \t.,:/h€%-]*\d|\d/g) || []).forEach(add);
+  (t.match(/[€$£%]/g) || []).forEach(add);
   // noms propres : mots capitalisés qui ne sont pas en début de phrase
   // chaque ligne (paragraphe, item de liste, cellule) commence une phrase : sa 1re majuscule n'est pas un nom propre
   const sents = t.split(/\n+/).flatMap((line) => splitSentences(line));
@@ -120,9 +121,35 @@ export function protectedTokens(text) {
 }
 
 export function checkPreserved(original, adapted) {
-  const hay = norm(adapted).replace(/\s/g, '').toLowerCase();
-  const missing = protectedTokens(original).filter((tok) => !hay.includes(tok));
+  const normalized = norm(adapted).toLowerCase();
+  const hay = normalized.replace(/\s/g, '');
+  const words = new Set(normalized.match(/[\p{L}\p{N}]+/gu) || []);
+  const missing = protectedTokens(original).filter((tok) => {
+    if (/^[\p{L}]+$/u.test(tok)) return !words.has(tok);
+    if (/^\d/.test(tok)) {
+      // « 50 » dans « 150 » ou « 50,5 » n'est pas le même montant.
+      const escaped = [...tok].map((c) => c.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('\\s*');
+      return !new RegExp('(?<!\\d)(?<!\\d[.,])' + escaped + '(?!\\d|[.,]\\d)', 'u').test(normalized);
+    }
+    return !hay.includes(tok);
+  });
   return { ok: missing.length === 0, missing };
+}
+
+/** Filtre conservateur, PAS une preuve d'équivalence sémantique.
+ * Les marqueurs de négation, condition, obligation et ordre doivent rester dans le même ordre.
+ * On compare aussi chaque phrase : déplacer une négation entre deux consignes est refusé.
+ */
+export function checkMeaning(original, adapted) {
+  const markers = (s) => (norm(s, { lower: true }).replace(/[’‘]/g, "'")
+    .match(/\b(?:ne|n'|pas|plus|jamais|aucun|aucune|sans|sauf|uniquement|seulement|si|sinon|avant|après|doit|doivent|devez|devrait|peut|peuvent|pouvez|interdit|obligatoire|facultatif|minimum|maximum|moins|au moins|au plus)\b/g) || []).join('|');
+  const a = splitSentences(original), b = splitSentences(adapted);
+  if (markers(original) !== markers(adapted)) return { ok: false, reason: 'negation-condition-modalite' };
+  if (a.length !== b.length && markers(original)) return { ok: false, reason: 'structure-consigne' };
+  if (a.length === b.length && a.some((s, i) => markers(s) !== markers(b[i]))) return { ok: false, reason: 'consigne-deplacee' };
+  // Même inventaire global ne suffit pas : on garde l'association des valeurs à leur phrase.
+  if (a.length === b.length && a.some((s, i) => !checkPreserved(s, b[i]).ok)) return { ok: false, reason: 'valeur-deplacee' };
+  return { ok: true };
 }
 
 /**
@@ -157,10 +184,13 @@ export function checkAdditions(original, adapted, opts = {}) {
 export async function adaptText(text, opts = {}) {
   const original = String(text);
   if (!original.trim()) return { text: original, source: 'original' };
-  const ruled = simplifyText(original);
+  // Si découper une consigne brouille sa structure, garder la phrase et ne changer que le vocabulaire.
+  let ruled = simplifyText(original);
+  if (!checkMeaning(original, ruled).ok) ruled = applyLexicon(original);
   const ruledCheck = checkPreserved(original, ruled);
-  const base = ruledCheck.ok ? ruled : original; // les règles ne perdent rien, mais on vérifie quand même
-  if (typeof opts.adapter !== 'function') return { text: base, source: ruledCheck.ok ? 'rules' : 'original', reason: ruledCheck.ok ? undefined : 'regles-refusees' };
+  const rulesOk = ruledCheck.ok && checkMeaning(original, ruled).ok;
+  const base = rulesOk ? ruled : original;
+  if (typeof opts.adapter !== 'function') return { text: base, source: rulesOk ? 'rules' : 'original', reason: rulesOk ? undefined : 'regles-refusees' };
   try {
     const out = String(await opts.adapter(base));
     if (!out.trim()) return { text: base, source: 'rules', reason: 'ia-vide' };
@@ -170,6 +200,8 @@ export async function adaptText(text, opts = {}) {
     if (!c.ok) return { text: base, source: 'rules', reason: 'ia-perte: ' + c.missing.slice(0, 3).join(', ') };
     const a = checkAdditions(original, out);
     if (!a.ok) return { text: base, source: 'rules', reason: 'ia-ajout: ' + (a.added.length ? a.added.slice(0, 3).join(', ') : Math.round(a.novelRatio * 100) + ' % de mots nouveaux') };
+    const meaning = checkMeaning(original, out);
+    if (!meaning.ok) return { text: base, source: rulesOk ? 'rules' : 'original', reason: 'ia-sens: ' + meaning.reason };
     return { text: out.trim(), source: 'ai' };
   } catch (e) {
     return { text: base, source: 'rules', reason: 'ia-erreur' };
