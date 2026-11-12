@@ -5,7 +5,8 @@
   "scripts": {
     "test": "node --test --test-reporter=spec",
     "bench": "node ../bench/run.mjs",
-    "test:browser": "node run-browser.mjs"
+    "test:browser": "node run-browser.mjs",
+    "test:responsive": "node run-browser.mjs --responsive"
   },
   "devDependencies": {
     "axe-core": "^4.10.0",

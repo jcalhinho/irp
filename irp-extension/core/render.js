@@ -61,7 +61,7 @@ export function buildCss(profile) {
 .irp-root p,.irp-root li,.irp-root dd,.irp-root td,.irp-root th{text-align:left;overflow-wrap:anywhere;hyphens:none}
 .irp-root li{margin:0 0 .5em}
 .irp-root a{color:${t.link};text-decoration:underline;text-underline-offset:.15em}
-.irp-root a:focus-visible,.irp-root .irp-skip:focus-visible{outline:3px solid ${t.link};outline-offset:3px}
+.irp-root a:focus-visible,.irp-root pre:focus-visible,.irp-root .irp-scroll:focus-visible,.irp-root .irp-skip:focus-visible{outline:3px solid ${t.link};outline-offset:3px}
 .irp-root .irp-skip{position:absolute;left:-9999px;top:0;background:${t.bg};color:${t.fg};padding:.5rem 1rem;z-index:10}
 .irp-root .irp-skip:focus{left:.5rem;top:.5rem}
 .irp-root .irp-actions{display:flex;flex-wrap:wrap;gap:.75rem;margin:0 0 ${s.ps};padding:0;list-style:none}
@@ -77,8 +77,8 @@ export function buildCss(profile) {
 .irp-root pre{overflow:auto;border:1px solid ${t.border};padding:.8em;white-space:pre-wrap;font-family:ui-monospace,Menlo,Consolas,monospace;letter-spacing:0;word-spacing:0}
 .irp-root .irp-callout{border:2px solid ${t.border};border-left-width:8px;background:${t.calloutBg};padding:.8em 1em}
 .irp-root .irp-callout-title{font-weight:700;margin:0 0 .3em}
-.irp-root dl.irp-facts{display:grid;grid-template-columns:max-content 1fr;gap:.4em 1.2em}
-.irp-root dl.irp-facts dt{font-weight:700}
+.irp-root dl.irp-facts{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr);gap:.4em 1.2em}
+.irp-root dl.irp-facts dt{font-weight:700;overflow-wrap:anywhere}
 .irp-root dl.irp-facts dd{margin:0}
 .irp-root ol.irp-steps{padding-left:0;list-style:none;counter-reset:s}
 .irp-root ol.irp-steps>li{counter-increment:s;padding-left:2.6em;position:relative}
@@ -160,7 +160,7 @@ export function renderDoc(doc, container, opts = {}) {
           renderInline(d, li, it.text || '', report); l.appendChild(li); } parent.appendChild(l); break; }
       case 'quote': { const q = d.createElement('blockquote'); const p = d.createElement('p'); renderInline(d, p, b.text, report); q.appendChild(p);
         if (b.cite) { const c = d.createElement('cite'); c.textContent = b.cite; q.appendChild(c); } parent.appendChild(q); break; }
-      case 'code': { const pre = d.createElement('pre'); const c = d.createElement('code'); c.textContent = b.text; pre.appendChild(c); parent.appendChild(pre); break; }
+      case 'code': { const pre = d.createElement('pre'); pre.tabIndex = 0; const c = d.createElement('code'); c.textContent = b.text; pre.appendChild(c); parent.appendChild(pre); break; }
       case 'callout': { const c = d.createElement('div'); c.className = 'irp-callout irp-' + (b.kind || 'info');
         c.setAttribute('role', b.kind === 'danger' || b.kind === 'warning' ? 'alert' : 'note');
         if (b.title) { const t = d.createElement('p'); t.className = 'irp-callout-title'; t.textContent = b.title; c.appendChild(t); }

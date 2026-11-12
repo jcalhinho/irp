@@ -1,5 +1,7 @@
 # IRP Lecture
 
+**[Ouvrir le lecteur en ligne](https://irp-lecture.netlify.app)** · Collage et import de fichiers. L’ouverture directe par URL est disponible dans la version locale.
+
 **Faites de la place au texte.** Un lecteur local pour ouvrir une page publique, coller un texte ou importer un fichier, adapter sa présentation et garder une copie lisible hors ligne.
 
 ![Le lecteur IRP](docs/screenshots/lecture-desktop.png)
@@ -76,6 +78,15 @@ Pour les essais navigateur (dépendances de développement uniquement) :
 npm run --prefix tests test:browser
 ```
 
+Pour la matrice responsive dans Chromium, Firefox et WebKit :
+
+```sh
+(cd tests && npx playwright install firefox webkit)
+npm run --prefix tests test:responsive
+```
+
+Elle vérifie 16 formats (320 à 2 560 px, portrait et paysage), les vues Lire/Comparer/Markdown, les grands caractères et les données larges. Les résultats sont enregistrés dans `docs/responsive-results.json`.
+
 Cette commande lance et arrête ses propres serveurs et teste aussi le vrai paquet d’extension dans un profil temporaire.
 
 `tests/reader.browser.js` contient un scénario Playwright complet : clavier, mobile, axe-core dans Chromium, comparaison, téléchargement et relecture hors réseau, concurrence entre URL et collage, import hostile et quatre pages publiques réelles. Son en-tête indique les serveurs nécessaires. Le bilan daté est dans [docs/VALIDATION.md](docs/VALIDATION.md).
@@ -89,7 +100,7 @@ python3 scripts/build_site.py
 # Publier dist-site/ sur un hébergement statique
 ```
 
-Le collage, les imports, les réglages et les exports fonctionnent sans backend. **La récupération d’URL demande le serveur Python** ; si elle manque, le lecteur propose le collage. Un hébergement compatible avec `_headers` applique les en-têtes fournis.
+Le collage, les imports, les réglages et les exports fonctionnent sans backend. La version statique ouvre le collage par défaut et explique la disponibilité de l’ouverture par adresse avant toute tentative. **La récupération d’URL demande le serveur Python** ; si elle manque, le lecteur propose le collage. Un hébergement compatible avec `_headers` applique les en-têtes fournis.
 
 Pour rendre la récupération d’URL accessible hors loopback, le serveur exige `--fetch`. Le fetcher refuse les réseaux privés, les ports non standards et les redirections vers un réseau privé, épingle l’IP validée et borne les téléchargements. Ne désactivez pas ces protections pour contourner un site bloqué.
 

@@ -40,10 +40,10 @@ $('go').addEventListener('click', async () => {
   const secs = ((performance.now() - t0) / 1000).toFixed(1);
   $('model').textContent = res.text;
   const used = res.source === 'ai';
-  $('badge').textContent = used ? modelBadge(current.model) : 'Sortie du modèle rejetée → règles sûres';
+  $('badge').textContent = used ? modelBadge(current.model) : 'Sortie du modèle rejetée → règles locales';
   const chk = checkPreserved(text, res.text);
   $('verdict').className = chk.ok ? 'ok' : 'warn';
-  $('verdict').textContent = (chk.ok ? '✔ Rien de perdu (nombres, dates, montants, adresses, noms). ' : '⚠ Éléments manquants : ' + chk.missing.join(', ') + '. ')
+  $('verdict').textContent = (chk.ok ? 'Éléments repérés présents. Le sens n’est pas garanti. ' : '⚠ Éléments manquants : ' + chk.missing.join(', ') + '. ')
     + (used ? `Version du modèle acceptée (${secs} s).` : `La version du modèle a été refusée par IRP (${res.reason || 'contrôle'}) : c’est le garde-fou qui travaille.`);
   $('status').textContent = ''; $('go').disabled = false;
 });

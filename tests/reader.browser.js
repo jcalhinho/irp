@@ -39,6 +39,7 @@
   ok(await page.locator('#theme').inputValue()==='sombre' && (await page.locator('#size-label').innerText()).includes('110'),'Préférences restaurées');
   await page.getByRole('button',{name:'Essayer avec un exemple'}).click();
   await page.locator('#reset-prefs').click();
+  if (await page.locator('#dismiss-message').isVisible()) await page.locator('#dismiss-message').click();
   if (config.screenshots) await page.screenshot({path:config.screenshots+'/lecture-desktop.png',fullPage:true});
   await page.locator('#focus-mode').click();
   ok(await page.locator('#exit-focus').isVisible() && !await page.locator('.masthead').isVisible(),'Mode concentration');
@@ -58,6 +59,7 @@
   ok((await offline.locator('body').innerText()).includes('120 €'),'Lecture exportée lisible sans réseau');
   await offline.close();
   await page.setViewportSize({width:390,height:844});
+  if (await page.locator('#dismiss-message').isVisible()) await page.locator('#dismiss-message').click();
   ok(!await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),'Mobile : aucun débordement horizontal');
   await audit('Lecteur mobile');
   if (config.screenshots) await page.screenshot({path:config.screenshots+'/lecture-mobile.png',fullPage:true});

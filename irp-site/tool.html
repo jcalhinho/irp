@@ -2,9 +2,12 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f6f7f2">
 <meta name="description" content="Un espace calme pour lire une page, adapter son affichage et garder une copie. Sans compte, sans IA obligatoire.">
 <title>IRP Lecture — Faites de la place au texte</title>
+<link rel="preload" href="/fonts/manrope-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/newsreader-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/tool.css">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='8' fill='%23232c29'/%3E%3Ctext x='8' y='29' font-size='28' fill='%23fffefa' font-family='Georgia'%3Ei%3C/text%3E%3C/svg%3E">
 </head>
@@ -16,19 +19,22 @@
   <a class="quiet-link" href="https://github.com/jcalhinho/irp" target="_blank" rel="noopener noreferrer">Code ouvert ↗</a>
 </header>
 <main id="workspace">
+<div class="welcome-layout">
   <section class="intro" id="intro" aria-labelledby="welcome">
-    <p class="eyebrow">UN PEU DE CALME SUR LE WEB</p>
+    <p class="eyebrow"><span class="live-dot" aria-hidden="true"></span> VOTRE ESPACE DE LECTURE</p>
     <h1 id="welcome">Faites de la place<br>au <em>texte.</em></h1>
-    <p class="intro-copy">Une page encombrée, un courrier compliqué, un article à garder.<br>Retrouvez le fil, à votre rythme.</p>
+    <p class="intro-copy">Un article à parcourir. Un courrier à comprendre.<br>Retrouvez le plaisir de lire, à votre rythme.</p>
+    <div class="intro-note"><span class="note-line" aria-hidden="true"></span><p>Votre contenu. Votre confort.<br><strong>Un moment pour vous concentrer.</strong></p></div>
   </section>
   <details class="composer" id="composer" open>
-    <summary><span>Votre prochaine lecture</span><span aria-hidden="true">＋</span></summary>
+    <summary><span><span class="composer-index" aria-hidden="true">01 /</span> Votre prochaine lecture</span><span class="disclosure-mark" aria-hidden="true">＋</span></summary>
     <div class="composer-body">
       <div class="input-tabs" role="tablist" aria-label="Importer du contenu">
         <button id="input-url" role="tab" type="button" aria-selected="true" aria-controls="url-panel">Une adresse web</button>
         <button id="input-text" role="tab" type="button" aria-selected="false" aria-controls="text-panel" tabindex="-1">Un texte à coller</button>
       </div>
       <div id="url-panel" role="tabpanel" aria-labelledby="input-url">
+        <div id="url-unavailable" class="availability-note" hidden><strong>Vous avez une page à lire ?</strong><p>Copiez son texte puis collez-le dans le lecteur, ou importez une copie HTML. L’ouverture directe par adresse est disponible avec l’application locale.</p><a href="https://github.com/jcalhinho/irp#utiliser-le-lecteur" target="_blank" rel="noopener noreferrer">Utiliser l’application locale ↗</a></div>
         <form id="form" novalidate>
           <label for="url">Adresse d’une page publique</label>
           <div class="url-row"><input id="url" type="url" inputmode="url" autocomplete="url" placeholder="https://…" aria-describedby="url-note"><button class="primary" id="load" type="submit">Ouvrir dans le lecteur <span aria-hidden="true">↗</span></button></div>
@@ -36,21 +42,29 @@
         </form>
       </div>
       <div id="text-panel" role="tabpanel" aria-labelledby="input-text" hidden>
-        <label for="paste">Votre texte (traité uniquement sur cet appareil)</label>
+        <label for="paste">Le texte que vous souhaitez lire</label>
         <textarea id="paste" rows="7" placeholder="Collez ici un article, une note ou un courrier…" spellcheck="false"></textarea>
         <button class="primary" id="paste-go" type="button">Lire ce texte <span aria-hidden="true">→</span></button>
       </div>
-      <div class="composer-bottom"><button class="text-button" id="demo" type="button">Essayer avec un exemple <span aria-hidden="true">→</span></button><label class="file-button" for="file">Importer un fichier .txt ou .html<input id="file" type="file" accept=".txt,.md,.html,.htm,text/plain,text/html,text/markdown"></label></div>
+      <div class="composer-bottom"><button class="text-button demo-button" id="demo" type="button">Essayer avec un exemple <span aria-hidden="true">→</span></button><span class="composer-or">ou</span><button class="import-button" id="import-file" type="button"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 16V4m-4 4 4-4 4 4M4 15v5h16v-5"/></svg>Importer un fichier</button><input id="file" type="file" hidden accept=".txt,.md,.html,.htm,text/plain,text/html,text/markdown" aria-label="Fichier à lire"></div>
+      <p class="composer-privacy"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg> Vos textes et fichiers restent sur cet appareil.</p>
     </div>
   </details>
-  <div class="status-row"><p id="msg" role="status" aria-live="polite" aria-atomic="true"></p><button id="cancel" class="text-button" type="button" hidden>Annuler</button></div>
+</div>
+<section class="principles" aria-label="Comment fonctionne le lecteur">
+  <div><span class="principle-index">01</span><h2>Apportez votre texte</h2><p>Collez un contenu, importez un document ou essayez notre exemple.</p></div>
+  <div><span class="principle-index">02</span><h2>Trouvez votre confort</h2><p>Une police, un contraste, un espacement. La lecture s’adapte à vous.</p></div>
+  <div><span class="principle-index">03</span><h2>Gardez l’essentiel</h2><p>Retrouvez le texte extrait et emportez une copie à lire hors ligne.</p></div>
+</section>
+  <div class="status-row" id="status-area"><p id="msg" role="status" aria-live="polite" aria-atomic="true"></p><button id="cancel" class="text-button" type="button" hidden>Annuler</button><button id="dismiss-message" type="button" aria-label="Fermer le message" hidden>×</button></div>
 
   <section id="out" hidden aria-label="Espace de lecture">
     <div class="reading-meta"><span id="source-kind" class="eyebrow">VOTRE LECTURE</span><span id="reading-time"></span><a id="source-link" target="_blank" rel="noopener noreferrer" hidden>Ouvrir la page source ↗</a></div>
     <div class="reader-grid">
       <aside class="reading-sidebar" aria-label="Réglages et sommaire">
+        <details class="settings-disclosure" id="reading-options" open>
+          <summary><span>À votre façon</span><span class="disclosure-mark" aria-hidden="true">＋</span></summary>
         <div class="settings">
-          <h2>À votre façon</h2>
           <label for="profile">Confort de lecture</label>
           <select id="profile"><option value="standard">Classique</option><option value="dyslexie">Espacé · dyslexie</option><option value="basse_vision">Grand contraste</option><option value="lecture_nuit">Lecture de nuit</option><option value="falc">Lecture accompagnée</option></select>
           <div class="size-row"><span>Taille du texte</span><button id="smaller" type="button" aria-label="A− : réduire le texte">A−</button><output id="size-label" aria-live="polite">100 %</output><button id="bigger" type="button" aria-label="A+ : agrandir le texte">A+</button></div>
@@ -60,7 +74,8 @@
           <p class="hint">Règles locales, sans IA. Une aide de lecture, pas un FALC certifié.</p>
           <button class="text-button" id="reset-prefs" type="button">Réglages par défaut</button>
         </div>
-        <nav id="outline" aria-label="Sommaire"><h2>Dans cette lecture</h2><ol id="toc"></ol></nav>
+        </details>
+        <nav id="outline" aria-label="Sommaire"><details class="outline-disclosure" id="outline-options" open><summary><span>Dans cette lecture <span id="toc-count"></span></span><span class="disclosure-mark" aria-hidden="true">＋</span></summary><ol id="toc"></ol></details></nav>
         <div class="privacy-note"><span aria-hidden="true">◌</span><p>Pas de compte. Pas de suivi.<br>Seuls vos réglages sont mémorisés.</p></div>
       </aside>
       <div class="reading-body">
@@ -73,11 +88,12 @@
           <button id="focus-mode" class="text-button" type="button" aria-pressed="false">Mode concentration</button>
         </div>
         <div class="fidelity" id="fidelity"><span class="fidelity-dot" aria-hidden="true"></span><p id="fidelity-text"></p></div>
+        <h1 id="alternate-title" class="alternate-title" hidden></h1>
         <div id="p-read" role="tabpanel" aria-labelledby="t-read" tabindex="0" class="reading-sheet"></div>
         <div id="p-compare" role="tabpanel" aria-labelledby="t-compare" tabindex="0" hidden><p class="compare-note">Le texte extrait à gauche, votre version à droite. Les passages modifiés sont signalés. L’extraction peut omettre du contenu : consultez aussi la page source.</p><div class="compare-head"><span>Texte extrait</span><span>Version de lecture</span></div><div id="comparison"></div></div>
-        <div id="p-md" role="tabpanel" aria-labelledby="t-md" tabindex="0" hidden><p class="compare-note">Le Markdown conserve le texte extrait, sans simplification. Les balises et menus retirés ne font pas partie de cet export.</p><pre id="md"></pre></div>
-        <div class="export-bar"><span>À garder, à partager.</span><button id="copy-md" type="button">Copier le Markdown</button><button id="dl-md" type="button">Télécharger .md</button><button id="dl-html" type="button">Garder la lecture .html</button><button id="print" type="button">Imprimer</button><button id="share" type="button" hidden>Copier le lien</button></div>
-        <details class="diagnostics"><summary>Ce qui a été extrait et contrôlé</summary><div id="metrics" class="metrics"></div><p id="extraction-note"></p><p class="hint">Les contrôles de nombres et de noms sont heuristiques. Ils ne prouvent ni la conservation de tout le contenu, ni l’équivalence du sens. Les formulaires, médias et éléments interactifs ne sont pas reproduits.</p><h3>Repérage sur la page source</h3><ul id="issues"></ul><p class="hint">Ce repérage automatique n’est pas un audit d’accessibilité.</p></details>
+        <div id="p-md" role="tabpanel" aria-labelledby="t-md" tabindex="0" hidden><p class="compare-note">Le Markdown conserve le texte extrait, sans simplification. Les balises et menus retirés ne font pas partie de cet export.</p><pre id="md" tabindex="0"></pre></div>
+        <div class="export-bar"><span class="export-heading">Votre lecture à emporter<span>Le Markdown conserve le texte extrait.</span></span><button id="copy-md" type="button">Copier le Markdown</button><button id="dl-md" type="button">Télécharger .md</button><button id="dl-html" type="button">Garder la lecture .html</button><button id="print" type="button">Imprimer</button><button id="share" type="button" hidden>Copier le lien</button></div>
+        <details class="diagnostics"><summary>Ce qui a été extrait et contrôlé</summary><div id="metrics" class="metrics"></div><p id="extraction-note"></p><p class="hint">Les contrôles de nombres et de noms sont heuristiques. Ils ne prouvent ni la conservation de tout le contenu, ni l’équivalence du sens. Les formulaires, médias et éléments interactifs ne sont pas reproduits.</p><h2>Repérage sur la page source</h2><ul id="issues"></ul><p class="hint">Ce repérage automatique n’est pas un audit d’accessibilité.</p></details>
       </div>
     </div>
   </section>

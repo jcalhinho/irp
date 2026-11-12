@@ -31,7 +31,19 @@ Afin de bénéficier de cette aide, vous pouvez déposer votre dossier à l’ac
 
 Vous pouvez contacter le service au 01 23 45 67 89. L’accueil est ouvert du lundi au vendredi, de 9 h à 17 h. Ce numéro est fictif.`;
 
-function msg(text, err = false) { $('msg').textContent = text; $('msg').className = err ? 'err' : ''; }
+let messageTimer;
+function msg(text, err = false) {
+  clearTimeout(messageTimer); $('status-area').hidden = false;
+  $('msg').textContent = text; $('msg').className = err ? 'err' : '';
+  $('dismiss-message').hidden = !state.doc || state.busy;
+  scheduleMessageDismissal();
+}
+function scheduleMessageDismissal() {
+  clearTimeout(messageTimer);
+  if (state.doc && !$('msg').classList.contains('err') && !state.busy) messageTimer = setTimeout(() => {
+    if (!$('status-area').contains(document.activeElement)) $('status-area').hidden = true;
+  }, 6500);
+}
 function element(tag, text, cls) { const e = document.createElement(tag); if (text != null) e.textContent = text; if (cls) e.className = cls; return e; }
 function savePrefs() { try { localStorage.setItem(PREFS_KEY, JSON.stringify(state.prefs)); } catch { /* stockage désactivé : lecture possible */ } }
 function syncPrefs() {
@@ -40,10 +52,18 @@ function syncPrefs() {
   $('size-label').textContent = Math.round(state.prefs.size * 100) + ' %';
   $('smaller').disabled = state.prefs.size <= 0.8; $('bigger').disabled = state.prefs.size >= 1.8;
 }
+const compactReader = window.matchMedia('(max-width: 56rem)');
+function syncReaderLayout() {
+  $('reading-options').open = !compactReader.matches;
+  $('outline-options').open = !compactReader.matches;
+}
+compactReader.addEventListener('change', syncReaderLayout);
 function busy(on) {
   state.busy = on;
   $('load').disabled = on; $('cancel').hidden = !on;
   $('composer').setAttribute('aria-busy', String(on));
+  $('dismiss-message').hidden = !state.doc || on;
+  scheduleMessageDismissal();
 }
 function cancel() {
   state.generation++;
@@ -52,6 +72,7 @@ function cancel() {
 function inputView(id, focus = false) { selectTab(id, ['input-url', 'input-text'], ['url-panel', 'text-panel']); if (focus) $(id === 'input-url' ? 'url' : 'paste').focus(); }
 function selectTab(id, tabs, panels) {
   tabs.forEach((t, i) => { const on = t === id; $(t).setAttribute('aria-selected', String(on)); $(t).tabIndex = on ? 0 : -1; $(panels[i]).hidden = !on; });
+  if (tabs.includes('t-read')) $('alternate-title').hidden = id === 't-read';
 }
 function wireTabs(tabs, panels, callback = () => {}) {
   const select = (id) => { selectTab(id, tabs, panels); callback(id); };
@@ -117,7 +138,9 @@ async function show(doc, meta, gen) {
   const hash = state.url ? '#u=' + encodeURIComponent(state.url) : '';
   history.replaceState(null, '', location.pathname + location.search + hash);
   document.title = doc.title + ' — IRP Lecture';
+  $('alternate-title').textContent = doc.title;
   document.body.classList.add('has-document'); $('out').hidden = false; $('composer').open = false;
+  syncReaderLayout();
   state.view = 't-read'; selectTab('t-read', ['t-read', 't-compare', 't-md'], ['p-read', 'p-compare', 'p-md']);
   paint();
   msg(meta.truncated ? 'Attention : cette page a été tronquée. Consultez la source pour la version complète.' : 'Votre lecture est prête. Le texte extrait reste disponible dans Comparer.');
@@ -140,7 +163,7 @@ function paint() {
   rows.forEach((row) => {
     const pair = element('div', null, 'compare-row' + (row.changed ? ' changed' : ''));
     for (const [label, text] of [['Texte extrait', row.original], ['Version de lecture', row.adapted]]) {
-      const cell = element('div'); if (row.changed) cell.append(element('span', label + ' · passage modifié', 'change-label'));
+      const cell = element('div'); cell.append(element('span', label + (row.changed ? ' · passage modifié' : ''), 'compare-label'));
       cell.append(element('p', text)); pair.append(cell);
     }
     comparison.append(pair);
@@ -153,6 +176,7 @@ function paint() {
     const li = element('li'); li.append(a); toc.append(li);
   });
   $('outline').hidden = !toc.childElementCount;
+  $('toc-count').textContent = toc.childElementCount ? String(toc.childElementCount) : '';
   diagnostics(v, changed);
   syncPrefs();
 }
@@ -209,6 +233,8 @@ wireTabs(['input-url', 'input-text'], ['url-panel', 'text-panel']);
 wireTabs(['t-read', 't-compare', 't-md'], ['p-read', 'p-compare', 'p-md'], (id) => { state.view = id; });
 $('form').addEventListener('submit', (e) => { e.preventDefault(); const url = $('url').value.trim(); if (!url) { msg('Collez une adresse de page.', true); $('url').focus(); return; } load(url); });
 $('cancel').addEventListener('click', () => { cancel(); msg('Ouverture annulée.'); });
+$('dismiss-message').addEventListener('click', () => { $('status-area').hidden = true; });
+$('import-file').addEventListener('click', () => $('file').click());
 $('paste-go').addEventListener('click', async () => { cancel(); try { const doc = fromPlainText($('paste').value); await show(doc, { kind: 'paste' }, state.generation); } catch (e) { msg(e.message, true); $('paste').focus(); } });
 $('demo').addEventListener('click', async () => { cancel(); await show(fromPlainText(DEMO), { kind: 'demo' }, state.generation); });
 $('file').addEventListener('change', async () => {
@@ -237,6 +263,10 @@ $('share').addEventListener('click', () => copy(location.href, 'Lien copié. La 
 $('focus-mode').addEventListener('click', () => focusMode(true)); $('exit-focus').addEventListener('click', () => focusMode(false));
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && document.body.classList.contains('focus-reading')) focusMode(false); });
 syncPrefs();
+syncReaderLayout();
+if (document.documentElement.dataset.fetchMode === 'unavailable') {
+  inputView('input-text'); $('form').hidden = true; $('url-unavailable').hidden = false;
+}
 function openHash() {
   const match = /^#u=(.+)$/.exec(location.hash);
   if (match) { try { const url = decodeURIComponent(match[1]); if (/^https?:\/\//i.test(url) && url !== state.url) { $('url').value = url; load(url); } } catch { msg('Ce lien de lecture est invalide.', true); } }

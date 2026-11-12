@@ -988,3 +988,12 @@ La direction produit est maintenant **IRP Lecture**, le lecteur de pages/texte/f
 - Extension minimale version 1.3.0 : texte extrait, export HTML, contrôle du focus et badge honnête sur les heuristiques. Les assemblages recopient sans supprimer les dossiers existants.
 - Tests : `npm ci --prefix tests`, `(cd tests && npx playwright install chromium)`, `npm run --prefix tests test:browser`. Le runner lance ses serveurs, teste quatre pages publiques et charge le vrai paquet MV3 dans un profil temporaire Chromium. Les sorties sont dans `docs/validation-results.json` et `docs/screenshots/`.
 - Bilan vérifié : `docs/VALIDATION.md`. Aucun déploiement public, publication Web Store ou test utilisateur de compréhension n’est impliqué par ces résultats.
+
+## 19. Interface professionnelle et publication (2026-11-12)
+
+- `tool.css` : interface responsive, polices auto-hébergées `irp-site/fonts/` avec leurs licences. Ne pas ajouter de requête vers un service de polices tiers.
+- Sous 56 rem, réglages et sommaire sont repliés par défaut ; les changements de largeur synchronisent ces panneaux. Sous 700 px, les colonnes de comparaison s’empilent.
+- Le rendu du code est accessible au clavier et les fiches descriptives utilisent des colonnes pouvant rétrécir. Le titre reste présent dans les vues Comparer et Markdown.
+- Le build statique ajoute `data-fetch-mode="unavailable"` : collage par défaut, indisponibilité de l’URL expliquée avant une requête. La version Python conserve l’ouverture directe des pages publiques.
+- `npm run --prefix tests test:responsive` vérifie 16 formats dans Chromium, Firefox et WebKit ; installer les trois moteurs via Playwright. Résultats : `docs/responsive-results.json`.
+- Le site public existant est `https://irp-lecture.netlify.app`, déployé manuellement avec Netlify Drop. Le dépôt GitHub ne déclenche pas automatiquement ce déploiement. Mettre à jour le site existant plutôt qu’en créer un nouveau.

@@ -1,0 +1,138 @@
+{
+  "formats": [
+    [
+      320,
+      568
+    ],
+    [
+      360,
+      740
+    ],
+    [
+      390,
+      844
+    ],
+    [
+      430,
+      932
+    ],
+    [
+      600,
+      900
+    ],
+    [
+      768,
+      1024
+    ],
+    [
+      820,
+      1180
+    ],
+    [
+      896,
+      700
+    ],
+    [
+      900,
+      900
+    ],
+    [
+      1024,
+      768
+    ],
+    [
+      1280,
+      900
+    ],
+    [
+      1440,
+      900
+    ],
+    [
+      1920,
+      1080
+    ],
+    [
+      2560,
+      1440
+    ],
+    [
+      844,
+      390
+    ],
+    [
+      1024,
+      600
+    ]
+  ],
+  "engines": [
+    {
+      "name": "chromium",
+      "version": "158.0.8127.18",
+      "screens": 112,
+      "stressScreens": 16,
+      "audits": [
+        {
+          "width": 320,
+          "view": "t-read",
+          "violations": []
+        },
+        {
+          "width": 320,
+          "view": "t-compare",
+          "violations": []
+        },
+        {
+          "width": 320,
+          "view": "t-md",
+          "violations": []
+        },
+        {
+          "width": 768,
+          "view": "t-read",
+          "violations": []
+        },
+        {
+          "width": 768,
+          "view": "t-compare",
+          "violations": []
+        },
+        {
+          "width": 768,
+          "view": "t-md",
+          "violations": []
+        },
+        {
+          "width": 1440,
+          "view": "t-read",
+          "violations": []
+        },
+        {
+          "width": 1440,
+          "view": "t-compare",
+          "violations": []
+        },
+        {
+          "width": 1440,
+          "view": "t-md",
+          "violations": []
+        }
+      ]
+    },
+    {
+      "name": "firefox",
+      "version": "159.0",
+      "screens": 112,
+      "stressScreens": 16,
+      "audits": []
+    },
+    {
+      "name": "webkit",
+      "version": "27.2",
+      "screens": 112,
+      "stressScreens": 16,
+      "audits": []
+    }
+  ],
+  "date": "2026-11-12T11:57:59.991Z"
+}

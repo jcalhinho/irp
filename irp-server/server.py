@@ -198,12 +198,15 @@ _FETCH_ENABLED = False
 _FETCH_RATE = None
 _TRUST_PROXY = os.environ.get("IRP_TRUST_PROXY") == "1"  # derrière un reverse proxy de confiance : lire X-Forwarded-For
 _TOOL_CSP = ("default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self'; "
-             "img-src 'self' data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'")
+             "font-src 'self'; img-src 'self' data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'")
 _STATIC = {"/tool": ("irp-site/tool.html", "text/html; charset=utf-8"), "/tool.js": ("irp-site/tool.js", "text/javascript; charset=utf-8"),
            "/tool.css": ("irp-site/tool.css", "text/css; charset=utf-8"),
            "/privacy": ("irp-site/privacy.html", "text/html; charset=utf-8")}
+for _font_file in ("manrope-400.woff2", "manrope-600.woff2", "manrope-700.woff2", "newsreader-normal.woff2", "newsreader-italic.woff2"):
+    _STATIC["/fonts/" + _font_file] = ("irp-site/fonts/" + _font_file, "font/woff2")
 # Démo modèles locaux : CSP dédiée (bibliothèque d'inférence + poids depuis des hôtes nommés, jamais d'inline script).
 _LOCAL_CSP = ("default-src 'none'; script-src 'self' blob: 'wasm-unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; "
+              "font-src 'self'; "
               "connect-src 'self' https://huggingface.co https://*.huggingface.co https://*.hf.co https://cdn.jsdelivr.net; "
               "worker-src 'self' blob:; img-src 'self' data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'")
 _LOCAL_PAGES = {"/local": ("irp-site/local.html", "text/html; charset=utf-8"), "/local.js": ("irp-site/local.js", "text/javascript; charset=utf-8")}

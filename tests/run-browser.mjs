@@ -7,6 +7,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { runInThisContext } from 'node:vm';
+import { checkResponsive } from './responsive.browser.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const children = [];
@@ -35,13 +36,20 @@ try {
 
   // Sans backend, la lecture par collage doit rester fonctionnelle et la récupération échouer clairement.
   await page.goto(staticBase+'/tool.html');
-  await page.locator('#url').fill('https://example.org');await page.locator('#form').evaluate(f=>f.requestSubmit());
-  await page.waitForFunction(()=>document.querySelector('#msg').className==='err');
-  if(!await page.locator('#text-panel').isVisible())throw new Error('Version statique : repli collage absent');
+  if(!await page.locator('#text-panel').isVisible())throw new Error('Version statique : collage par défaut absent');
+  await page.locator('#input-url').click();
+  if(!await page.locator('#url-unavailable').isVisible() || await page.locator('#form').isVisible())throw new Error('Version statique : ouverture URL indisponible non expliquée');
+  await page.locator('#input-text').click();
   await page.locator('#paste').fill('Lecture sans serveur\n\nUn texte collé reste disponible sans service de récupération d’URL.');
   await page.locator('#paste-go').click();await page.waitForSelector('#out:not([hidden])');
   if(!(await page.title()).startsWith('Lecture sans serveur'))throw new Error('Version statique : collage défaillant');
   result.static={urlFailureExplained:true,pasteWorks:true};
+
+  if(process.argv.includes('--responsive')) {
+    const responsive=await checkResponsive({base:staticBase,axe,screenshots});
+    await writeFile(path.join(root,'docs','responsive-results.json'),JSON.stringify(responsive,null,2)+'\n');
+    result.responsive={engines:responsive.engines.map(e=>e.name),formats:responsive.formats.length,screens:responsive.engines.reduce((n,e)=>n+e.screens,0)};
+  }
 
   // Extension MV3 réellement chargée dans un profil de test séparé.
   const extPath=path.join(root,'dist','irp-reader');

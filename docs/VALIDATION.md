@@ -2,6 +2,16 @@
 
 Version vérifiée localement dans le dépôt, avant publication. Les résultats navigateur détaillés sont dans [validation-results.json](validation-results.json). Les captures utilisent le courrier fictif livré avec l’application, sans données personnelles.
 
+## Interface et responsive (12 novembre, version de publication)
+
+L’interface utilise des polices locales Newsreader et Manrope (licences OFL incluses), un accueil en deux colonnes sur ordinateur et une colonne sur téléphone. Les réglages et le sommaire se replient sur les écrans compacts. Les comparaisons s’empilent, les commandes d’export se réorganisent et les données larges restent dans leurs zones de défilement.
+
+Matrice dans Chromium, Firefox et WebKit : **16 formats par moteur**, de **320 à 2 560 px**, dont deux formats paysage. **336 contrôles de disposition** réussis sur les différentes vues et états, avec texte agrandi, contraste élevé, tableau et code larges. Les 9 audits axe supplémentaires (3 vues × 3 largeurs) n’ont détecté aucune violation. Détails : [responsive-results.json](responsive-results.json).
+
+La page Confidentialité et le laboratoire utilisent la même présentation. Leurs contrôles séparés sont dans [secondary-pages-results.json](secondary-pages-results.json). Ces essais sur moteurs de navigateur ne constituent pas une validation sur tous les appareils physiques.
+
+Le site statique propose le collage et les fichiers par défaut. L’ouverture par adresse y est indiquée comme disponible dans l’application locale ; aucun formulaire URL destiné à échouer n’est présenté.
+
 ## Vérifications réussies
 
 | Vérification | Résultat | Portée |
@@ -58,5 +68,5 @@ Pour les 27 contrôles HTTP historiques : lancer `./start.sh --no-open` dans un 
 - L’équivalence sémantique de toute reformulation. Les filtres sont conservateurs, mais heuristiques ; ils ne détectent pas toute inversion de sujet, unité, causalité ou portée d’une condition.
 - La présence de tout le contenu de la page source. L’extraction retire des zones et ne reproduit ni formulaires, ni vidéos, ni interactions ; elle peut se tromper sur la zone principale.
 - Une amélioration de compréhension pour de vrais utilisateurs, une certification FALC ou une conformité d’accessibilité.
-- La compatibilité Firefox et Safari, les performances sur tous les appareils ou une inférence IA locale réelle. L’IA n’est pas requise dans le lecteur principal.
-- Une publication sur le Web Store ou la mise à jour de l’hébergement public. Les livrables vérifiés ici sont locaux et prêts à distribuer.
+- Les performances sur tous les appareils physiques ou une inférence IA locale réelle. Les parcours de présentation ont été exercés sur les moteurs Firefox et WebKit, sans constituer une certification de chaque version de Safari. L’IA n’est pas requise dans le lecteur principal.
+- Une publication sur le Web Store. Le déploiement web de l’interface est effectué séparément après les contrôles locaux.
